@@ -2044,7 +2044,7 @@ window.onload = function() {
                 else{
                   MCK_WEBSOCKET_URL = data.websocketUrl;
                 }
-								
+
                 if (typeof MCK_WEBSOCKET_PORT !== 'undefined'){
                   data.websocketPort = MCK_WEBSOCKET_PORT;
                 }
@@ -2115,7 +2115,6 @@ window.onload = function() {
                     });
                 }
 								alFileService.init(data);
-								mckContactService.loadContacts();
                 alNotificationService.subscribeToServiceWorker();
                 ALStorage.setAppHeaders(data);
                 mckGroupService.loadGroups({
@@ -2837,15 +2836,7 @@ window.onload = function() {
                                     $mck_no_gsm_text.removeClass('n-vis').addClass('vis');
                                 }
                             } else {
-                                alUserService.getUserStatus({
-                                    'callback': mckGroupLayout.addMembersToGroupSearchList
-                                }, function(data){
-																	$applozic.each(data.users, function (i, user) {
-							                        var contact = mckMessageLayout.getContact('' + user.userId);
-							                       contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
-							                        MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
-							                    });
-																});
+                              mckContactService.loadContacts();
                             }
                         } else {
                             $mck_group_admin_options.removeClass('vis').addClass('n-vis');
@@ -3344,7 +3335,7 @@ window.onload = function() {
             _this.downloadImage = function(fileurl) {
                 window.open(fileurl, "_blank");
             };
-						$applozic('div').scroll(function() {
+						$applozic('.mck-message-inner').scroll(function() {
              if ($applozic("#mck-sidebox-search").hasClass('vis') || $applozic('#mck-gm-search-box').css('display') == 'block') {
                if ($applozic(this).scrollTop() + $applozic(this).innerHeight() >= $applozic(this)[0].scrollHeight) {
                  if (lastFetchTime) {
@@ -3688,11 +3679,6 @@ window.onload = function() {
                                             (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail): mckMessageLayout.updateContactDetail(contact, userDetail);
                                         });
                                     }
-																		if(data.userDetails.length === 0 && callback){
-																		  if (typeof callback === 'function') {
-																		      callback(params);
-																		  }
-																		}
                                     if (data.groupFeeds.length > 0) {
                                         $applozic.each(data.groupFeeds, function(i, groupFeed) {
                                             mckMessageLayout.updateUnreadCount('group_' + groupFeed.id, groupFeed.unreadCount, false);
@@ -3745,6 +3731,9 @@ window.onload = function() {
                                     } else {
                                         $mck_msg_inner.data('datetime', '');
                                     }
+																		if (typeof callback === 'function') {
+																			 callback(params);
+																	  }
                                     if (params.isLaunch) {
                                         mckMessageLayout.updateUnreadCountonChatIcon(data.userDetails);
                                     }
@@ -4826,7 +4815,7 @@ window.onload = function() {
                 if (typeof name === 'undefined' || name === '') {
                     return '<div class="mck-alpha-contact-image mck-alpha-user"><span class="mck-icon-user"></span></div>';
                 }
-                var first_alpha = name.charAt(0);
+                var first_alpha = name.toString().charAt(0);
                 var letters = /^[a-zA-Z]+$/;
                 if (first_alpha.match(letters)) {
                     first_alpha = first_alpha.toUpperCase();

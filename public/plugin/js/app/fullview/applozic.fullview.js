@@ -4062,7 +4062,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
-                    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.tabId] === 'undefined'&& params.isGroup !=true) {
                      var userIdArray = new Array();
                      userIdArray.push(params.tabId);
                       mckContactService.getUsersDetail(userIdArray, { 'async': false,'callback':function(){

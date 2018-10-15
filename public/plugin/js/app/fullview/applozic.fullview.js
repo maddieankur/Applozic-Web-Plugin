@@ -4207,6 +4207,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if ((msg.metadata && msg.metadata.category === 'HIDDEN') || msg.contentType === 102) {
                     return;
                 }
+                if (msg.contentType === 13 && (msg.metadata && msg.metadata.hide === 'true' && msg.metadata.show === 'false')) {
+                    return;
+                }
                 if (msg.contentType === 10 && (msg.metadata && msg.metadata.hide === 'true')) {
                     return;
                 }

@@ -97,6 +97,7 @@ _this.generateCloudUrl = function(key, callback) {
   mckUtils.ajax({
       type: 'get',
       async: false,
+      skipEncryption: true,
       headers: headers,
       url: url,
       success: function(result) {

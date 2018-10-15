@@ -85,7 +85,6 @@
             MCK_APP_ID = options.data.alUser.applicationId;
             MCK_BASE_URL = options.data.baseUrl ? options.data.baseUrl : "https://apps.applozic.com";
             MCK_CUSTOM_UPLOAD_SETTINGS = options.data.alUser.fileupload;
-            console.log(MCK_CUSTOM_UPLOAD_SETTINGS);
             ALApiService.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 skipEncryption: true,

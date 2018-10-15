@@ -4502,6 +4502,9 @@ window.onload = function() {
                 if (msg.contentType === 10 && (msg.metadata && msg.metadata.hide === 'true')) {
                     return;
                 }
+								if (msg.contentType === 13 && (msg.metadata && msg.metadata.hide === 'true' && msg.metadata.show === 'false')) {
+										return;
+								}
                 if ($applozic("#mck-message-cell ." + msg.key).length > 0) {
                     return;
                 }

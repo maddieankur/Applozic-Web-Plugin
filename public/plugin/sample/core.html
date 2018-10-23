@@ -11,29 +11,6 @@
 		</script>
 	</head>
 <body>
-			<input type="file" id="myFile" multiple size="50" onchange="myFunction()">
-				<script type="text/javascript">
-				function myFunction() {
-				var file =document.getElementById("myFile").files[0];
-				var message = {
-						 "type": 5,
-						 "message": "",
-						 "to": "debug6",        //optional, remove it if sending group message
-						 "metadata": {},
-						 "source": 1
-					};
-					if(file){
-						window.Applozic.ALApiService.sendAttachment({
-							data: {
-									file: file,
-									messagePxy: message
-							},
-							success: function (result) { },
-							error: function () { }
-						});
-					};
-				}
-				</script>
 	<div>Sample without UI to get data from Applozic Server APIs and connect to websocket connection.</div>
 	<div>Go to src/js/app folder and add the following js files:</div>
 	<ul>

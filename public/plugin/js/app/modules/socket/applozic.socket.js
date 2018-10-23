@@ -16,6 +16,7 @@
         var MCK_TYPING_STATUS;
         var SOCKET = '';
         var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
+        var MCK_WEBSOCKET_PORT = "15675";
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
         var mckUtils = new MckUtils();
@@ -53,14 +54,18 @@
                 ALSocket.MCK_TOKEN = data.token;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
                 MCK_WEBSOCKET_URL = data.websocketUrl;
+                MCK_WEBSOCKET_PORT = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
+
+                if (typeof data.websocketPort !== 'undefined') {
+                    MCK_WEBSOCKET_PORT = data.websocketPort;
+                }
             }
 
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
-                var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 if (typeof SockJS === 'function') {
                     if (!SOCKET) {
-                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + port + "/stomp");
+                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     }
                     ALSocket.stompClient = Stomp.over(SOCKET);
                     ALSocket.stompClient.heartbeat.outgoing = 0;
@@ -195,6 +200,7 @@
             data.token = ALSocket.MCK_TOKEN ;
             data.deviceKey = ALSocket.USER_DEVICE_KEY;
             data.websocketUrl = MCK_WEBSOCKET_URL;
+            data.websocketPort = MCK_WEBSOCKET_PORT;
             ALSocket.init(MCK_APP_ID, data, ALSocket.events);
         };
         ALSocket.onError = function(err) {

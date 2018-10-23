@@ -347,7 +347,8 @@ window.onload = function() {
         var FILE_META = [];
         var USER_DEVICE_KEY;
         var USER_COUNTRY_CODE;
-        var MCK_WEBSOCKET_URL;
+        var MCK_WEBSOCKET_URL = appOptions.websocketUrl;
+        var MCK_WEBSOCKET_PORT = appOptions.websocketPort;
         var IS_LOGGED_IN = true;
         var MCK_CONTACT_MAP = [];
         var MCK_TYPING_STATUS = 0;
@@ -498,7 +499,7 @@ window.onload = function() {
             'onUserDisconnect': function(resp) {},
             'onConversationReadFromOtherSource': function(resp) {},
             'onConversationRead': function(resp) {},
-            'onMessageReceived': function(resp) {console.log(resp)},
+            'onMessageReceived': function(resp) {},
             'onMessageSentUpdate': function(resp) {},
             'onMessageSent': function(resp) {},
             'onUserBlocked': function(resp) {},
@@ -2044,10 +2045,20 @@ window.onload = function() {
 								if (typeof (data.encryptionKey) !== 'undefined'){
 								ALStorage.setEncryptionKey(data.encryptionKey);
 								}
+
+                if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
+                  data.websocketUrl = MCK_WEBSOCKET_URL;
+                }
+                else{
+                  MCK_WEBSOCKET_URL = data.websocketUrl;
+                }
+
+                if (typeof MCK_WEBSOCKET_PORT !== 'undefined'){
+                  data.websocketPort = MCK_WEBSOCKET_PORT;
+                }
                 MCK_USER_ID = data.userId;
                 USER_COUNTRY_CODE = data.countryCode;
                 USER_DEVICE_KEY = data.deviceKey;
-                MCK_WEBSOCKET_URL = data.websocketUrl;
                 MCK_IDLE_TIME_LIMIT = data.websocketIdleTimeLimit;
                 MCK_USER_TIMEZONEOFFSET = data.timeZoneOffset;
                 MCK_FILE_URL = data.fileBaseUrl;
@@ -2112,7 +2123,6 @@ window.onload = function() {
                     });
                 }
 								alFileService.init(data);
-								mckContactService.loadContacts();
                 alNotificationService.subscribeToServiceWorker();
                 ALStorage.setAppHeaders(data);
                 mckGroupService.loadGroups({
@@ -2834,6 +2844,8 @@ window.onload = function() {
                                     $mck_gms_loading.removeClass('vis').addClass('n-vis');
                                     $mck_no_gsm_text.removeClass('n-vis').addClass('vis');
                                 }
+                            } else {
+                              mckContactService.loadContacts();
                             }
 													 }else {
                             $mck_group_admin_options.removeClass('vis').addClass('n-vis');
@@ -3333,7 +3345,7 @@ window.onload = function() {
             _this.downloadImage = function(fileurl) {
                 window.open(fileurl, "_blank");
             };
-						$applozic('div').scroll(function() {
+						$applozic('.mck-message-inner').scroll(function() {
              if ($applozic("#mck-sidebox-search").hasClass('vis') || $applozic('#mck-gm-search-box').css('display') == 'block') {
                if ($applozic(this).scrollTop() + $applozic(this).innerHeight() >= $applozic(this)[0].scrollHeight) {
                  if (lastFetchTime) {
@@ -3574,13 +3586,14 @@ window.onload = function() {
                                                     }
                                                 }
                                                 if (userDetail.userName && !params.startTime) {
-																										if (params.topicId && params.userName) {
-																											var name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, params.userName);
-																										} else {
-																											var name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, userDetail.userName);
-																										}
-																										$mck_tab_title.html(name);
-                                                    $mck_tab_title.attr('title', name);
+                                                      var name;
+                                                      if (params.topicId && params.userName) {
+                                                        name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, params.userName);
+                                                      } else {
+                                                        name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, userDetail.userName);
+                                                      }
+                                                      $mck_tab_title.html(name);										
+                                                    	$mck_tab_title.attr('title', name);
                                                 }
                                             }
                                         });
@@ -3700,11 +3713,6 @@ window.onload = function() {
                                             (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail): mckMessageLayout.updateContactDetail(contact, userDetail);
                                         });
                                     }
-																		if(data.userDetails.length === 0 && callback){
-																		  if (typeof callback === 'function') {
-																		      callback(params);
-																		  }
-																		}
                                     if (data.groupFeeds.length > 0) {
                                         $applozic.each(data.groupFeeds, function(i, groupFeed) {
                                             mckMessageLayout.updateUnreadCount('group_' + groupFeed.id, groupFeed.unreadCount, false);
@@ -3758,6 +3766,9 @@ window.onload = function() {
                                     } else {
                                         $mck_msg_inner.data('datetime', '');
                                     }
+																		if (typeof callback === 'function') {
+																			 callback(params);
+																	  }
                                     if (params.isLaunch) {
                                         mckMessageLayout.updateUnreadCountonChatIcon(data.userDetails);
                                     }
@@ -4839,7 +4850,7 @@ window.onload = function() {
                 if (typeof name === 'undefined' || name === '') {
                     return '<div class="mck-alpha-contact-image mck-alpha-user"><span class="mck-icon-user"></span></div>';
                 }
-                var first_alpha = name.charAt(0);
+                var first_alpha = name.toString().charAt(0);
                 var letters = /^[a-zA-Z]+$/;
                 if (first_alpha.match(letters)) {
                     first_alpha = first_alpha.toUpperCase();
@@ -5722,8 +5733,8 @@ window.onload = function() {
             _this.updateUnreadCount = function(tabId, count, isTotalUpdate) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
+								MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                 if (isTotalUpdate && $mckChatLauncherIcon.length > 0) {
-                    MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;
                     }

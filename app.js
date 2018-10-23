@@ -8,6 +8,7 @@ const argv = require('yargs').argv
 const conf = require('config');
 const port = conf.get('port');
 const baseUrl = conf.get('baseUrl');
+const applozicMinifiedFileUrl = conf.get('applozicMinifiedFileUrl');
 const replace = require("replace");
 
 console.log(baseUrl);
@@ -42,6 +43,7 @@ var server = app.listen(app.get('port'), function() {
       return console.log(err);
     }
     var result = data.replace(":getBaseurl", baseUrl);
+    var result = result.replace(":applozicMinifiedFileUrl", applozicMinifiedFileUrl);
 
     fs.writeFile("./public/plugin/sample/sidebox.html", result, 'utf8', function(err) {
       if (err) return console.log(err);
@@ -52,6 +54,7 @@ var server = app.listen(app.get('port'), function() {
       return console.log(err);
     }
     var result = data.replace(":getBaseurl", baseUrl);
+    var result = result.replace(":applozicMinifiedFileUrl", applozicMinifiedFileUrl);
 
     fs.writeFile("./public/plugin/sample/fullview.html", result, 'utf8', function(err) {
       if (err) return console.log(err);
@@ -62,6 +65,7 @@ var server = app.listen(app.get('port'), function() {
       return console.log(err);
     }
     var result = data.replace(":getBaseurl", baseUrl);
+    var result = result.replace(":applozicMinifiedFileUrl", applozicMinifiedFileUrl);
 
     fs.writeFile("./public/plugin/sample/core.html", result, 'utf8', function(err) {
       if (err) return console.log(err);

@@ -4066,7 +4066,6 @@ var MCK_CLIENT_GROUP_MAP = [];
               var displayName = params.isGroup ? mckGroupService.getGroupDisplayName(params.tabId) : _this.fetchContact(params.tabId).displayName;
               $applozic('.right .top .name').html(displayName);
               $applozic('.chat[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').addClass('active-chat');
-              //_this.addingConversationListInUi(params, callback);
             }
 
             _this.loadTab = function(params, callback) {

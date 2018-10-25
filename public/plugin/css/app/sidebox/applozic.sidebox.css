@@ -1429,7 +1429,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	max-height: 78px;
 	resize: none;
 	background-color: #E7F1F5;
-	width: calc(100% - 120px) !important;
+	width: calc(100% - 120px);
 	outline: none;
 	margin: 0px;
 	font-size: 14px;
@@ -3760,4 +3760,8 @@ fill:white;
 	z-index: 2243001;
 	right: 0;
 	min-width: 12px;
+}
+
+.mck-text-box-width-increase {
+	width : calc(100% - 90px) !important;
 }

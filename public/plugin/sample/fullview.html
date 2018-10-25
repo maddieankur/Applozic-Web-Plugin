@@ -726,7 +726,9 @@
 	    <script type="text/javascript" src="autosuggest/js/jquery.atwho.min.js"></script> -->
 
 	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
-	<script type="text/javascript" src="../../applozic.chat.min.js"></script>
+	<!-- remomve comment from below file to usey applozic.chat.min.js file from repository and comment out cdn file -->
+	<!-- <script type="text/javascript" src="../../applozic.chat.min.js"></script> -->
+	<script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-5.0.min.js"></script>
 	<script type="text/javascript" src="../js/app/fullview/applozic.fullview.js"></script>
 
 	<script type="text/javascript">
@@ -803,7 +805,8 @@
 	                    googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4", // your project google api key
 	                    googleMapScriptLoaded: false, // true if your app already loaded google maps script
 	                    //   mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
-										 	//   video: true,
+										 	// video: true,
+											//   emojilibrary: true, // true if you want to load emoticons in chat
 											fileupload : "googleServer", // awsS3Server  or googleCloud or googleServer or customStorage,
 	                    autoTypeSearchEnabled: true, // set to false if you don't want to allow sending message to user who is not in the contact list
 	                    loadOwnContacts: true, //set to true if you want to populate your own contact list (see Step 4 for reference)

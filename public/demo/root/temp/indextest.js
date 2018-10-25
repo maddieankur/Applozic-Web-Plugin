@@ -73,6 +73,7 @@ function intializeChat(appId, userId, pass) {
         authenticationTypeId: 1, //1 for password verification from Applozic server and 0 for access Token verification from your server
         accessToken: pass, //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
         locShare: true,
+        //   emojilibrary: true, // true if you want to load emoticons in chat
         googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4", // your project google api key
         googleMapScriptLoaded: false, // true if your app already loaded google maps script
         //   mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",

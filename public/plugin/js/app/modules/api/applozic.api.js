@@ -870,7 +870,7 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + GET_USER_DETAIL_URL,
                 data: JSON.stringify({
-                    userIdList: options.data.userIdList
+                    userIdList: options.data
                 }),
                 type: 'POST',
                 async: (typeof options.async !== 'undefined') ? options.async : true,

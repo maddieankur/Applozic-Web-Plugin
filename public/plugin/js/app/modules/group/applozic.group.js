@@ -449,7 +449,6 @@ function MckGroupService() {
   };
 
   //function MckMessageLayout
-
   _this.getContactFromGroupOfTwo = function(group, callback) {
     var user;
     for (var i = 0; i < group.members.length; i++) {
@@ -461,7 +460,8 @@ function MckGroupService() {
       if (typeof callback === "function") {
         callback(user);
       }
-      // return mckMessageLayout.fetchContact('' + group.members[i]);
+      return user;
+       //return _this.fetchContact('' + group.members[i]);
     }
   };
   _this.addGroupFromMessage = function(message, update, callback) {
@@ -522,12 +522,31 @@ function MckGroupService() {
                displayName = mckMessageLayout.getTabDisplayName(contact, false);
            }
        }*/
+       var userIdList =[];
       if (group.type === 7) {
         var contact = _this.getContactFromGroupOfTwo(group);
         if (typeof contact !== 'undefined') {
-          displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
-        }
-      }
+          if(!alUserService.MCK_USER_DETAIL_MAP[contact]){
+            userIdList.push(contact);
+             window.Applozic.ALApiService.getUserDetail({data:userIdList,
+               success: function(data) {
+               if (data.response.length > 0) {
+                   $applozic.each(data.response, function(i, userDetail) {
+                     alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                     if(alUserService.MCK_USER_DETAIL_MAP[contact] && alUserService.MCK_USER_DETAIL_MAP[contact].displayName){
+                     displayName = alUserService.MCK_USER_DETAIL_MAP[contact].displayName;
+                   }
+                   });
+               }
+             }
+           })
+         }else{
+           if(alUserService.MCK_USER_DETAIL_MAP[contact] && alUserService.MCK_USER_DETAIL_MAP[contact].displayName){
+               displayName = alUserService.MCK_USER_DETAIL_MAP[contact].displayName;
+            }
+         }
+  }
+    }
       if (group.type === 3) {
         if (displayName.indexOf(MCK_USER_ID) !== -1) {
           displayName = displayName.replace(MCK_USER_ID, '').replace(":", '');

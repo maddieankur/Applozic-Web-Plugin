@@ -59,7 +59,7 @@ function MckCallingService(identity, token, callId, toUserDisplayName,
         var initialTime =  _this.twilioService.callReceivedAt.getTime();
         var callDurationInMilis = new Date().getTime() - initialTime;
         alMessageService.sendVideoCallEndMessage(callId,
-          "CALL_END", 103, false, callDurationInMilis, toUser,
+          "CALL_END", 102, false, callDurationInMilis, toUser,
           function(messagePxy) {
             mckMessageService.sendMessage(messagePxy);
           });

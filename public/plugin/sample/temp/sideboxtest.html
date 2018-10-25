@@ -704,7 +704,9 @@
 	<script type="text/javascript" src="../js/applozic.aes.js"></script>
 
 	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
-	<script type="text/javascript" src="../../applozic.chat.min.js"></script>
+	<!-- remomve comment from below file to usey applozic.chat.min.js file from repository and comment out cdn file -->
+	<!-- <script type="text/javascript" src="../../applozic.chat.min.js"></script> -->
+	<script type="text/javascript" src=":applozicMinifiedFileUrl"></script>
 	<script type="text/javascript" src="../js/app/sidebox/applozic.sidebox.js"></script>
 
 	<script type="text/javascript">
@@ -796,6 +798,7 @@
 							locShare : true,
 						 	olStatus: true,
 							// awsS3Server :true,
+							//	emojilibrary: true, // true if you want to load emoticons in chat
 						  fileupload : "googleServer", // awsS3Server or googleCloud or googleServer or customStorage,
 							onTopicDetails: function(topic) { console.log(topic); },
 							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",

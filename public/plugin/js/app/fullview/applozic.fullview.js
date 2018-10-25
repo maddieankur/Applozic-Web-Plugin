@@ -11,6 +11,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         notificationSoundLink: '',
         mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
         launcher: 'applozic-launcher',
+        emojilibrary: true, // true if you want to load emoticons in chat
         userId: null,
         appId: null,
         userName: null,
@@ -337,6 +338,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_CONVERSATION_MAP = [];
         var IS_MCK_TAB_FOCUSED = true;
         var MCK_TOTAL_UNREAD_COUNT = 0;
+        var EMOJI_LIBRARY = appOptions.emojilibrary;
         var MCK_CUSTOM_URL = appOptions.customFileUrl;
         var MCK_STORAGE_URL = appOptions.customUploadUrl;
         var MCK_MODE = appOptions.mode;
@@ -346,7 +348,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var OPEN_GROUP_SUBSCRIBER_MAP = [];
         var MCK_CONNECTED_CLIENT_COUNT = 0;
         var GROUP_ROLE_MAP = [0, 1, 2, 3];
-        var GROUP_TYPE_MAP = [1, 2, 5, 6];
+        var GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
         var MCK_TOPIC_CONVERSATION_MAP = [];
         var IS_MCK_USER_DEACTIVATED = false;
         var MCK_LAUNCHER = appOptions.launcher;
@@ -476,7 +478,13 @@ var MCK_CLIENT_GROUP_MAP = [];
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
-            mckMessageLayout.initEmojis();
+            if(EMOJI_LIBRARY) { // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
+               mckMessageLayout.initEmojis();
+            }
+            else {              // EMOJI_LIBRARY = false ->hide emoticon from chat widget
+               document.getElementById('mck-btn-smiley').setAttribute('class', 'n-vis');
+               document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
+            }
             if (IS_CALL_ENABLED) {
               notificationtoneoption.loop = true;
              ringToneService = new RingToneService();
@@ -3987,6 +3995,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                       $mck_write_box.removeClass('vis').addClass('n-vis');
                   }
                   mckInitializeChannel.subscibeToTypingChannel(params.tabId, params.isGroup);
+                  if (typeof MCK_ON_TAB_CLICKED === 'function') {
+                      MCK_ON_TAB_CLICKED({
+                          tabId: params.tabId,
+                          isGroup: params.isGroup
+                      });
+                  }
                   var contact = (params.isGroup) ? mckGroupUtils.getGroup(params.tabId) : mckMessageLayout.getContact(params.tabId);
                   var contactHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                   $applozic("#li-" + contactHtmlExpr + " .mck-unread-count-box").removeClass("vis").addClass("n-vis");
@@ -4052,14 +4066,13 @@ var MCK_CLIENT_GROUP_MAP = [];
               var displayName = params.isGroup ? mckGroupService.getGroupDisplayName(params.tabId) : _this.fetchContact(params.tabId).displayName;
               $applozic('.right .top .name').html(displayName);
               $applozic('.chat[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').addClass('active-chat');
-              _this.addingConversationListInUi(params, callback);
             }
 
             _this.loadTab = function(params, callback) {
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
-                    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.tabId] === 'undefined'&& params.isGroup !=true) {
                      var userIdArray = new Array();
                      userIdArray.push(params.tabId);
                       mckContactService.getUsersDetail(userIdArray, { 'async': false,'callback':function(){
@@ -4069,7 +4082,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         _this.addingConversationList(params, callback);
                     }
                 }
-                  _this.addingConversationListInUi(params, callback);
+                   _this.addingConversationListInUi(params, callback);
             };
             _this.setProductProperties = function(topicDetail) {
                 $mck_product_title.html(topicDetail.title);
@@ -4117,6 +4130,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                         scrollTop: $mck_msg_inner.prop("scrollHeight")
                     }, 'fast');
                 }
+                var messageBody = document.querySelectorAll(".mck-message-inner.active-chat")[0];
+                messageBody.scrollTop = messageBody.scrollHeight;
             };
             _this.closeConversation = function(data) {
                 if (typeof MCK_DISPLAY_TEXT === 'function') {
@@ -4286,7 +4301,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     msgReply: replyMsg   ? replyMsg.message + "\n" : '',
                     msgReplyTo: replyMsg ? replyTo + "\n" : '',
                     msgReplyDivExpr: replyMsg ? 'vis' : 'n-vis',
-                    msgReplyToVisibleExpr: (contact.isGroup && replyMsg) ? 'vis' : 'n-vis',
+                    msgReplyToVisibleExpr: (replyMsg) ? 'vis' : 'n-vis',
                     msgPreview: msgpreview ? _this.getImageForReplyMessage(replyMsg) :"",
                     msgpreviewvisExpr: msgpreviewVis,
                     textreplyVisExpr: textreply,
@@ -4398,6 +4413,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                         scrollTop: $mck_msg_inner.prop("scrollHeight")
                     }, 'fast');
                 }
+                var messageBody = document.querySelectorAll(".mck-message-inner.active-chat")[0];
+                messageBody.scrollTop = messageBody.scrollHeight;
                 if ($mck_tab_message_option.hasClass('n-vis')) {
                     if (msg.groupId) {
                         var group = mckGroupUtils.getGroup(msg.groupId);
@@ -5487,7 +5504,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         e.preventDefault();
                         $applozic(".mck-context-menu").removeClass("vis").addClass("n-vis");
                         $applozic("." + messageKey + " .mck-context-menu").removeClass("n-vis").addClass("vis");
-                        w.event.returnValue = false;
+                        event.returnValue = false;
                     });
                 }
             };

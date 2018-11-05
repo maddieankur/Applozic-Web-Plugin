@@ -6327,6 +6327,27 @@ window.onload = function() {
                    }, error: function () { }
                });
            };
+
+           _this.updateDisplayName = function (userId, userName) {
+                if (userId === "" || userName === "") {
+                    return;
+                }
+                var data = "userId=" + userId + "&displayName=" + userName;
+                $applozic.ajax({
+                    url: MCK_BASE_URL + USER_DISPLAY_NAME_UPDATE,
+                    type: 'get',
+                    data: data,
+                    success: function (data) {
+                        if (typeof data === 'object') {
+                            if (data.status === 'success') {
+                                return "success";
+                            }
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            };
 				}
         function MckGroupLayout() {
             var _this = this;

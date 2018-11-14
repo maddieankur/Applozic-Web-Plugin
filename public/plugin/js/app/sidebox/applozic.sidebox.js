@@ -1226,6 +1226,9 @@ window.onload = function() {
                     params.userId = optns.userId;
                 }
                 mckMessageService.getConversationId(params);
+                if (typeof optns.callback === "function") {
+                    optns.callback();
+                }
             } else {
                 if (!optns.userId || !optns.groupId) {
                     return 'UserId or groupId required';
@@ -1635,7 +1638,8 @@ window.onload = function() {
                     'type': params.messageType,
                     'contentType': params.type,
                     'message': message,
-										'metadata': params.metadata
+                    'conversationId': params.conversationId,
+					'metadata': params.metadata
                 };
                 mckMessageService.sendMessage(messagePxy);
                 return 'success';
@@ -1660,6 +1664,7 @@ window.onload = function() {
                 var messagePxy = {
                     'type': params.messageType,
                     'contentType': params.type,
+                    'conversationId': params.conversationId,
                     'message': message
                 };
                 if (params.groupId) {

@@ -2240,7 +2240,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (groupId) {
                         var group = mckGroupUtils.getGroup(groupId);
-                        if (group && group.adminName === MCK_USER_ID) {
+                        var groupLength=document.getElementsByClassName('mck-group-admin-text').length;
+                        var userAdminStatus=document.getElementsByClassName('mck-group-admin-text')[groupLength-1].lastChild.innerText;
+                        
+                        if (group && userAdminStatus == "Admin"  ) {
                             if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0) {
                                 mckGroupLayout.addMembersToGroupSearchList();
                             } else if (IS_MCK_OWN_CONTACTS && MCK_CONTACT_ARRAY.length > 0) {
@@ -6675,8 +6678,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_group_title.html(group.displayName);
                         if (groupInfo.users && groupInfo.users.length > 0) {
                             $mck_group_member_List.html('');
+                            console.log(group);
                             _this.addMembersToGroupInfoList(group);
-                            (group.adminName === MCK_USER_ID) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
+                            var groupLength=document.getElementsByClassName('mck-group-admin-text').length;
+                            var userAdminStatus=document.getElementsByClassName('mck-group-admin-text')[groupLength-1].lastChild.innerText;
+                            
+                            (userAdminStatus=="Admin") ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                         }
                     }
                     var currTabId = $mck_msg_inner.data('mck-id');
@@ -6894,7 +6901,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_group_info_icon.html(mckGroupService.getGroupImage(group.imageUrl));
                         $mck_group_title.html(group.displayName);
                         _this.addMembersToGroupInfoList(group);
-                        (group.adminName === MCK_USER_ID) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
+                        var groupLength=document.getElementsByClassName('mck-group-admin-text').length;
+                        var userAdminStatus=document.getElementsByClassName('mck-group-admin-text')[groupLength-1].lastChild.innerText;
+
+                        (userAdminStatus === "Admin") ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                     } else {
                         mckGroupService.getGroupFeed({
                             'groupId': params.groupId,
@@ -6916,7 +6926,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var groupId = $mck_group_info_tab.data('mck-id');
                 if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                     var group = mckGroupUtils.getGroup(groupId);
-                    if (typeof group === 'object' && MCK_USER_ID === group.adminName) {
+                    var groupLength=document.getElementsByClassName('mck-group-admin-text').length;
+                    var userAdminStatus=document.getElementsByClassName('mck-group-admin-text')[groupLength-1].lastChild.innerText;
+
+                    if (typeof group === 'object' && userAdminStatus === "Admin") {
                         alUserService.loadUserProfile(userId);
 
                         mckGroupService.addGroupMember({

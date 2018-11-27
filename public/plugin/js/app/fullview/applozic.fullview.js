@@ -2240,7 +2240,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (groupId) {
                         var group = mckGroupUtils.getGroup(groupId);
-                        if (group && group.users[loginId.value].role==1 ) {
+                        if (group && group.users[MCK_USER_ID].role==1 ) {
                             if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0) {
                                 mckGroupLayout.addMembersToGroupSearchList();
                             } else if (IS_MCK_OWN_CONTACTS && MCK_CONTACT_ARRAY.length > 0) {
@@ -6677,7 +6677,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             $mck_group_member_List.html('');
                             console.log(group);
                             _this.addMembersToGroupInfoList(group);
-                            (group.users[loginId.value].role==1) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
+                            (group.users[MCK_USER_ID].role==1) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                         }
                     }
                     var currTabId = $mck_msg_inner.data('mck-id');
@@ -6896,7 +6896,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_group_title.html(group.displayName);
                         _this.addMembersToGroupInfoList(group);
 
-                        if(group.users[loginId.value].role == 1){
+                        if(group.users[MCK_USER_ID].role == 1){
                             $mck_group_add_member_box.removeClass('n-vis').addClass('vis');
                             var element=document.getElementsByClassName('mck-group-admin-options');
                             for(var i = 1; i < element.length; i++){
@@ -6929,7 +6929,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var groupId = $mck_group_info_tab.data('mck-id');
                 if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                     var group = mckGroupUtils.getGroup(groupId);
-                   if (typeof group === 'object' && group.users[loginId.value].role==1) {
+                   if (typeof group === 'object' && group.users[MCK_USER_ID].role==1) {
                         alUserService.loadUserProfile(userId);
                         
 

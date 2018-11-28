@@ -8100,10 +8100,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     $mck_tab_status.removeClass('vis').addClass('n-vis');
                                     $mck_typing_label.html(MCK_LABELS['typing']);
                                 }
-                                var userBlockStatus=document.getElementById('mck-msg-error').classList.contains('vis');
-                                if(userBlockStatus == false){
-                                    $mck_typing_box.removeClass('n-vis').addClass('vis');
-                                }
+                                $mck_typing_box.removeClass('n-vis').addClass('vis');
                                 setTimeout(function() {
                                     $mck_tab_title.removeClass("mck-tab-title-w-typing");
                                     $mck_typing_box.removeClass('vis').addClass('n-vis');

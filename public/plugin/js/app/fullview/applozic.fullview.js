@@ -6675,7 +6675,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_group_title.html(group.displayName);
                         if (groupInfo.users && groupInfo.users.length > 0) {
                             $mck_group_member_List.html('');
-                            console.log(group);
                             _this.addMembersToGroupInfoList(group);
                             (group.users[MCK_USER_ID].role==1) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                         }

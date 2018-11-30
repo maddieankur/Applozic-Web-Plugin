@@ -6899,9 +6899,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                             $mck_group_add_member_box.removeClass('n-vis').addClass('vis');
                             var element=document.getElementsByClassName('mck-group-admin-options');
                             for(var i = 1; i < element.length; i++){
+                                if(element[i].parentElement.parentElement.parentElement.offsetParent.dataset.mckId != MCK_USER_ID)
                                 element[i].classList.remove('n-vis');
                                 element[i].classList.add('vis');
                             }
+
                         }
                         else{
                             $mck_group_add_member_box.removeClass('vis').addClass('n-vis');

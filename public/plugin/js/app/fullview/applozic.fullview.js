@@ -2187,7 +2187,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                         var group = mckGroupUtils.getGroup(groupId);
-                        if (typeof group === 'object' && MCK_USER_ID === group.adminName) {
+                        if (typeof group === 'object' && (group.users[MCK_USER_ID].role==1  || group.users[MCK_USER_ID].role==2) ) {
                             if (confirm(MCK_LABELS['remove.member.alert'])) {
                                 mckGroupService.removeGroupMemberFromChat({
                                     'groupId': groupId,
@@ -2240,7 +2240,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (groupId) {
                         var group = mckGroupUtils.getGroup(groupId);
-                        if (group && group.users[MCK_USER_ID].role==1 ) {
+                        if (group && (group.users[MCK_USER_ID].role==1 || group.users[MCK_USER_ID].role==2) ) {
                             if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0) {
                                 mckGroupLayout.addMembersToGroupSearchList();
                             } else if (IS_MCK_OWN_CONTACTS && MCK_CONTACT_ARRAY.length > 0) {
@@ -6934,7 +6934,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var groupId = $mck_group_info_tab.data('mck-id');
                 if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                     var group = mckGroupUtils.getGroup(groupId);
-                   if (typeof group === 'object' && group.users[MCK_USER_ID].role==1) {
+                   if (typeof group === 'object' && (group.users[MCK_USER_ID].role==1|| group.users[MCK_USER_ID].role==2)) {
                         alUserService.loadUserProfile(userId);
                         
 

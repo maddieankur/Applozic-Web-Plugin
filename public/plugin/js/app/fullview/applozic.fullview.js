@@ -6895,13 +6895,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_group_title.html(group.displayName);
                         _this.addMembersToGroupInfoList(group);
 
-                        if(group.users[MCK_USER_ID].role == 1){
+                        if(group.users[MCK_USER_ID].role == 1 || group.users[MCK_USER_ID].role == 2){
                             $mck_group_add_member_box.removeClass('n-vis').addClass('vis');
                             var element=document.getElementsByClassName('mck-group-admin-options');
                             for(var i = 1; i < element.length; i++){
-                                if(element[i].parentElement.parentElement.parentElement.offsetParent.dataset.mckId != MCK_USER_ID)
-                                element[i].classList.remove('n-vis');
-                                element[i].classList.add('vis');
+                                if(element[i].parentElement.parentElement.parentElement.offsetParent.dataset.mckId != MCK_USER_ID){
+                                    //for admin member
+                                    if(group.users[MCK_USER_ID].role == 1){
+                                        element[i].classList.remove('n-vis');
+                                        element[i].classList.add('vis');
+                                    }
+                                }
                             }
 
                         }

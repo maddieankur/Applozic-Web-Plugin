@@ -27,6 +27,7 @@ window.onload = function() {
         groupUserCount: false,
         desktopNotification: false,
         locShare: false,
+        unreadCountOnchatLauncher: true,
         maxAttachmentSize: 25, // default size is 25MB
         notification: true,
         launchOnUnreadMessage: false,
@@ -2072,8 +2073,8 @@ window.onload = function() {
 
 				window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
 
-                MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
-								mckUtils.badgeCountOnLaucher(MCK_ENABLE_BADGE_COUNT,MCK_TOTAL_UNREAD_COUNT);
+                _this.setUnreadCountOnStartup(MCK_USER_ID);
+
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
                     (IS_REINITIALIZE) ? window.Applozic.ALSocket.reconnect(): window.Applozic.ALSocket.init(MCK_APP_ID, data, events);
@@ -2327,6 +2328,20 @@ window.onload = function() {
                     clearInterval(offlineIntervalId);
                 }
                 offlineIntervalId = '';
+            };
+            _this.setUnreadCountOnStartup = function (userId) {
+                window.Applozic.ALApiService.getUserDetail({
+                    data: [userId],
+                    success: function (data) {
+                        if (data.status === 'success') {
+                            MCK_TOTAL_UNREAD_COUNT = data.response[0].unreadCount;
+                            mckUtils.badgeCountOnLaucher(MCK_ENABLE_BADGE_COUNT, MCK_TOTAL_UNREAD_COUNT);
+                        }
+                    },
+                    error: function () {
+                        throw new Error("Error while fetching unread count.");
+                    }
+                });
             };
         }
 
@@ -5738,7 +5753,7 @@ window.onload = function() {
             _this.updateUnreadCount = function(tabId, count, isTotalUpdate) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
-								MCK_TOTAL_UNREAD_COUNT += count - previousCount;
+				MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                 if (isTotalUpdate && $mckChatLauncherIcon.length > 0) {
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;

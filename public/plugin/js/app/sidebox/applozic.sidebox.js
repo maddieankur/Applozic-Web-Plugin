@@ -27,7 +27,6 @@ window.onload = function() {
         groupUserCount: false,
         desktopNotification: false,
         locShare: false,
-        unreadCountOnchatLauncher: true,
         maxAttachmentSize: 25, // default size is 25MB
         notification: true,
         launchOnUnreadMessage: false,

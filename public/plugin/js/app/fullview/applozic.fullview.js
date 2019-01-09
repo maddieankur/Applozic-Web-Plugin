@@ -8367,7 +8367,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         var tabId = $mck_message_inner.data('mck-id');
                         if (tabId === contact.contactId) {
                             if (status === BLOCK_STATUS_MAP[0]) {
-                                MCK_BLOCKED_TO_MAP[contact.contactId] = true;
+                                alUserService.MCK_BLOCKED_TO_MAP[contact.contactId] = true;
                                 mckUserUtils.toggleBlockUser(tabId, true);
                             } else {
                                 MCK_BLOCKED_BY_MAP[contact.contactId] = true;

@@ -76,10 +76,11 @@
 
                     ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
-                      var check_url=e.target.activeElement.href;
-                      if(!check_url || 0 === check_url.length){
-                      ALSocket.disconnect();
-                      }
+                        var check_url;
+                        (e.target.activeElement) && (check_url=e.target.activeElement.href);
+                        if(!check_url || 0 === check_url.length){
+                            ALSocket.disconnect();
+                        }
                     });
                 }
             }

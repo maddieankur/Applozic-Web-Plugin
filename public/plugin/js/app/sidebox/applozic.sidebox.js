@@ -2334,6 +2334,9 @@ window.onload = function() {
                     success: function (data) {
                         if (data.status === 'success') {
                             MCK_TOTAL_UNREAD_COUNT = data.response[0].unreadCount;
+                            if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
+                                $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
+                            }
                             mckUtils.badgeCountOnLaucher(MCK_ENABLE_BADGE_COUNT, MCK_TOTAL_UNREAD_COUNT);
                         }
                     },
@@ -3473,6 +3476,7 @@ window.onload = function() {
             _this.loadMessageList = function(params, callback) {
                 var individual = false;
                 var isConvReq = false;
+                var calledFrom = 'loadMessageList';
                 var data = {};
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
                     if (params.isGroup) {
@@ -3652,9 +3656,9 @@ window.onload = function() {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
 																						_this.dropInUnreadCountUpdate(params.tabId,true);
 																						_this.dropInUnreadCountUpdate(params.clientGroupId,true,true);
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
                                         } else {
-                                            mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true);
+                                            mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
 																						_this.dropInUnreadCountUpdate(params.tabId,false);
                                         }
                                         if (typeof callback === 'function') {
@@ -3726,7 +3730,7 @@ window.onload = function() {
                                                     MCK_LAST_SEEN_AT_MAP[userDetail.userId] = userDetail.lastSeenAtTime;
                                                 }
                                             }
-                                            mckMessageLayout.updateUnreadCount('user_' + userDetail.userId, userDetail.unreadCount, false);
+                                            mckMessageLayout.updateUnreadCount('user_' + userDetail.userId, userDetail.unreadCount, false, calledFrom);
 																						_this.dropInUnreadCountUpdate(userDetail.userId,false);
                                             var contact = mckMessageLayout.getContact('' + userDetail.userId);
                                             (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail): mckMessageLayout.updateContactDetail(contact, userDetail);
@@ -5749,11 +5753,11 @@ window.onload = function() {
                 }
                 TAB_MESSAGE_DRAFT[tabId] = tab_draft;
             };
-            _this.updateUnreadCount = function(tabId, count, isTotalUpdate) {
+            _this.updateUnreadCount = function(tabId, count, isTotalUpdate, calledFrom) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
 				MCK_TOTAL_UNREAD_COUNT += count - previousCount;
-                if (isTotalUpdate && $mckChatLauncherIcon.length > 0) {
+                if (calledFrom !== 'loadMessageList' && (isTotalUpdate || $mckChatLauncherIcon.length > 0)) {
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;
                     }

@@ -3224,7 +3224,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 if (isMessages) {
                                     if (params.startTime) {
-                                       // mckMessageLayout.addContactsFromMessageList(data, false);
+                                        mckMessageLayout.addContactsFromMessageList(data, false);
                                     } else {
                                         mckMessageLayout.addContactsFromMessageList(data, false);
                                         $mck_contacts_inner.animate({

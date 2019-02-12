@@ -1047,6 +1047,12 @@ window.onload = function() {
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
              mckCallService.init();
             }
+            
+            if(MCK_NOTIFICATION_TONE_LINK){
+                ringToneService = new RingToneService();
+                mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK, { loop: false });
+            }
+
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -7985,7 +7991,7 @@ window.onload = function() {
                 alUserService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-               // var notificationsound = mckNotificationTone;
+               var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7996,7 +8002,8 @@ window.onload = function() {
                             iconLink = imgsrc;
                         }
                     }
-                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg);
+                    
+                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg, notificationsound);
                 }
             };
 

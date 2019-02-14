@@ -106,6 +106,8 @@ window.onload = function() {
             'private':'Private',
             'open':'Open',
             'you':'You',
+            'userIdPattern':'[^!$%\^&*()]+',
+            'charsNotAllowedMessage':'Following characters are not allowed: !$%^&*()',
             'group.metadata': {
                 'CREATE_GROUP_MESSAGE': ':adminName created group :groupName',
                 'REMOVE_MEMBER_MESSAGE': ':adminName removed :userName',
@@ -2210,6 +2212,7 @@ window.onload = function() {
                 $applozic('#mck-group-name-save').attr('title', MCK_LABELS['save']);
                 $applozic('#mck-btn-group-icon-save').attr('title', MCK_LABELS['save']);
                 $applozic('#mck-group-name-edit').attr('title', MCK_LABELS['edit']);
+                $applozic('#mck-contact-search-input').attr('title', MCK_LABELS['charsNotAllowedMessage']);
             };
 
             $applozic(w).on('resize', function() {
@@ -5186,6 +5189,10 @@ window.onload = function() {
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
+                            var val = $mck_contact_search_input.val();
+                            var regex = new RegExp('[!$%\^&*()]');
+                            if (regex.test(val))
+                                return false;
                             var userId = $mck_contact_search_input.val();
                             if (userId) {
                                 if ((MCK_SELF_CHAT_DISABLE === true && userId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
@@ -5214,6 +5221,11 @@ window.onload = function() {
                     });
                     $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
+                        var val = $mck_contact_search_input.val();
+                        var tabId = $mck_contact_search_input.val();
+                        var regex = new RegExp('[!$%\^&*()]');
+                        if (regex.test(val))
+                            return false;
                         var tabId = $mck_contact_search_input.val();
                         if (tabId !== '') {
                             if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {

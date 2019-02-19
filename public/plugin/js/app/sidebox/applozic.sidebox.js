@@ -6401,8 +6401,8 @@ window.onload = function() {
             };
 
 						var select = document.getElementById( 'mck-group-create-type' );
+                        select.options[select.options.length] = new Option( MCK_LABELS['public'], '2');
 						select.options[select.options.length] = new Option( MCK_LABELS['private'], '1');
-						select.options[select.options.length] = new Option( MCK_LABELS['public'], '2');
 						select.options[select.options.length] = new Option( MCK_LABELS['open'], '6');
 
             var $mck_msg_form = $applozic("#mck-msg-form");

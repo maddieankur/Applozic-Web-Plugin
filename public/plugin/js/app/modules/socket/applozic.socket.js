@@ -47,7 +47,6 @@
         window.Applozic.ALSocket.init("applozic-sample-app", "https://apps.applozic.com", events);
         */
         ALSocket.init = function(appId, data, _events) {
-            console.log(data);
             if (appId) {
                 MCK_APP_ID = appId;
             }

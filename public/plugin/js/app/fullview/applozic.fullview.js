@@ -1457,7 +1457,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 USER_DEVICE_KEY = data.deviceKey;
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
                   data.websocketUrl = MCK_WEBSOCKET_URL;
-                } else{
+                } else {
                   MCK_WEBSOCKET_URL = data.websocketUrl;
                 }
 

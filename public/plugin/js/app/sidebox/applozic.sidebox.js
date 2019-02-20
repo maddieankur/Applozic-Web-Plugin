@@ -2053,7 +2053,7 @@ window.onload = function() {
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
                   data.websocketUrl = MCK_WEBSOCKET_URL;
-                } else{
+                } else {
                   MCK_WEBSOCKET_URL = data.websocketUrl;
                 }
 

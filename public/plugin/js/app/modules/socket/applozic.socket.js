@@ -15,8 +15,8 @@
         ALSocket.mck_typing_status = 0;
         var MCK_TYPING_STATUS;
         var SOCKET = '';
-        var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
-        var MCK_WEBSOCKET_PORT = "15675";
+        var MCK_WEBSOCKET_URL = 'https://socket.applozic.com';
+        var MCK_WEBSOCKET_PORT = "80";
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
         var mckUtils = new MckUtils();
@@ -54,9 +54,10 @@
                 ALSocket.MCK_TOKEN = data.token;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
                 MCK_WEBSOCKET_URL = data.websocketUrl;
-                MCK_WEBSOCKET_PORT = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
 
-                if (typeof data.websocketPort !== 'undefined') {
+                if (typeof data.websocketPort === "undefined") {
+                    MCK_WEBSOCKET_PORT = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
+                } else {
                     MCK_WEBSOCKET_PORT = data.websocketPort;
                 }
             }

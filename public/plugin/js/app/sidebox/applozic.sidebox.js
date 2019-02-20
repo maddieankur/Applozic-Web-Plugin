@@ -2052,17 +2052,10 @@ window.onload = function() {
 								}
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
-                  data.websocketUrl = MCK_WEBSOCKET_URL;
-                } else {
-                  MCK_WEBSOCKET_URL = data.websocketUrl;
+                    data.websocketUrl = MCK_WEBSOCKET_URL;
                 }
-
                 if (typeof MCK_WEBSOCKET_PORT !== "undefined") {
                     data.websocketPort = MCK_WEBSOCKET_PORT;
-                } else if (data.websocketPort) {
-                    MCK_WEBSOCKET_PORT = data.websocketPort;
-                } else {
-                    MCK_WEBSOCKET_PORT = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 }
 
                 MCK_USER_ID = data.userId;

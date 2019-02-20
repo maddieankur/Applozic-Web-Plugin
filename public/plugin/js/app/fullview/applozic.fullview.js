@@ -491,6 +491,10 @@ var MCK_CLIENT_GROUP_MAP = [];
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3",notificationtoneoption);
             mckCallService.init();
               }
+            if(MCK_NOTIFICATION_TONE_LINK){
+                ringToneService = new RingToneService();
+                mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK, { loop: false });
+            }
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -3228,7 +3232,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 if (isMessages) {
                                     if (params.startTime) {
-                                       // mckMessageLayout.addContactsFromMessageList(data, false);
+                                        mckMessageLayout.addContactsFromMessageList(data, false);
                                     } else {
                                         mckMessageLayout.addContactsFromMessageList(data, false);
                                         $mck_contacts_inner.animate({
@@ -7841,7 +7845,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 alUserService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-
+                var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7852,7 +7856,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                             iconLink = imgsrc;
                         }
                     }
-                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg);
+                    
+                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg, notificationsound);
                 }
             };
             _this.showNewMessageNotification = function(message, contact, displayName) {

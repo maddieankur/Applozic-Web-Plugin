@@ -1882,6 +1882,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_search_inner.html('<ul id="mck-search-list" class="mck-search-list mck-contact-list mck-nav mck-nav-tabs mck-nav-stacked"></ul>');
                 if (MCK_CONTACT_ARRAY.length !== 0) {
                     mckMessageLayout.addContactsToSearchList();
+                } else if (!IS_MCK_OWN_CONTACTS) {
+                    var url = "/rest/ws/user/filter" + '?startIndex=0&pageSize=50&orderBy=1';
+                    mckContactService.ajaxcallForContacts(url,false,  function(){$mck_contact_search_box.mckModal('hide')});
                 } else {
                     $mck_search_inner.html('<div class="mck-no-data-text mck-text-muted">No contacts yet!</div>');
                 }
@@ -5924,10 +5927,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 });
                                 if (mckContactNameArray.length > 0) {
                                     mckStorage.updateMckContactNameArray(mckContactNameArray);
+                                    mckMessageLayout.addContactsToSearchList();
                                 }
                             }
                             mckMessageLayout.addContactsToContactSearchList(append);
                             mckGroupLayout.addMembersToGroupSearchList();
+                            if(callback) {
+                                callback();
+                            }
                             $mck_search_inner.html('<div class="mck-no-data-text mck-text-muted">No contacts yet!</div>');
                             return;
                         }

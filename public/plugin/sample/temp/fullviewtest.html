@@ -810,7 +810,7 @@
 											//   emojilibrary: true, // true if you want to load emoticons in chat
 											fileupload : "googleServer", // awsS3Server  or googleCloud or googleServer or customStorage,
 	                    autoTypeSearchEnabled: true, // set to false if you don't want to allow sending message to user who is not in the contact list
-	                    loadOwnContacts: true, //set to true if you want to populate your own contact list (see Step 4 for reference)
+	                    //loadOwnContacts: true, //set to true if you want to populate your own contact list (see Step 4 for reference)
 	                    olStatus: true, //set to true for displaying a green dot in chat screen for users who are online
 	                    onInit: function(response) {
 
@@ -824,7 +824,7 @@
 															document.getElementsByTagName("body")[0].style.background= 'url("../images/image.jpg")';
 
 	                            $applozic.fn.applozic('loadTab', '');
-	                            $applozic.fn.applozic('loadContacts', { "contacts": contactsJSON });
+	                            //$applozic.fn.applozic('loadContacts', { "contacts": contactsJSON });
 	                            // login successful, perform your actions if any, for example: load contacts, getting unread message count, etc
 	                        } else {
 	                            // error in user login/register (you can hide chat button or refresh page)

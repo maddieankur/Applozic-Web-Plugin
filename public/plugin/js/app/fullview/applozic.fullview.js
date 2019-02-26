@@ -491,6 +491,10 @@ var MCK_CLIENT_GROUP_MAP = [];
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3",notificationtoneoption);
             mckCallService.init();
               }
+            if(MCK_NOTIFICATION_TONE_LINK){
+                ringToneService = new RingToneService();
+                mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK, { loop: false });
+            }
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -1457,11 +1461,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                 USER_DEVICE_KEY = data.deviceKey;
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
                   data.websocketUrl = MCK_WEBSOCKET_URL;
-                }
-                else{
+                } else {
                   MCK_WEBSOCKET_URL = data.websocketUrl;
                 }
-                if (typeof MCK_WEBSOCKET_PORT == "undefined") {
+
+                if (typeof MCK_WEBSOCKET_PORT !== "undefined") {
+                    data.websocketPort = MCK_WEBSOCKET_PORT;
+                } else if (data.websocketPort) {
+                    MCK_WEBSOCKET_PORT = data.websocketPort;
+                } else {
                     MCK_WEBSOCKET_PORT = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 }
 
@@ -7844,7 +7852,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 alUserService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-
+                var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7855,7 +7863,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                             iconLink = imgsrc;
                         }
                     }
-                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg);
+                    
+                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg, notificationsound);
                 }
             };
             _this.showNewMessageNotification = function(message, contact, displayName) {

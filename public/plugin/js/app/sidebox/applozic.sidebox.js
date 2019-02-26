@@ -106,6 +106,8 @@ window.onload = function() {
             'private':'Private',
             'open':'Open',
             'you':'You',
+            'userIdPattern':'[^!$%\^&*()]+',
+            'charsNotAllowedMessage':'Following characters are not allowed: !$%^&*()',
             'group.metadata': {
                 'CREATE_GROUP_MESSAGE': ':adminName created group :groupName',
                 'REMOVE_MEMBER_MESSAGE': ':adminName removed :userName',
@@ -1047,6 +1049,12 @@ window.onload = function() {
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
              mckCallService.init();
             }
+            
+            if(MCK_NOTIFICATION_TONE_LINK){
+                ringToneService = new RingToneService();
+                mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK, { loop: false });
+            }
+
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -2052,15 +2060,12 @@ window.onload = function() {
 								}
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
-                  data.websocketUrl = MCK_WEBSOCKET_URL;
+                    data.websocketUrl = MCK_WEBSOCKET_URL;
                 }
-                else{
-                  MCK_WEBSOCKET_URL = data.websocketUrl;
+                if (typeof MCK_WEBSOCKET_PORT !== "undefined") {
+                    data.websocketPort = MCK_WEBSOCKET_PORT;
                 }
 
-                if (typeof MCK_WEBSOCKET_PORT !== 'undefined'){
-                  data.websocketPort = MCK_WEBSOCKET_PORT;
-                }
                 MCK_USER_ID = data.userId;
                 USER_COUNTRY_CODE = data.countryCode;
                 USER_DEVICE_KEY = data.deviceKey;
@@ -2204,6 +2209,7 @@ window.onload = function() {
                 $applozic('#mck-group-name-save').attr('title', MCK_LABELS['save']);
                 $applozic('#mck-btn-group-icon-save').attr('title', MCK_LABELS['save']);
                 $applozic('#mck-group-name-edit').attr('title', MCK_LABELS['edit']);
+                $applozic('#mck-contact-search-input').attr('title', MCK_LABELS['charsNotAllowedMessage']);
             };
 
             $applozic(w).on('resize', function() {
@@ -5180,6 +5186,10 @@ window.onload = function() {
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
+                            var val = $mck_contact_search_input.val();
+                            var regex = new RegExp('[!$%\^&*()]');
+                            if (regex.test(val))
+                                return false;
                             var userId = $mck_contact_search_input.val();
                             if (userId) {
                                 if ((MCK_SELF_CHAT_DISABLE === true && userId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
@@ -5208,6 +5218,11 @@ window.onload = function() {
                     });
                     $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
+                        var val = $mck_contact_search_input.val();
+                        var tabId = $mck_contact_search_input.val();
+                        var regex = new RegExp('[!$%\^&*()]');
+                        if (regex.test(val))
+                            return false;
                         var tabId = $mck_contact_search_input.val();
                         if (tabId !== '') {
                             if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
@@ -6383,8 +6398,8 @@ window.onload = function() {
             };
 
 						var select = document.getElementById( 'mck-group-create-type' );
-						select.options[select.options.length] = new Option( MCK_LABELS['public'], '1');
-						select.options[select.options.length] = new Option( MCK_LABELS['private'], '2');
+                        select.options[select.options.length] = new Option( MCK_LABELS['public'], '2');
+						select.options[select.options.length] = new Option( MCK_LABELS['private'], '1');
 						select.options[select.options.length] = new Option( MCK_LABELS['open'], '6');
 
             var $mck_msg_form = $applozic("#mck-msg-form");
@@ -7985,7 +8000,7 @@ window.onload = function() {
                 alUserService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-               // var notificationsound = mckNotificationTone;
+               var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7996,7 +8011,8 @@ window.onload = function() {
                             iconLink = imgsrc;
                         }
                     }
-                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg);
+                    
+                    mckNotificationUtils.sendDesktopNotification(displayName, iconLink, msg, notificationsound);
                 }
             };
 

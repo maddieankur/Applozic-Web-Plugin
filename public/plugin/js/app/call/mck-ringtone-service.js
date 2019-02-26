@@ -1,9 +1,9 @@
  function RingToneService() {
             var _this = this;
-            _this.loadRingTone = function (url) {
+            _this.loadRingTone = function (url, notificationtoneoption) {
                 return new Howl({
                     src: [url],
-                    loop: true
+                    loop: notificationtoneoption.loop
                 });
             };
         }

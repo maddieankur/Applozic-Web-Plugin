@@ -706,7 +706,7 @@
 	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
 	<!-- remomve comment from below file to usey applozic.chat.min.js file from repository and comment out cdn file -->
 	<!-- <script type="text/javascript" src="../../applozic.chat.min.js"></script> -->
-	<script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-5.1.min.js"></script>
+	<script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-5.2.min.js"></script>
 	<script type="text/javascript" src="../js/app/sidebox/applozic.sidebox.js"></script>
 
 	<script type="text/javascript">
@@ -788,7 +788,8 @@
 							customFileUrl:'https://googleupload.applozic.com', //optional, google cloud file upload url
 							genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", //optional, generate viewable link for a file incase of file upload on google cloud
 							notificationIconLink : "https://www.applozic.com/resources/images/applozic_icon.png",
-							notificationSoundLink : "https://www.applozic.com/resources/audio/notification_sound.wav",
+							notificationSoundLink : "../audio/notification_tone.mp3",
+							authenticationTypeId: 1, //1 for password verification from Applozic server and 0 for access Token verification from your server
 							readConversation : readMessage, // readMessage function defined above
 							contactDisplayName : displayName, // displayName function defined above
 							contactDisplayImage : contactImageSrc, // contactImageSrc function defined above

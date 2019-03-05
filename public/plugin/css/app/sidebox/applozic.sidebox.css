@@ -3440,7 +3440,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 		width: 60px;
 	}
 	.mck-contact-list .blk-lg-8 {
-		width: calc(100% - 55px);
+		width: calc(100% - 70px);
 	}
 	.mck-sidebox-content .mck-box-top .mck-tab-individual .blk-lg-2 {
 		width: 30px;
@@ -3469,7 +3469,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 		width: calc(100% - 70px);
 	}
 	.mck-contact-list .blk-lg-4 {
-		width: 55px;
+		width: 70px;
 	}
 	.mck-group-member-list .blk-lg-4 {
 		width: 65px;
@@ -3764,4 +3764,22 @@ fill:white;
 
 .mck-text-box-width-increase {
 	width : calc(100% - 90px) !important;
+}
+
+.mck-icon--camera {
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.mck-icon--camera svg {
+	vertical-align: sub
+}
+
+.mck-attachement-icon, .mck-icon--video {
+	margin-right: 5px;
+}
+.mck-attachement-icon svg {
+	vertical-align: bottom;
+}
+.mck-icon--video svg, .mck-icon-video-text{
+	vertical-align: middle;
 }

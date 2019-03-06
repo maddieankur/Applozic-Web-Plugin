@@ -487,6 +487,7 @@ window.onload = function() {
 				var notificationtoneoption = {};
         var ringToneService;
 				var lastFetchTime;
+        var latestSeenContactTime;
         var isUserDeleted = false;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
@@ -2860,7 +2861,12 @@ window.onload = function() {
                             $mck_gm_search_box.mckModal();
                             $mck_gms_loading.removeClass('n-vis').addClass('vis');
                              if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0||friendListGroup) {
-                                mckGroupLayout.addMembersToGroupSearchList();
+                                if (latestSeenContactTime) {
+                                    var url = '/rest/ws/user/filter?pageSize=50&orderBy=1&startTime=' + latestSeenContactTime + "&endTime=" + (new Date).getTime();;
+                                    mckContactService.ajaxcallForContacts(url,true);
+                                } else {
+                                    mckGroupLayout.addMembersToGroupSearchList();
+                                }
                             }
 														 if (IS_MCK_OWN_CONTACTS) {
                                 if (MCK_CONTACT_ARRAY.length > 0) {
@@ -6182,9 +6188,10 @@ window.onload = function() {
 						url:url,
 						baseUrl: MCK_BASE_URL,
 					success: function(data) {
-						lastFetchTime = data.lastFetchTime;
 							if ($mck_sidebox_search.hasClass('vis') || $mck_gms_loading.hasClass('vis')) {
-									if (typeof data === 'object' && data.users.length > 0) {
+									if (typeof data === 'object' && data.users && data.users.length > 0) {
+                                        lastFetchTime = data.lastFetchTime ? data.lastFetchTime : lastFetchTime;
+                                        latestSeenContactTime = data.users[0] ? data.users[0].lastSeenAtTime : latestSeenContactTime;
 											$applozic.each(data.users, function(i, user) {
 													if (typeof user.userId !== 'undefined') {
 															var contact = mckMessageLayout.getContact('' + user.userId);

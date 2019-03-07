@@ -2165,7 +2165,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (confirm(blockText)) {
                       alUserService.blockUser(tabId, isBlock,function(userId){
                          mckUserUtils.toggleBlockUser(userId, isBlock);
-                         alUserService.MCK_BLOCKED_TO_MAP[userId]=true;
                       });
                     }
                 });

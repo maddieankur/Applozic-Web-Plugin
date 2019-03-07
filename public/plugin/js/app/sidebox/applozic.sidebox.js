@@ -6190,7 +6190,7 @@ window.onload = function() {
 					success: function(data) {
 							if ($mck_sidebox_search.hasClass('vis') || $mck_gms_loading.hasClass('vis')) {
 									if (typeof data === 'object' && data.users && data.users.length > 0) {
-                                        lastFetchTime = data.lastFetchTime ? data.lastFetchTime : lastFetchTime;
+                                        lastFetchTime = data.lastFetchTime || lastFetchTime;
                                         latestSeenContactTime = data.users[0] ? data.users[0].lastSeenAtTime : latestSeenContactTime;
 											$applozic.each(data.users, function(i, user) {
 													if (typeof user.userId !== 'undefined') {

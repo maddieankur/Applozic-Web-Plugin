@@ -6459,7 +6459,7 @@ window.onload = function() {
                 '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' +
-                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span>${roleExpr}</span></div></div>' +
+                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span id="${contHtmlExpr}-role">${roleExpr}</span></div></div>' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' +
                 '<div class="blk-lg-4 mck-group-admin-options move-right ${enableAdminMenuExpr}">' +

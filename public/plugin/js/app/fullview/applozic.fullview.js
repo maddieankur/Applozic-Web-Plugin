@@ -2165,6 +2165,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (confirm(blockText)) {
                       alUserService.blockUser(tabId, isBlock,function(userId){
                          mckUserUtils.toggleBlockUser(userId, isBlock);
+                         alUserService.MCK_BLOCKED_TO_MAP[userId]=true;
                       });
                     }
                 });
@@ -2856,8 +2857,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             }
                             var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.getContact(tabId);
                             var contHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
-                            $applozic("#li-" + contHtmlExpr + " .mck-cont-msg-wrapper").html('');
-                            $applozic("#li-" + contHtmlExpr + " .time").html('');
+                            //$applozic("#li-" + contHtmlExpr + " .mck-cont-msg-wrapper").html('');
+                            //$applozic("#li-" + contHtmlExpr + " .time").html('');
+                            $applozic("#li-" + contHtmlExpr).remove();
                            // mckStorage.clearMckMessageArray();
                         },
                         error: function() {}

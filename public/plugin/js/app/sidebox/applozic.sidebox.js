@@ -6931,6 +6931,14 @@ window.onload = function() {
                 var groupId = params.groupId;
                 var groupInfo = params.groupInfo;
                 var group = mckGroupUtils.getGroup(groupId);
+                if (params.users) {
+                    for (var index in params.users) {
+                        document.getElementById(params.users[index].userId+'-role').innerHTML=ROLE_MAP[params.users[index].role];
+                        if (params.users[index].userId) {
+                            group.users[params.users[index].userId] = params.users[index];
+                        }
+                    }
+                }
                 if (typeof group === 'object' && groupInfo) {
                     if (groupInfo.imageUrl) {
                         group.imageUrl = groupInfo.imageUrl;

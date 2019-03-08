@@ -396,7 +396,8 @@ function MckGroupService() {
         if (params.apzCallback) {
           params.apzCallback(response, {
             groupId: params.groupId,
-            groupInfo: group
+            groupInfo: group,
+            users: params.users
           })
         }
       },

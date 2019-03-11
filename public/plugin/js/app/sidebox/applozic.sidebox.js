@@ -7032,6 +7032,17 @@ window.onload = function() {
                 _this.sortGroupMemberHtmlList();
                 _this.enableGroupAdminMenuToggle();
             };
+            _this.isAdminUser = function(group) {
+                if (typeof group === 'object') {
+                    for (var index in group.users) {
+                        var user = group.users[index];
+                        if (user.userId == MCK_USER_ID) {
+                            return (user.role == 1);
+                        }
+                    }
+                }
+                return false;
+            };
             _this.enableGroupAdminMenuToggle = function() {
                 $applozic('.mck-group-member-info').bind("mouseenter", function() {
                     $applozic(this).find('.mck-menu-box').removeClass('n-vis');
@@ -7189,6 +7200,7 @@ window.onload = function() {
                     if (typeof group === 'object') {
                         $mck_group_info_icon.html(mckGroupService.getGroupImage(group.imageUrl));
                         $mck_group_title.html(group.displayName);
+                        group.adminName = _this.isAdminUser(group) ? MCK_USER_ID : group.adminName;
                         _this.addMembersToGroupInfoList(group);
                         (group.adminName === MCK_USER_ID) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                     } else {

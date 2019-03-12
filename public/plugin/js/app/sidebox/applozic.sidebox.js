@@ -487,6 +487,7 @@ window.onload = function() {
 				var notificationtoneoption = {};
         var ringToneService;
 				var lastFetchTime;
+        var latestSeenContactTime;
         var isUserDeleted = false;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
@@ -2860,7 +2861,12 @@ window.onload = function() {
                             $mck_gm_search_box.mckModal();
                             $mck_gms_loading.removeClass('n-vis').addClass('vis');
                              if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0||friendListGroup) {
-                                mckGroupLayout.addMembersToGroupSearchList();
+                                if (latestSeenContactTime) {
+                                    var url = '/rest/ws/user/filter?pageSize=50&orderBy=1&startTime=' + latestSeenContactTime + "&endTime=" + (new Date).getTime();;
+                                    mckContactService.ajaxcallForContacts(url,true);
+                                } else {
+                                    mckGroupLayout.addMembersToGroupSearchList();
+                                }
                             }
 														 if (IS_MCK_OWN_CONTACTS) {
                                 if (MCK_CONTACT_ARRAY.length > 0) {
@@ -6182,9 +6188,10 @@ window.onload = function() {
 						url:url,
 						baseUrl: MCK_BASE_URL,
 					success: function(data) {
-						lastFetchTime = data.lastFetchTime;
 							if ($mck_sidebox_search.hasClass('vis') || $mck_gms_loading.hasClass('vis')) {
-									if (typeof data === 'object' && data.users.length > 0) {
+									if (typeof data === 'object' && data.users && data.users.length > 0) {
+                                        lastFetchTime = data.lastFetchTime || lastFetchTime;
+                                        latestSeenContactTime = data.users[0] ? data.users[0].lastSeenAtTime : latestSeenContactTime;
 											$applozic.each(data.users, function(i, user) {
 													if (typeof user.userId !== 'undefined') {
 															var contact = mckMessageLayout.getContact('' + user.userId);
@@ -6452,7 +6459,7 @@ window.onload = function() {
                 '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' +
-                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span>${roleExpr}</span></div></div>' +
+                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span id="${contHtmlExpr}-role">${roleExpr}</span></div></div>' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' +
                 '<div class="blk-lg-4 mck-group-admin-options move-right ${enableAdminMenuExpr}">' +
@@ -6924,6 +6931,14 @@ window.onload = function() {
                 var groupId = params.groupId;
                 var groupInfo = params.groupInfo;
                 var group = mckGroupUtils.getGroup(groupId);
+                if (params.users) {
+                    for (var index in params.users) {
+                        document.getElementById(params.users[index].userId+'-role').innerHTML=ROLE_MAP[params.users[index].role];
+                        if (params.users[index].userId) {
+                            group.users[params.users[index].userId] = params.users[index];
+                        }
+                    }
+                }
                 if (typeof group === 'object' && groupInfo) {
                     if (groupInfo.imageUrl) {
                         group.imageUrl = groupInfo.imageUrl;
@@ -7016,6 +7031,17 @@ window.onload = function() {
                 });
                 _this.sortGroupMemberHtmlList();
                 _this.enableGroupAdminMenuToggle();
+            };
+            _this.isAdminUser = function(group) {
+                if (typeof group === 'object') {
+                    for (var index in group.users) {
+                        var user = group.users[index];
+                        if (user.userId == MCK_USER_ID) {
+                            return (user.role == 1);
+                        }
+                    }
+                }
+                return false;
             };
             _this.enableGroupAdminMenuToggle = function() {
                 $applozic('.mck-group-member-info').bind("mouseenter", function() {
@@ -7174,6 +7200,7 @@ window.onload = function() {
                     if (typeof group === 'object') {
                         $mck_group_info_icon.html(mckGroupService.getGroupImage(group.imageUrl));
                         $mck_group_title.html(group.displayName);
+                        group.adminName = _this.isAdminUser(group) ? MCK_USER_ID : group.adminName;
                         _this.addMembersToGroupInfoList(group);
                         (group.adminName === MCK_USER_ID) ? $mck_group_add_member_box.removeClass('n-vis').addClass('vis'): $mck_group_add_member_box.removeClass('vis').addClass('n-vis');
                     } else {

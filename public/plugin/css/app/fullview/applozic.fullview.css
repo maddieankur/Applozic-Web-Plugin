@@ -3655,3 +3655,29 @@ width:65%;
 .mck-msg-box{
 	text-align: left;
 }
+
+.mck-container .left .people .person .name {
+	width: calc(100% - 75px) !important;
+}
+
+.mck-container .left .people .person .time  {
+	width: 75px !important; 
+}
+
+.mck-icon--camera {
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.mck-icon--camera svg {
+	vertical-align: sub
+}
+
+.mck-attachement-icon, .mck-icon--video {
+	margin-right: 5px;
+}
+.mck-attachement-icon svg {
+	vertical-align: bottom;
+}
+.mck-icon--video svg, .mck-icon-video-text{
+	vertical-align: middle;
+}

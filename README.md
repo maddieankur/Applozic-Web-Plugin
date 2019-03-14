@@ -6,7 +6,7 @@
 Open source Chat and Messaging SDK that lets you add real time chat and messaging in your mobile (android, iOS) applications and website.
 
 
-Signup at [https://www.applozic.com/signup.html](https://www.applozic.com/signup.html?utm_source=github&utm_medium=readme&utm_campaign=web) to get the application key.
+Signup at [https://www.applozic.com/signup.html](https://www.applozic.com/signup.html?utm_source=github&utm_medium=readme&utm_campaign=web) to get the App ID.
 
 Documentation: [Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://docs.applozic.com/docs/web-javascript-chat-plugin)
 
@@ -78,7 +78,7 @@ A jQuery plugin to integrate messaging into your web page for real time communic
 
 Integrate messaging into your mobile apps and website without developing or maintaining any infrastructure.
 
-Signup at [https://www.applozic.com/signup.html](https://www.applozic.com/signup.html?utm_source=github&utm_medium=readme&utm_campaign=web) to get the application key.
+Signup at [https://www.applozic.com/signup.html](https://www.applozic.com/signup.html?utm_source=github&utm_medium=readme&utm_campaign=web) to get the App ID.
 
 #### Step 1: Add Plugin
 Add the Applozic Chat plugin script before closing of ```</body>``` into your web page            
@@ -106,7 +106,7 @@ Add the below code just after Step 1.
 ``` 
 <script type="text/javascript">
   window.applozic.init({
-    appId: applozicApplicationKey,      //Get your application key from https://www.applozic.com
+    appId: '<APP_ID>',      //Get your App ID from https://www.applozic.com
     userId: userId,                     //Logged in user's id, a unique identifier for user
     userName: username,                 //User's display name
     imageLink : '',                     //User's profile picture url

@@ -33,6 +33,7 @@ window.onload = function() {
         loadOwnContacts: false,
         maxGroupSize: 100,
         authenticationTypeId: 0,
+        userCreatedInSearchEnabled: true,
 		//	isAnonymousChat: true,
         labels: {
             'conversations.title': 'Conversations',
@@ -437,6 +438,7 @@ window.onload = function() {
         var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
+        var IS_USER_CREATED_IN_SEARCH_ENABLED = (typeof appOptions.userCreatedInSearchEnabled === "boolean") ? appOptions.userCreatedInSearchEnabled : true;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
@@ -5189,6 +5191,14 @@ window.onload = function() {
                 });
             };
             _this.initSearchAutoType = function () {
+                var loadTab = function (userId) {
+                    mckMessageLayout.loadTab({
+                        'tabId': userId,
+                        'isGroup': false,
+                        'isSearch': true
+                    });
+                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                }
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
@@ -5201,12 +5211,21 @@ window.onload = function() {
                                 if ((MCK_SELF_CHAT_DISABLE === true && userId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
                                     userId = (typeof userId !== 'undefined' && userId !== '') ? userId.toString() : '';
                                     if (userId) {
-                                        mckMessageLayout.loadTab({
-                                            'tabId': userId,
-                                            'isGroup': false,
-                                            'isSearch': true
-                                        });
-                                        $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                        if (!IS_USER_CREATED_IN_SEARCH_ENABLED) {
+                                            window.Applozic.ALApiService.getUserDetail({
+                                                'data': [userId],
+                                                'success': function (data) {
+                                                    if (data.response.length > 0) {
+                                                        loadTab(userId);
+                                                    } else {
+                                                        alert('User: '+ userId +' does not exist');
+                                                    }
+                                                },
+                                                'error': function () {}
+                                            });
+                                        } else {
+                                            loadTab(userId);
+                                        }
                                     }
                                 }
                             }
@@ -5232,12 +5251,21 @@ window.onload = function() {
                         var tabId = $mck_contact_search_input.val();
                         if (tabId !== '') {
                             if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
-                                mckMessageLayout.loadTab({
-                                    tabId: tabId,
-                                    isGroup: false,
-                                    'isSearch': true
-                                });
-                                $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                if(!IS_USER_CREATED_IN_SEARCH_ENABLED) {
+                                    window.Applozic.ALApiService.getUserDetail({
+                                        'data': [val],
+                                        'success': function (data) {
+                                            if(data.response.length>0) {
+                                                loadTab(tabId);
+                                            } else {
+                                                alert('User: '+ tabId +' does not exist');
+                                            }
+                                        },
+                                        'error': function () {}
+                                    });
+                                } else {
+                                    loadTab(tabId);
+                                }
                             }
                         }
                         $mck_contact_search_input.val('');

@@ -30,6 +30,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         loadOwnContacts: false,
         maxGroupSize: 100,
         authenticationTypeId: 0,
+        userCreatedInSearchEnabled: true,
         labels: {
             'conversations.title': 'Conversations',
             'start.new': 'Start New',
@@ -405,6 +406,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
+        var IS_USER_CREATED_IN_SEARCH_ENABLED = (typeof appOptions.userCreatedInSearchEnabled === "boolean") ? appOptions.userCreatedInSearchEnabled : true;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
@@ -4948,6 +4950,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
             };
             _this.initSearchAutoType = function () {
+                var loadTab = function (userId) {
+                    mckMessageLayout.loadTab({
+                        'tabId': userId,
+                        'isGroup': false,
+                        'isSearch': true
+                    });
+                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                }
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_search.keypress(function (e) {
                         if (e.which === 13) {
@@ -4958,12 +4968,21 @@ var MCK_CLIENT_GROUP_MAP = [];
                           if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                             if (tabId !== '') {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
-                                    mckMessageLayout.loadTab({
-                                        'tabId': tabId,
-                                        'isGroup': false,
-                                        'isSearch': true
-                                    });
-                                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                    if (!IS_USER_CREATED_IN_SEARCH_ENABLED) {
+                                        window.Applozic.ALApiService.getUserDetail({
+                                            'data': [tabId],
+                                            'success': function (data) {
+                                                if (data.response.length > 0) {
+                                                    loadTab(userId);
+                                                } else {
+                                                    alert('User: '+ tabId +' does not exist');
+                                                }
+                                            },
+                                            'error': function () {}
+                                        });
+                                    } else {
+                                        loadTab(tabId);
+                                    }
                                 }
                             }
                           }
@@ -4979,12 +4998,21 @@ var MCK_CLIENT_GROUP_MAP = [];
                         mckContactService.getUsersDetail(userIdArray, { 'async': false });
                       if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                         if (tabId !== '') {
-                            mckMessageLayout.loadTab({
-                                tabId: tabId,
-                                isGroup: false,
-                                'isSearch': true
-                            });
-                            $modal_footer_content.removeClass('n-vis').addClass('vis');
+                            if(!IS_USER_CREATED_IN_SEARCH_ENABLED) {
+                                window.Applozic.ALApiService.getUserDetail({
+                                    'data': [tabId],
+                                    'success': function (data) {
+                                        if(data.response.length>0) {
+                                            loadTab(tabId);
+                                        } else {
+                                            alert('User: '+ tabId +' does not exist');
+                                        }
+                                    },
+                                    'error': function () {}
+                                });
+                            } else {
+                                loadTab(tabId);
+                            }
                         }
                       }
                         $mck_search.val('');

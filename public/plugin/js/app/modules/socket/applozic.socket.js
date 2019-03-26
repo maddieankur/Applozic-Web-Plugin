@@ -8,10 +8,10 @@
         ALSocket.stompClient = null;
         var TYPING_TAB_ID = '';
         ALSocket.typingSubscriber = null;
-        var openGroupSubscriber = [];
+        ALSocket.openGroupSubscriber = [];
         var checkConnectedIntervalId;
         var sendConnectedStatusIntervalId;
-        var OPEN_GROUP_SUBSCRIBER_MAP;
+        var OPEN_GROUP_SUBSCRIBER_MAP=[];
         ALSocket.mck_typing_status = 0;
         var MCK_TYPING_STATUS;
         var SOCKET = '';
@@ -154,9 +154,10 @@
             }
         };
         ALSocket.subscribeToOpenGroup = function(group) {
+            console.log('adding subscription');
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 var subs = ALSocket.stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, ALSocket.onOpenGroupMessage);
-                openGroupSubscriber.push(subs.id);
+                ALSocket.openGroupSubscriber.push(subs.id);
                 OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] = subs.id;
             } else {
                 ALSocket.reconnect();

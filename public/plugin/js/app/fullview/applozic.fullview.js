@@ -1914,6 +1914,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var isGroup = $this.data("isgroup");
                     tabId = (typeof tabId !== "undefined" && tabId !== '') ? tabId.toString() : '';
                     if (tabId) {
+                        $mck_msg_to.val(tabId);
                         mckMessageLayout.loadTab({
                             'tabId': tabId,
                             'isGroup': isGroup
@@ -2636,6 +2637,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 } else {
                     messagePxy.to = $mck_msg_to.val();
                 }
+                messagePxy.forward = true;
                 _this.sendMessage(messagePxy);
             }
             _this.sendWelcomeMessage = function(params) {
@@ -5887,7 +5889,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.loadContacts = function() {
                var url = CONTACT_LIST_URL + '?startIndex=0&pageSize=50&orderBy=1';
-               mckContactService.ajaxcallForContacts(url,false,  mckMessageService.loadMessageList({}));
+               mckContactService.ajaxcallForContacts(url,false,  function(){});
              };
               _this.ajaxcallForContacts =  function (url,append,callback) {
                 $mck_search_loading.removeClass('n-vis').addClass('vis');

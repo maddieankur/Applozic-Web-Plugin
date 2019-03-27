@@ -4948,66 +4948,132 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
             };
             _this.initSearchAutoType = function () {
-                if (IS_AUTO_TYPE_SEARCH_ENABLED) {
-                    $mck_search.keypress(function (e) {
-                        if (e.which === 13) {
-                            var tabId = $mck_search.val();
-                            var userIdArray = new Array();
-                            userIdArray.push(tabId);
-                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                          if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
-                            if (tabId !== '') {
-                                if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
-                                    mckMessageLayout.loadTab({
-                                        'tabId': tabId,
-                                        'isGroup': false,
-                                        'isSearch': true
-                                    });
-                                    $modal_footer_content.removeClass('n-vis').addClass('vis');
-                                }
-                            }
-                          }
-                            $applozic(this).val('');
-                            return true;
-                        }
+                var loadTab = function (userId) {
+                    mckMessageLayout.loadTab({
+                        'tabId': userId,
+                        'isGroup': false,
+                        'isSearch': true
                     });
-                    $applozic(d).on("click", ".mck-tab-search", function (e) {
-                        e.preventDefault();
+                }
+                $mck_search.keypress(function (e) {
+                    if (e.which === 13) {
                         var tabId = $mck_search.val();
                         var userIdArray = new Array();
                         userIdArray.push(tabId);
                         mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                      if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
-                        if (tabId !== '') {
-                            mckMessageLayout.loadTab({
-                                tabId: tabId,
-                                isGroup: false,
-                                'isSearch': true
-                            });
-                            $modal_footer_content.removeClass('n-vis').addClass('vis');
-                        }
-                      }
-                        $mck_search.val('');
-                    });
-                    $mck_contact_search_input.keypress(function (e) {
-                        if (e.which === 13) {
-                            var userId = $mck_contact_search_input.val();
-                            if (userId) {
-                                userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
-                                if (userId) {
-                                    if ((MCK_SELF_CHAT_DISABLE === true && userId!== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
-                                        mckMessageLayout.loadTab({
-                                            'tabId': userId,
-                                            'isGroup': false,
-                                            'isSearch': true
+                        if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
+                            if (tabId !== '') {
+                                if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                                    if (IS_AUTO_TYPE_SEARCH_ENABLED) {
+                                        loadTab(tabId);
+                                        $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                    } else {
+                                        window.Applozic.ALApiService.getUserDetail({
+                                            'data': [tabId],
+                                            'success': function (data) {
+                                                if (data.response.length > 0) {
+                                                    loadTab(tabId);
+                                                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                                } else {
+                                                    alert('User: '+ tabId +' does not exist');
+                                                }
+                                            },
+                                            'error': function () {}
                                         });
                                     }
                                 }
                             }
-                            $mck_contact_search_input.val('');
-                            $mck_contact_search_box.mckModal('hide');
                         }
-                    });
+                        $applozic(this).val('');
+                        return true;
+                    }
+                });
+                $applozic(d).on("click", ".mck-tab-search", function (e) {
+                    e.preventDefault();
+                    var tabId = $mck_search.val();
+                    var userIdArray = new Array();
+                    userIdArray.push(tabId);
+                    mckContactService.getUsersDetail(userIdArray, { 'async': false });
+                    if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
+                        if (tabId !== '') {
+                            if (IS_AUTO_TYPE_SEARCH_ENABLED) {
+                                loadTab(tabId);
+                                $modal_footer_content.removeClass('n-vis').addClass('vis');
+                            } else {
+                                window.Applozic.ALApiService.getUserDetail({
+                                    'data': [tabId],
+                                    'success': function (data) {
+                                        if (data.response.length > 0) {
+                                            loadTab(tabId);
+                                            $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                        } else {
+                                            alert('User: '+ tabId +' does not exist');
+                                        }
+                                    },
+                                    'error': function () {}
+                                });
+                            }
+                        }
+                    }
+                    $mck_search.val('');
+                });
+                $mck_contact_search_input.keypress(function (e) {
+                    if (e.which === 13) {
+                        var userId = $mck_contact_search_input.val();
+                        if (userId) {
+                            userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
+                            if (userId) {
+                                if ((MCK_SELF_CHAT_DISABLE === true && userId!== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                                    if (IS_AUTO_TYPE_SEARCH_ENABLED) {
+                                        loadTab(userId);
+                                    } else {
+                                        window.Applozic.ALApiService.getUserDetail({
+                                            'data': [userId],
+                                            'success': function (data) {
+                                                if (data.response.length > 0) {
+                                                    loadTab(userId);
+                                                } else {
+                                                    alert('User: '+ userId +' does not exist');
+                                                }
+                                            },
+                                            'error': function () {}
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        $mck_contact_search_input.val('');
+                        $mck_contact_search_box.mckModal('hide');
+                    }
+                });
+                $applozic(d).on('click', '.mck-contact-search-link', function (e) {
+                    e.preventDefault();
+                    var tabId = $mck_contact_search_input.val();
+                    if (tabId !== '') {
+                        if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                            if (IS_AUTO_TYPE_SEARCH_ENABLED) {
+                                loadTab(tabId);
+                                $modal_footer_content.removeClass('n-vis').addClass('vis');
+                            } else {
+                                window.Applozic.ALApiService.getUserDetail({
+                                    'data': [tabId],
+                                    'success': function (data) {
+                                        if (data.response.length > 0) {
+                                            loadTab(tabId);
+                                            $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                        } else {
+                                            alert('User: '+ tabId +' does not exist');
+                                        }
+                                    },
+                                    'error': function () {}
+                                });
+                            }
+                        }
+                    }
+                    $mck_contact_search_input.val('');
+                    $mck_contact_search_box.mckModal('hide');
+                });
+                if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_group_search_input.keypress(function(e) {
                         if (e.which === 13) {
                             return true;
@@ -5016,22 +5082,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(d).on('click', '.mck-group-search-link', function(e) {
                         e.preventDefault();
                         return true;
-                    });
-                    $applozic(d).on('click', '.mck-contact-search-link', function (e) {
-                        e.preventDefault();
-                        var tabId = $mck_contact_search_input.val();
-                        if (tabId !== '') {
-                            if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
-                            mckMessageLayout.loadTab({
-                                tabId: tabId,
-                                isGroup: false,
-                                'isSearch': true
-                            });
-                            $modal_footer_content.removeClass('n-vis').addClass('vis');
-                        }
-                        }
-                        $mck_contact_search_input.val('');
-                        $mck_contact_search_box.mckModal('hide');
                     });
                 }
             };

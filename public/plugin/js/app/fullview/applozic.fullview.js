@@ -407,6 +407,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
+        var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var mckStorage = new MckStorage();
@@ -3813,7 +3814,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="mck-msgreply-border ${textreplyVisExpr}">${msgReply}</div>' +
                 '<div class="mck-msgreply-border ${msgpreviewvisExpr}">{{html msgPreview}}</div>' +
                 '</div>' +
-                '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
+                '<div id="msgNameExpr-${msgNameExpr}" class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
                 '<div class="mck-file-text notranslate mck-attachment downloadimage ${downloadIconVisibleExpr}" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
                 '<div class="mck-msg-text mck-msg-content"></div>' +
                 '</div>' +
@@ -5601,6 +5602,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                     if (!displayName) {
                         displayName = _this.getContactDisplayName(tabId);
+                        if (!displayName && SHOW_USERNAME_OPEN_GROUP) {
+                            mckContactService.getContactDisplayName([tabId], function(){
+                                document.getElementById('msgNameExpr-'+tabId).innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                            });
+                        }
                     }
                     var contact = _this.fetchContact('' + tabId);
                     if (!displayName) {
@@ -5849,7 +5855,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
-            _this.getContactDisplayName = function(userIdArray) {
+            _this.getContactDisplayName = function(userIdArray, callback) {
                 var mckContactNameArray = [];
                 if (userIdArray.length > 0 && userIdArray[0]) {
                     var data = '';
@@ -5881,6 +5887,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     }
                                 }
                                 mckStorage.updateMckContactNameArray(mckContactNameArray);
+                                if (typeof callback === 'function') {
+                                    callback();
+                                }
                             },
                             error: function() {}
                         });

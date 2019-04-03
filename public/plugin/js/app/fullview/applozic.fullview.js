@@ -5604,7 +5604,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         displayName = _this.getContactDisplayName(tabId);
                         if (!displayName && SHOW_USERNAME_OPEN_GROUP) {
                             mckContactService.getContactDisplayName([tabId], function(){
-                                document.getElementById('msgNameExpr-'+tabId).innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                                var ele = document.getElementById('msgNameExpr-'+tabId);
+                                if (ele) {
+                                    ele.innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                                }
                             });
                         }
                     }

@@ -5604,7 +5604,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         displayName = _this.getContactDisplayName(tabId);
                         if (!displayName && SHOW_USERNAME_OPEN_GROUP) {
                             mckContactService.getContactDisplayName([tabId], function(){
-                                document.getElementById('msgNameExpr-'+tabId).innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                                var ele = document.getElementById('msgNameExpr-'+tabId);
+                                if (ele) {
+                                    ele.innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                                }
                             });
                         }
                     }
@@ -5881,7 +5884,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 for (var userId in data) {
                                     if (data.hasOwnProperty(userId)) {
                                         mckContactNameArray.push([userId, data[userId]]);
-                                        MCK_CONTACT_NAME_MAP[userId] = data[userId];
+                                        MCK_CONTACT_NAME_MAP[userId] = data[userId] || userId;
                                         var contact = mckMessageLayout.fetchContact(userId);
                                         contact.displayName = data[userId];
                                     }

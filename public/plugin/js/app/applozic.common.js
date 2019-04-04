@@ -383,9 +383,9 @@ function MckDateUtils() {
                     l: pad(L, 3),
                     L: pad(L > 99 ? w.Math.round(L / 10) : L),
                     t: H < 12 ? 'a' : 'p',
-                    tt: H < 12 ? 'am' : 'pm',
+                    tt: H < 12 ? MCK_LABELS['time.format.am'] || 'am': MCK_LABELS['time.format.pm'] || 'pm',
                     T: H < 12 ? 'A' : 'P',
-                    TT: H < 12 ? 'AM' : 'PM',
+                    TT: H < 12 ? MCK_LABELS['time.format.AM'] || 'AM': MCK_LABELS['time.format.PM'] || 'PM',
                     Z: utc ? 'UTC' : (String(date).match(timezone) || [ '' ]).pop().replace(timezoneClip, ''),
                     o: (o > 0 ? '-' : '+') + pad(w.Math.floor(w.Math.abs(o) / 60) * 100 + w.Math.abs(o) % 60, 4),
                     S: [ 'th', 'st', 'nd', 'rd' ][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]

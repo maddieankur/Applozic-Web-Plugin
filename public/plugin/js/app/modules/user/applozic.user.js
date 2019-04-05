@@ -58,6 +58,7 @@ function AlUserService() {
   };
   _this.loadUserProfile = function(userId) {
     if (typeof userId !== "undefined") {
+      typeof userId !== "string" && (userId = String(userId));
       var userIdArray = [];
       var memberId = '' + userId.split(",")[0];
       userIdArray.push(memberId);

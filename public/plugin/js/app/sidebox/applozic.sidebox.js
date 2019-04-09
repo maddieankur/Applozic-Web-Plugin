@@ -6176,7 +6176,7 @@ window.onload = function() {
                         for (var userId in data) {
                             if (data.hasOwnProperty(userId)) {
                                 mckContactNameArray.push([userId, data[userId]]);
-                                MCK_CONTACT_NAME_MAP[userId] = data[userId];
+                                MCK_CONTACT_NAME_MAP[userId] = data[userId] || userId;
                                 var contact = mckMessageLayout.fetchContact(userId);
                                 contact.displayName = data[userId];
                             }

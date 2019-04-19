@@ -3050,7 +3050,7 @@ window.onload = function() {
             _this.openChat = function(ele) {
                 if ($('.mck-message-inner').height() == 0) {
                     mckMessageLayout.loadTab({
-                        'tabId': tabId,
+                        'tabId': '',
                         'isGroup': false
                     });
                 }

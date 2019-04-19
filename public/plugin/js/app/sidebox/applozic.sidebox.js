@@ -3048,6 +3048,12 @@ window.onload = function() {
                   Fr.voice.stop();
               });
             _this.openChat = function(ele) {
+                if ($('.mck-message-inner').height() == 0) {
+                    mckMessageLayout.loadTab({
+                        'tabId': tabId,
+                        'isGroup': false
+                    });
+                }
                 var $this = $applozic(ele);
                 var tabId = $this.data("mck-id");
                 tabId = (typeof tabId !== "undefined" && tabId !== '') ? tabId.toString() : '';

@@ -4963,7 +4963,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         userIdArray.push(tabId);
                         mckContactService.getUsersDetail(userIdArray, { 'async': false });
                         if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
-                            if (tabId !== '') {
+                            if (tabId) {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                                     if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                                         loadTab(tabId);
@@ -4996,7 +4996,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     userIdArray.push(tabId);
                     mckContactService.getUsersDetail(userIdArray, { 'async': false });
                     if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
-                        if (tabId !== '') {
+                        if (tabId) {
                             if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                                 loadTab(tabId);
                                 $modal_footer_content.removeClass('n-vis').addClass('vis');
@@ -5050,7 +5050,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                     e.preventDefault();
                     var tabId = $mck_contact_search_input.val();
-                    if (tabId !== '') {
+                    if (tabId) {
                         if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                                 loadTab(tabId);

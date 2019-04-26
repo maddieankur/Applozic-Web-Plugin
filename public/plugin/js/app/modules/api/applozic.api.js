@@ -177,7 +177,7 @@
                         options.success(res);
                     }
                 }
-          }
+            }
             var request = new XMLHttpRequest();
             var responsedata;
             var asyn = true;
@@ -745,7 +745,7 @@
                 success: function (response) {
                     if (options.success) {
                         options.success(response);
-                        ALStorage.setFriendListGroupName(options.data.group.groupName);
+                        ALStorage.setFriendListGroupName(options.data.groupName);
                     }
                 },
                 error: function (response) {

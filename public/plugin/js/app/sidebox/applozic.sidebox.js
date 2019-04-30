@@ -3048,7 +3048,7 @@ window.onload = function() {
                   Fr.voice.stop();
               });
             _this.openChat = function(ele) {
-                if ($('.mck-message-inner').height() == 0) {
+                if (document.querySelector('.mck-message-inner').clientHeight == 0) {
                     mckMessageLayout.loadTab({
                         'tabId': '',
                         'isGroup': false

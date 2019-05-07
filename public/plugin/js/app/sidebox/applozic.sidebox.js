@@ -7792,6 +7792,10 @@ window.onload = function() {
                                 var fd = new FormData();
                                 fd.append('files[]', file);
                                 xhr.open("POST", result, true);
+                                xhr.setRequestHeader("UserId-Enabled", true);
+                                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
+                                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                                 xhr.send(fd);
                             },
                             error: function () { }

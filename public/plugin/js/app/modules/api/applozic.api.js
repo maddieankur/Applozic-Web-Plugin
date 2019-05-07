@@ -745,7 +745,7 @@
                 success: function (response) {
                     if (options.success) {
                         options.success(response);
-                        ALStorage.setFriendListGroupName(options.data.groupName);
+                        ALStorage.setFriendListGroupName(options.data.group.groupName);
                     }
                 },
                 error: function (response) {

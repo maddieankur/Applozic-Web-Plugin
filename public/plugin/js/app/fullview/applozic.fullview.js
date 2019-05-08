@@ -4958,6 +4958,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_search.keypress(function (e) {
                     e.preventDefault();
                     if (e.which === 13) {
+                        var val = $mck_contact_search_input.val();
+                        var regex = new RegExp('[!$%\^&*()]');
+                        if (regex.test(val)) {
+                            alert(MCK_LABELS['charsNotAllowedMessage']);
+                            return false;
+                        }
                         var tabId = $mck_search.val();
                         var userIdArray = new Array();
                         userIdArray.push(tabId);
@@ -5050,6 +5056,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                     e.preventDefault();
                     var tabId = $mck_contact_search_input.val();
+                    var val = $mck_contact_search_input.val();
+                    var regex = new RegExp('[!$%\^&*()]');
+                    if (regex.test(val)) {
+                        alert(MCK_LABELS['charsNotAllowedMessage']);
+                        return false;
+                    }
                     if (tabId) {
                         if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             if (IS_AUTO_TYPE_SEARCH_ENABLED) {

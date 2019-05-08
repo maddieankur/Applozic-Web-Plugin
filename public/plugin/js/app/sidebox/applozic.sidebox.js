@@ -5237,8 +5237,10 @@ window.onload = function() {
                     var val = $mck_contact_search_input.val();
                     var tabId = $mck_contact_search_input.val();
                     var regex = new RegExp('[!$%\^&*()]');
-                    if (regex.test(val))
+                    if (regex.test(val)) {
+                        alert(MCK_LABELS['charsNotAllowedMessage']);
                         return false;
+                    }
                     var tabId = $mck_contact_search_input.val();
                     if (tabId !== '') {
                         if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {

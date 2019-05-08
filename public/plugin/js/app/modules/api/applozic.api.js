@@ -5,6 +5,7 @@
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = 'https://apps.applozic.com';
+        var S3_MIGRATION_URL = 'https://s3-migration-dot-applozic.appspot.com';
         var MCK_FILE_URL = 'https://applozic.appspot.com'
         var CUSTOM_FILE_UPLOAD_URL = '/files/upload/';
         var MCK_CUSTOM_URL = "https://googleupload.applozic.com";
@@ -205,7 +206,7 @@
 
             //authorizationrequestheaders
             MCK_BASE_URL = MCK_BASE_URL ? MCK_BASE_URL : "https://apps.applozic.com";
-            if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
+            if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1 || reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
                 request.setRequestHeader("UserId-Enabled", true);
 
                 if (AUTH_CODE) {

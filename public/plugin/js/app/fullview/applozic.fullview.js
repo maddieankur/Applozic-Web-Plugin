@@ -5936,6 +5936,42 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                 return groupmemberdetail;
             };
+            _this.createFriendList = function(params) {
+                var group={};
+                group.groupMemberList=params.groupMemberList;
+                group.groupName=params.groupName;
+                if(params.type){
+                    group.type=params.type;
+                    window.Applozic.ALApiService.createOpenFriendList({data:group,
+                        success: function(response) {
+                            if(response.status==='success'){
+                            ALStorage.setFriendListGroupName(params.groupName);
+                            var friendListGroupType;
+                            if (typeof params.type !== 'undefined') {
+                              ALStorage.setFriendListGroupType(params.type);
+                            };
+                            if(params.callback){
+                              params.callback();
+                            }
+
+                                }
+                            }, error: function() {}});
+                } else {
+                    var groupMembersArray =[];
+                    for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
+                        groupMembersArray.push((params.groupMemberList)[i]);
+                    }
+                    var data = {};
+                    data.group = group;
+                    window.Applozic.ALApiService.createUserFriendList({data:data,
+                    success: function(response) {
+                        ALStorage.setFriendListGroupName(params.groupName);
+                        if(typeof friendListGroupType !=='undefined') {
+                            ALStorage.setFriendListGroupType(friendListGroupType);
+                        }
+                    }, error: function() {}});
+                }
+            };
             _this.getContactDisplayName = function(userIdArray, callback) {
                 var mckContactNameArray = [];
                 if (userIdArray.length > 0 && userIdArray[0]) {

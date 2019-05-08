@@ -1187,6 +1187,10 @@
                 var file = options.data.file;
                 data.append('files[]', file);
                 xhr.open("POST", response, true);
+                xhr.setRequestHeader("UserId-Enabled", true);
+                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
+                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                 xhr.send(data);
                 },
               error: function (response) {

@@ -7605,7 +7605,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 $file_remove.trigger('click');
                             }
                         });
-                        $applozic.ajax({
+                        window.Applozic.ALApiService.ajax({
                             type: "GET",
                             url: MCK_FILE_URL + FILE_UPLOAD_URL,
                             global: false,

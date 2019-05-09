@@ -250,6 +250,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                     case 'subscribeToEvents':
                         return oInstance.subscribeToEvents(params);
                         break;
+                    case 'createFriendContactList':
+                        return oInstance.createFriendContactList(params);
+                        break;
+                    case 'getFriendContactList':
+                        return oInstance.getFriendContactList(params);
+                        break;
                 }
             } else if ($applozic.type(appOptions) === 'object') {
                 oInstance.reInit(appOptions);
@@ -808,6 +814,20 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_LOGGED_IN = false;
             sessionStorage.clear();
   					localStorage.clear();
+        };
+        _this.createFriendContactList = function(params) {
+            mckContactService.createFriendList(params);
+        };
+        _this.getFriendContactList = function(params) {
+            var friendListGroupName;
+            if (typeof params.groupName !== 'undefined') {
+                friendListGroupName = params.groupName;
+            };
+            var friendListGroupType;
+            if (params.groupType) {
+                friendListGroupType = params.groupType;
+            };
+            mckContactService.getFriendList(friendListGroupName,friendListGroupType);
         };
         _this.setOnline = function() {
             if (typeof mckInitializeChannel !== 'undefined') {
@@ -5966,6 +5986,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     window.Applozic.ALApiService.createUserFriendList({data:data,
                     success: function(response) {
                         ALStorage.setFriendListGroupName(params.groupName);
+                        if(params.callback){
+                            params.callback();
+                        }
                         if(typeof friendListGroupType !=='undefined') {
                             ALStorage.setFriendListGroupType(friendListGroupType);
                         }

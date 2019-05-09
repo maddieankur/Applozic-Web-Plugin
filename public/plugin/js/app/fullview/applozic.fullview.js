@@ -4956,7 +4956,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
                 $mck_search.keypress(function (e) {
-                    e.preventDefault();
                     if (e.which === 13) {
                         var val = $mck_contact_search_input.val();
                         var regex = new RegExp('[!$%\^&*()]');

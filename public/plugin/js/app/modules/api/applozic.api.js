@@ -206,7 +206,7 @@
 
             //authorizationrequestheaders
             MCK_BASE_URL = MCK_BASE_URL ? MCK_BASE_URL : "https://apps.applozic.com";
-            if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1 || reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
+            if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
                 request.setRequestHeader("UserId-Enabled", true);
 
                 if (AUTH_CODE) {
@@ -222,6 +222,9 @@
                 if (APP_MODULE_NAME) {
                     request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
                 }
+            }
+            if (reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
+                request.setRequestHeader("Application-Key", MCK_APP_ID);
             }
             if (typeof reqOptions.data === 'undefined') {
                 request.send();

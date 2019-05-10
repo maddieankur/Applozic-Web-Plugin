@@ -5890,7 +5890,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
             _this.addUserToFriendList = function(userId) {
-                if (!FRIEND_LIST_MAP[userId]) {
+                if (IS_CONTACT_FROM_FRIEND_LIST && !FRIEND_LIST_MAP[userId]) {
                     var params = {};
                     params.data = [userId];
                     params.success = function(response) {

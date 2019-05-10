@@ -6174,7 +6174,7 @@ window.onload = function() {
 						var USER_DISPLAY_NAME_UPDATE = "/rest/ws/user/name";
             var FRIEND_LIST_URL ="/rest/ws/group/";
             _this.addUserToFriendList = function(userId) {
-                if (!FRIEND_LIST_MAP[userId]) {
+                if (IS_CONTACT_FROM_FRIEND_LIST && !FRIEND_LIST_MAP[userId]) {
                     var params = {};
                     params.data = [userId];
                     params.success = function(response) {

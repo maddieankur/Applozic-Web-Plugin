@@ -178,7 +178,7 @@
                         options.success(res);
                     }
                 }
-          }
+            }
             var request = new XMLHttpRequest();
             var responsedata;
             var asyn = true;

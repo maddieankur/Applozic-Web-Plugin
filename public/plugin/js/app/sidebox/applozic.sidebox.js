@@ -442,8 +442,11 @@ window.onload = function() {
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var IS_CONTACT_FROM_FRIEND_LIST = (typeof appOptions.isContactFromFriendList === "boolean") ? appOptions.isContactFromFriendList : false;
+        var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
+        var FRIEND_LIST_MAP = {};
         var TAB_FILE_DRAFT = new Object();
         var MCK_GROUP_ARRAY = new Array();
         var MCK_CONTACT_ARRAY = new Array();
@@ -946,6 +949,9 @@ window.onload = function() {
 																	mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
 																});
                             }
+                        }
+                        if (messageType === "APPLOZIC_01" && IS_CONTACT_FROM_FRIEND_LIST) {
+                            mckContactService.addUserToFriendList(resp.message.contactIds);
                         }
                         if (typeof contact === 'undefined') {
                             var params = {
@@ -3220,6 +3226,9 @@ window.onload = function() {
 							mckMessageLayout.clearMessageField(true);
 							FILE_META = [];
 							delete TAB_MESSAGE_DRAFT[contact.contactId];
+                            if (IS_CONTACT_FROM_FRIEND_LIST) {
+                                mckContactService.addUserToFriendList(messagePxy.to);
+                            }
 					};
 
             _this.sendForwardMessage = function(forwardMessageKey) {
@@ -3591,7 +3600,6 @@ window.onload = function() {
                                             MCK_CALLBACK(params.tabId);
                                         }
                                     }
-
                                     if (data.userDetails.length > 0) {
                                         $applozic.each(data.userDetails, function(i, userDetail) {
                                             alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
@@ -4312,6 +4320,7 @@ window.onload = function() {
                         $li_mck_video_call.removeClass('vis').addClass('n-vis');
                         $mck_videocall_btn.removeClass('vis').addClass('n-vis');
                     } else {
+                        mckContactService.addUserToFriendList(params.tabId);
                         $li_mck_block_user.removeClass('n-vis').addClass('vis');
                         $li_mck_video_call.removeClass('n-vis').addClass('vis')
                         if(IS_CALL_ENABLED) {
@@ -5247,8 +5256,10 @@ window.onload = function() {
                     var val = $mck_contact_search_input.val();
                     var tabId = $mck_contact_search_input.val();
                     var regex = new RegExp('[!$%\^&*()]');
-                    if (regex.test(val))
+                    if (regex.test(val)) {
+                        alert(MCK_LABELS['charsNotAllowedMessage']);
                         return false;
+                    }
                     var tabId = $mck_contact_search_input.val();
                     if (tabId !== '') {
                         if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
@@ -5455,6 +5466,7 @@ window.onload = function() {
                 var friendListGroup = ALStorage.getFriendListGroupName();
                if (MCK_CONTACT_ARRAY.length !== 0 ||friendListGroup) {
                    mckMessageLayout.addContactsToSearchList(false,contactList);
+                   $mck_no_search_contacts.removeClass('vis').addClass('n-vis');
                } else if (!IS_MCK_OWN_CONTACTS) {
                     mckContactService.loadContacts();
                 } else {
@@ -6201,6 +6213,35 @@ window.onload = function() {
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
 						var USER_DISPLAY_NAME_UPDATE = "/rest/ws/user/name";
             var FRIEND_LIST_URL ="/rest/ws/group/";
+            _this.addUserToFriendList = function(userId) {
+                if (IS_CONTACT_FROM_FRIEND_LIST && !FRIEND_LIST_MAP[userId]) {
+                    var params = {};
+                    params.data = [userId];
+                    params.success = function(response) {
+                        var mckContactNameArray = [];
+                        var contacts = [];
+                        $applozic.each(response.response, function(i, user) {
+                            var contact = mckMessageLayout.getContact('' + user.userId);
+                            contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+                            contacts.push(contact);
+                            MCK_CONTACT_ARRAY.push(contact);
+                            MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+                            mckContactNameArray.push([user.userId, contact.displayName]);
+                            if (mckContactNameArray.length > 0) {
+                                ALStorage.updateMckContactNameArray(mckContactNameArray);
+                            }
+                            FRIEND_LIST_MAP[userId]="";
+                        });
+                        mckMessageLayout.addContactsToSearchList(true);
+                        mckGroupLayout.addMembersToGroupSearchList();
+                    }
+                    window.Applozic.ALApiService.getUserDetail(params);
+                    var param = {};
+                    param.groupName = FRIEND_LIST_GROUP_NAME;
+                    param.groupMemberList = [userId];
+                    mckContactService.createFriendList(param);
+                }
+            };
             _this.getContactDisplayName = function (userIdArray) {
                 var mckContactNameArray = [];
                 window.Applozic.ALApiService.getContactDisplayName({
@@ -6368,7 +6409,9 @@ window.onload = function() {
             		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
-                       window.Applozic.ALApiService.createUserFriendList({data:group,
+                       var data = {};
+                       data.group = group;
+                       window.Applozic.ALApiService.createUserFriendList({data:data,
                         success: function(response) {
                                         ALStorage.setFriendListGroupName(params.groupName);
                                         if(typeof friendListGroupType !=='undefined') {
@@ -6382,7 +6425,7 @@ window.onload = function() {
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
                 var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
-                window.Applozic.ALApiService.getFriendList({data:{groupName:friendListGroupName,url: getFriendListUrl,async:false},
+                window.Applozic.ALApiService.getFriendList({data:{groupName:friendListGroupName,url: getFriendListUrl,async:true},
                 success: function(response) {
                     console.log("response",response);
                     if (typeof friendListGroupType !== 'undefined') {
@@ -6391,12 +6434,33 @@ window.onload = function() {
                     for (var i = 0, size = (response.response.membersId).length; i < size; i++) {
                         groupmemberdetail.push((response.response.membersId)[i]);
                     }
+                    var params = {};
+                    params.data = groupmemberdetail;
+                    params.success = function (resp) {
+                        var mckContactNameArray = [];
+                        var contacts = [];
+                        $applozic.each(resp.response, function(i, user) {
+                            var contact = mckMessageLayout.getContact('' + user.userId);
+                            contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+                            MCK_CONTACT_ARRAY.push(contact);
+                            MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+                            FRIEND_LIST_MAP[user.userId] = "";
+                            mckContactNameArray.push([user.userId, contact.displayName]);
+                            if (mckContactNameArray.length > 0) {
+                                ALStorage.updateMckContactNameArray(mckContactNameArray);
+                            }
+                            mckMessageLayout.addContactsToSearchList(true);
+                            mckGroupLayout.addMembersToGroupSearchList();
+                            contacts.push(contact);
+                        });
+                    }
+                    window.Applozic.ALApiService.getUserDetail(params);
                 }, error: function () {
                     console.log(response);
                 } });
 
-                       return groupmemberdetail;
-                  };
+                return groupmemberdetail;
+            };
            _this.removeUserFromFriendList = function (group) {
                window.Applozic.ALApiService.removeUserFromFriendList({
                    data:  group,

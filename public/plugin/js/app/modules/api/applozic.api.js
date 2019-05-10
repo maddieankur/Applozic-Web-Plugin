@@ -5,6 +5,7 @@
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = 'https://apps.applozic.com';
+        var S3_MIGRATION_URL = 'https://s3-migration-dot-applozic.appspot.com';
         var MCK_FILE_URL = 'https://applozic.appspot.com'
         var CUSTOM_FILE_UPLOAD_URL = '/files/upload/';
         var MCK_CUSTOM_URL = "https://googleupload.applozic.com";
@@ -177,7 +178,7 @@
                         options.success(res);
                     }
                 }
-          }
+            }
             var request = new XMLHttpRequest();
             var responsedata;
             var asyn = true;
@@ -221,6 +222,9 @@
                 if (APP_MODULE_NAME) {
                     request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
                 }
+            }
+            if (reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
+                request.setRequestHeader("Application-Key", MCK_APP_ID);
             }
             if (typeof reqOptions.data === 'undefined') {
                 request.send();
@@ -1187,6 +1191,10 @@
                 var file = options.data.file;
                 data.append('files[]', file);
                 xhr.open("POST", response, true);
+                xhr.setRequestHeader("UserId-Enabled", true);
+                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
+                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                 xhr.send(data);
                 },
               error: function (response) {

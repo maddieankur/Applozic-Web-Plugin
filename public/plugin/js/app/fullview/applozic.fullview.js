@@ -250,6 +250,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                     case 'subscribeToEvents':
                         return oInstance.subscribeToEvents(params);
                         break;
+                    case 'createFriendContactList':
+                        return oInstance.createFriendContactList(params);
+                        break;
+                    case 'getFriendContactList':
+                        return oInstance.getFriendContactList(params);
+                        break;
                 }
             } else if ($applozic.type(appOptions) === 'object') {
                 oInstance.reInit(appOptions);
@@ -410,10 +416,13 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var IS_CONTACT_FROM_FRIEND_LIST = (typeof appOptions.isContactFromFriendList === "boolean") ? appOptions.isContactFromFriendList : false;
+        var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
+        var FRIEND_LIST_MAP = {};
         var mckStorage = new MckStorage();
         var TAB_FILE_DRAFT = new Object();
         var MCK_GROUP_ARRAY = new Array();
@@ -805,6 +814,20 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_LOGGED_IN = false;
             sessionStorage.clear();
   					localStorage.clear();
+        };
+        _this.createFriendContactList = function(params) {
+            mckContactService.createFriendList(params);
+        };
+        _this.getFriendContactList = function(params) {
+            var friendListGroupName;
+            if (typeof params.groupName !== 'undefined') {
+                friendListGroupName = params.groupName;
+            };
+            var friendListGroupType;
+            if (params.groupType) {
+                friendListGroupType = params.groupType;
+            };
+            mckContactService.getFriendList(friendListGroupName,friendListGroupType);
         };
         _this.setOnline = function() {
             if (typeof mckInitializeChannel !== 'undefined') {
@@ -2604,6 +2627,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckMessageLayout.clearMessageField(true);
                 FILE_META = [];
                 delete TAB_MESSAGE_DRAFT[contact.contactId];
+                if (IS_CONTACT_FROM_FRIEND_LIST) {
+                    mckContactService.addUserToFriendList(messagePxy.to);
+                }
             };
 
             _this.sendForwardMessage = function(forwardMessageKey) {
@@ -3954,6 +3980,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                       $mck_group_tab_title.removeClass('n-vis').addClass('vis');
                       $mck_videocall_btn.removeClass('vis').addClass('n-vis');
                   } else {
+                      mckContactService.addUserToFriendList(params.tabId);
                       $li_mck_block_user.removeClass('n-vis').addClass('vis');
                       $mck_group_tab_title.removeClass('vis').addClass('n-vis');
                       $mck_individual_tab_title.removeClass('n-vis').addClass('vis');
@@ -4961,8 +4988,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
                 $mck_search.keypress(function (e) {
-                    e.preventDefault();
                     if (e.which === 13) {
+                        var val = $mck_contact_search_input.val();
+                        var regex = new RegExp('[!$%\^&*()]');
+                        if (regex.test(val)) {
+                            alert(MCK_LABELS['charsNotAllowedMessage']);
+                            return false;
+                        }
                         var tabId = $mck_search.val();
                         var userIdArray = new Array();
                         userIdArray.push(tabId);
@@ -5055,6 +5087,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                     e.preventDefault();
                     var tabId = $mck_contact_search_input.val();
+                    var val = $mck_contact_search_input.val();
+                    var regex = new RegExp('[!$%\^&*()]');
+                    if (regex.test(val)) {
+                        alert(MCK_LABELS['charsNotAllowedMessage']);
+                        return false;
+                    }
                     if (tabId) {
                         if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             if (IS_AUTO_TYPE_SEARCH_ENABLED) {
@@ -5913,6 +5951,112 @@ var MCK_CLIENT_GROUP_MAP = [];
             var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
+            _this.addUserToFriendList = function(userId) {
+                if (IS_CONTACT_FROM_FRIEND_LIST && !FRIEND_LIST_MAP[userId]) {
+                    var params = {};
+                    params.data = [userId];
+                    params.success = function(response) {
+                        var mckContactNameArray = [];
+                        var contacts = [];
+                        $applozic.each(response.response, function(i, user) {
+                            var contact = mckMessageLayout.getContact('' + user.userId);
+                            contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+                            contacts.push(contact);
+                            MCK_CONTACT_ARRAY.push(contact);
+                            MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+                            mckContactNameArray.push([user.userId, contact.displayName]);
+                            if (mckContactNameArray.length > 0) {
+                                ALStorage.updateMckContactNameArray(mckContactNameArray);
+                            }
+                            FRIEND_LIST_MAP[userId]="";
+                        });
+                        mckMessageLayout.addContactsToSearchList(true);
+                        mckGroupLayout.addMembersToGroupSearchList();
+                    }
+                    window.Applozic.ALApiService.getUserDetail(params);
+                    var param = {};
+                    param.groupName = FRIEND_LIST_GROUP_NAME;
+                    param.groupMemberList = [userId];
+                    mckContactService.createFriendList(param);
+                }
+            };
+            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
+                var groupmemberdetail=[];
+                var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
+                window.Applozic.ALApiService.getFriendList({data:{groupName:friendListGroupName,url: getFriendListUrl,async:true},
+                success: function(response) {
+                    if (typeof friendListGroupType !== 'undefined') {
+                        ALStorage.setFriendListGroupType(friendListGroupType);
+                    }
+                    for (var i = 0, size = (response.response.membersId).length; i < size; i++) {
+                        groupmemberdetail.push((response.response.membersId)[i]);
+                    }
+                    var params = {};
+                    params.data = groupmemberdetail;
+                    params.success = function (resp) {
+                        var mckContactNameArray = [];
+                        var contacts = [];
+                        $applozic.each(resp.response, function(i, user) {
+                            var contact = mckMessageLayout.getContact('' + user.userId);
+                            contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+                            MCK_CONTACT_ARRAY.push(contact);
+                            MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+                            FRIEND_LIST_MAP[user.userId] = "";
+                            mckContactNameArray.push([user.userId, contact.displayName]);
+                            if (mckContactNameArray.length > 0) {
+                                ALStorage.updateMckContactNameArray(mckContactNameArray);
+                            }
+                            mckMessageLayout.addContactsToSearchList(true);
+                            mckGroupLayout.addMembersToGroupSearchList();
+                            contacts.push(contact);
+                        });
+                    }
+                    window.Applozic.ALApiService.getUserDetail(params);
+                }, error: function () {
+                    console.log(response);
+                } });
+
+                return groupmemberdetail;
+            };
+            _this.createFriendList = function(params) {
+                var group={};
+                group.groupMemberList=params.groupMemberList;
+                group.groupName=params.groupName;
+                if(params.type){
+                    group.type=params.type;
+                    window.Applozic.ALApiService.createOpenFriendList({data:group,
+                        success: function(response) {
+                            if(response.status==='success'){
+                            ALStorage.setFriendListGroupName(params.groupName);
+                            var friendListGroupType;
+                            if (typeof params.type !== 'undefined') {
+                              ALStorage.setFriendListGroupType(params.type);
+                            };
+                            if(params.callback){
+                              params.callback();
+                            }
+
+                                }
+                            }, error: function() {}});
+                } else {
+                    var groupMembersArray =[];
+                    for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
+                        groupMembersArray.push((params.groupMemberList)[i]);
+                    }
+                    var data = {};
+                    data.group = group;
+                    window.Applozic.ALApiService.createUserFriendList({data:data,
+                    success: function(response) {
+                        ALStorage.setFriendListGroupName(params.groupName);
+                        if(params.callback){
+                            params.callback();
+                        }
+                        if(typeof friendListGroupType !=='undefined') {
+                            ALStorage.setFriendListGroupType(friendListGroupType);
+                        }
+                    }, error: function() {}});
+                }
+            };
             _this.getContactDisplayName = function(userIdArray, callback) {
                 var mckContactNameArray = [];
                 if (userIdArray.length > 0 && userIdArray[0]) {
@@ -8312,7 +8456,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 });
                             }
                         }
-
+                        if (messageType === "APPLOZIC_01" && IS_CONTACT_FROM_FRIEND_LIST) {
+                            mckContactService.addUserToFriendList(resp.message.contactIds);
+                        }
                         if (typeof contact === 'undefined') {
                             var params = {
                                 'message': message,

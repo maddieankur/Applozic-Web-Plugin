@@ -1598,6 +1598,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (AUTH_CODE) {
                     jqXHR.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    jqXHR.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                 }
                 jqXHR.setRequestHeader("Application-Key", MCK_APP_ID);
                 if (USER_DEVICE_KEY) {
@@ -7639,6 +7640,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 xhr.open("POST", result, true);
                                 xhr.setRequestHeader("UserId-Enabled", true);
                                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                                 xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                                 xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                                 xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
@@ -7752,6 +7754,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
 
@@ -7851,6 +7854,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
 
@@ -7949,6 +7953,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                         if (MCK_ACCESS_TOKEN) {
@@ -8013,6 +8018,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     xhr.open('post', MCK_BASE_URL + FILE_AWS_UPLOAD_URL, true);
                     xhr.setRequestHeader("UserId-Enabled", true);
                     xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                     xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                     xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                     if (MCK_ACCESS_TOKEN) {

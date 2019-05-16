@@ -442,6 +442,7 @@ window.onload = function() {
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
         var IS_CONTACT_FROM_FRIEND_LIST = (typeof appOptions.isContactFromFriendList === "boolean") ? appOptions.isContactFromFriendList : false;
         var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
@@ -4202,7 +4203,7 @@ window.onload = function() {
                 '<div class="mck-msgreply-border ${textreplyVisExpr}">${msgReply}</div>' +
                 '<div class="mck-msgreply-border ${msgpreviewvisExpr}">{{html msgPreview}}</div>' +
                 '</div>' +
-                '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
+                '<div id="msgNameExpr-${msgNameExpr}" class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
                 '<div class="mck-file-text notranslate mck-attachment downloadimage ${downloadIconVisibleExpr}" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
                 '<div class="mck-msg-text mck-msg-content"></div>' +
                 '</div>' +
@@ -5878,6 +5879,14 @@ window.onload = function() {
                     }
                     if (!displayName) {
                         displayName = _this.getContactDisplayName(tabId);
+                        if (!displayName && SHOW_USERNAME_OPEN_GROUP) {
+                            mckContactService.getContactDisplayName([tabId], function(){
+                                var ele = document.getElementById('msgNameExpr-'+tabId);
+                                if (ele) {
+                                    ele.innerHTML = MCK_CONTACT_NAME_MAP[tabId];
+                                }
+                            });
+                        }
                     }
                     var contact = _this.fetchContact('' + tabId);
                     if (!displayName) {
@@ -6241,7 +6250,7 @@ window.onload = function() {
                     mckContactService.createFriendList(param);
                 }
             };
-            _this.getContactDisplayName = function (userIdArray) {
+            _this.getContactDisplayName = function (userIdArray, callback) {
                 var mckContactNameArray = [];
                 window.Applozic.ALApiService.getContactDisplayName({
                     data: { "userIdArray": userIdArray },
@@ -6249,12 +6258,15 @@ window.onload = function() {
                         for (var userId in data) {
                             if (data.hasOwnProperty(userId)) {
                                 mckContactNameArray.push([userId, data[userId]]);
-                                MCK_CONTACT_NAME_MAP[userId] = data[userId];
+                                MCK_CONTACT_NAME_MAP[userId] = data[userId] || userId;
                                 var contact = mckMessageLayout.fetchContact(userId);
                                 contact.displayName = data[userId];
                             }
                         }
                         ALStorage.updateMckContactNameArray(mckContactNameArray);
+                        if (typeof callback === 'function') {
+                            callback();
+                        }
                     }, error: function () { }
                 });
         };

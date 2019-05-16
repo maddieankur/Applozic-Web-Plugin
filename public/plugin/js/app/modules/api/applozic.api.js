@@ -119,6 +119,7 @@
             var headers = {
                 'UserId-Enabled': true,
                 'Authorization': "Basic " + AUTH_CODE,
+                "Application-User": "Basic " + AUTH_CODE,
                 'Application-Key': MCK_APP_ID,
                 'Device-Key': DEVICE_KEY
             };
@@ -211,6 +212,7 @@
 
                 if (AUTH_CODE) {
                     request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    request.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                 }
                 request.setRequestHeader("Application-Key", MCK_APP_ID);
                 if (DEVICE_KEY) {
@@ -1193,6 +1195,7 @@
                 xhr.open("POST", response, true);
                 xhr.setRequestHeader("UserId-Enabled", true);
                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                 xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                 xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                 xhr.send(data);
@@ -1225,6 +1228,7 @@
           xhr.open("post", attachmentURL, true);
           xhr.setRequestHeader("UserId-Enabled", true);
           xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
           xhr.setRequestHeader("Application-Key", MCK_APP_ID);
           xhr.setRequestHeader("Device-Key", DEVICE_KEY);
           if (ACCESS_TOKEN) {
@@ -1253,6 +1257,7 @@
           xhr.open("post", attachmentURL, true);
           xhr.setRequestHeader("UserId-Enabled", true);
           xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
           xhr.setRequestHeader("Application-Key", MCK_APP_ID);
           xhr.setRequestHeader("Device-Key", DEVICE_KEY);
           if (ACCESS_TOKEN) {
@@ -1351,7 +1356,7 @@
                 success: function (data) { },
                 error: function (xhr, desc, err) {
                     if (xhr.status === 401) {
-                        sessionStorage.clear();
+                        ALStorage.clearSessionStorageElements();
                         console.log('Please reload page.');
                     }
                 }

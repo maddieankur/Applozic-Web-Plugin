@@ -709,7 +709,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             }
         };
         _this.reset = function(optns) {
-          w.sessionStorage.clear();
+          ALStorage.clearSessionStorageElements();
           MCK_TOKEN = '';
           AUTH_CODE = '';
           FILE_META = [];
@@ -804,16 +804,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckStorage.clearMckMessageArray();
                 appOptions.MCK_APP_ID='';
                 appOptions.accessToken='';
-                if(window.Applozic.AlCustomService.logout()){
-  							window.Applozic.AlCustomService.logout();
-  							}
+                window.Applozic.AlCustomService.logout() && window.Applozic.AlCustomService.logout();
                 $applozic.fn.applozic("reset",appOptions);
                 $applozic(".mck-container").hide();
                 $applozic(".mck-contacts-inner").empty();
             }
             IS_LOGGED_IN = false;
-            sessionStorage.clear();
-  					localStorage.clear();
         };
         _this.createFriendContactList = function(params) {
             mckContactService.createFriendList(params);
@@ -1598,6 +1594,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (AUTH_CODE) {
                     jqXHR.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    jqXHR.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                 }
                 jqXHR.setRequestHeader("Application-Key", MCK_APP_ID);
                 if (USER_DEVICE_KEY) {
@@ -2931,7 +2928,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            window.Applozic.AlCustomService.logout()
                             console.log('Please reload page.');
                         }
                         response.status = "error";
@@ -3004,7 +3001,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         resp.status = "error";
@@ -3293,7 +3290,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         CONTACT_SYNCING = false;
@@ -3326,7 +3323,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         mckMessageLayout.clearContactMessageData(tabId, isGroup);
@@ -7639,6 +7636,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 xhr.open("POST", result, true);
                                 xhr.setRequestHeader("UserId-Enabled", true);
                                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                                 xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                                 xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                                 xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
@@ -7752,6 +7750,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
 
@@ -7851,6 +7850,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
 
@@ -7949,6 +7949,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         xhr.open('post', url , true);
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                         xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                         if (MCK_ACCESS_TOKEN) {
@@ -8013,6 +8014,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     xhr.open('post', MCK_BASE_URL + FILE_AWS_UPLOAD_URL, true);
                     xhr.setRequestHeader("UserId-Enabled", true);
                     xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
                     xhr.setRequestHeader("Application-Key", MCK_APP_ID);
                     xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
                     if (MCK_ACCESS_TOKEN) {

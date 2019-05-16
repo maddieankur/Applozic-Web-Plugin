@@ -728,7 +728,7 @@
 	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
 	<!-- remomve comment from below file to usey applozic.chat.min.js file from repository and comment out cdn file -->
 	<!-- <script type="text/javascript" src="../../applozic.chat.min.js"></script> -->
-	<script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-5.5.1.min.js"></script>
+	<script type="text/javascript" src="https://cdn.applozic.com/applozic/applozic.chat-5.5.2.min.js"></script>
 	<script type="text/javascript" src="../js/app/fullview/applozic.fullview.js"></script>
 
 	<script type="text/javascript">
@@ -778,14 +778,13 @@
 	 *this method logs in a user.
 	 */
 	function intializeChat(appId, userId, pass) {
-		 sessionStorage.clear();
-		 localStorage.clear();
 	    var contactsJSON = [{
 	        "userId": "applozic",
 	        "displayName": "Applozic",
 	        "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png", // image url (optional)
 	        "imageData": "Base64 encoded image data" // or image data (optional)
-	    }];
+		}];
+	window.Applozic.AlCustomService.logout(); 
 	$applozic.fn.applozic({
 	                    baseUrl : 'https://apps.applozic.com',
 	                    appId: appId, //Get your application key from https://www.applozic.com

@@ -1271,7 +1271,7 @@ window.onload = function() {
             }
         };
         _this.reset = function(optns) {
-         w.sessionStorage.clear();
+           ALStorage.clearSessionStorageElements();
            MCK_TOKEN = '';
            AUTH_CODE = '';
            FILE_META = [];
@@ -1364,9 +1364,7 @@ window.onload = function() {
           if (typeof window.Applozic.ALSocket !== 'undefined') {
               window.Applozic.ALSocket.disconnect();
               ALStorage.clearMckMessageArray();
-							if(window.Applozic.AlCustomService){
-							window.Applozic.AlCustomService.logout();
-							}
+              window.Applozic.AlCustomService && window.Applozic.AlCustomService.logout();
               $applozic.fn.applozic("reset",appOptions);
               $applozic("#mck-sidebox").hide();
               $applozic("#mck-sidebox-launcher").hide();
@@ -3838,7 +3836,7 @@ window.onload = function() {
                     },
                     error: function(error) {
 												if (xhr.status === 401) {
-														sessionStorage.clear();
+                                                        ALStorage.clearSessionStorageElements();
 														console.log('Please reload page.');
 												}
                         CONTACT_SYNCING = false;

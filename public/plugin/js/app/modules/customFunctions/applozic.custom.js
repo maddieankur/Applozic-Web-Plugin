@@ -6,11 +6,7 @@ AlCustomService.logout = function() {
    if (typeof window.Applozic.ALSocket !== 'undefined') {
         window.Applozic.ALApiService.setAjaxHeaders('','','','','');
         window.Applozic.ALSocket.disconnect();
-        ALStorage.clearMckMessageArray();
-        ALStorage.clearAppHeaders();
-        ALStorage.clearMckContactNameArray();
-        ALStorage.removeEncryptionKey();
-        w.sessionStorage.clear();
+        ALStorage.clearSessionStorageElements();
    }
 };
 

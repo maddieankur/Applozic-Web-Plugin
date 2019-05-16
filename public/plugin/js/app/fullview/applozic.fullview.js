@@ -709,7 +709,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             }
         };
         _this.reset = function(optns) {
-          w.sessionStorage.clear();
+          ALStorage.clearSessionStorageElements();
           MCK_TOKEN = '';
           AUTH_CODE = '';
           FILE_META = [];
@@ -804,16 +804,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckStorage.clearMckMessageArray();
                 appOptions.MCK_APP_ID='';
                 appOptions.accessToken='';
-                if(window.Applozic.AlCustomService.logout()){
-  							window.Applozic.AlCustomService.logout();
-  							}
+                window.Applozic.AlCustomService.logout() && window.Applozic.AlCustomService.logout();
                 $applozic.fn.applozic("reset",appOptions);
                 $applozic(".mck-container").hide();
                 $applozic(".mck-contacts-inner").empty();
             }
             IS_LOGGED_IN = false;
-            sessionStorage.clear();
-  					localStorage.clear();
         };
         _this.createFriendContactList = function(params) {
             mckContactService.createFriendList(params);
@@ -2932,7 +2928,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            window.Applozic.AlCustomService.logout()
                             console.log('Please reload page.');
                         }
                         response.status = "error";
@@ -3005,7 +3001,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         resp.status = "error";
@@ -3294,7 +3290,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         CONTACT_SYNCING = false;
@@ -3327,7 +3323,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     error: function(xhr, desc, err) {
                         if (xhr.status === 401) {
-                            sessionStorage.clear();
+                            ALStorage.clearSessionStorageElements();
                             console.log('Please reload page.');
                         }
                         mckMessageLayout.clearContactMessageData(tabId, isGroup);

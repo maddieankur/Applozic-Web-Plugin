@@ -1356,7 +1356,7 @@
                 success: function (data) { },
                 error: function (xhr, desc, err) {
                     if (xhr.status === 401) {
-                        sessionStorage.clear();
+                        ALStorage.clearSessionStorageElements();
                         console.log('Please reload page.');
                     }
                 }

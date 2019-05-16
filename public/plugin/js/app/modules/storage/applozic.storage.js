@@ -151,7 +151,12 @@ var ALStorage = (function (win) {
             } else {
                 MCK_CONTACT_NAME_ARRAY.length = 0;
             }
+        },
+        clearSessionStorageElements: function () {
+            ALStorage.clearMckMessageArray();
+            ALStorage.clearAppHeaders();
+            ALStorage.clearMckContactNameArray();
+            ALStorage.removeEncryptionKey();
         }
-
     };
 })(window);

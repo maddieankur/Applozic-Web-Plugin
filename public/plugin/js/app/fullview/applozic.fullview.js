@@ -3029,6 +3029,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var individual = false;
                 var isConvReq = false;
+                var calledFrom = 'loadMessageList';
                 var reqData = '';
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
                     MESSAGE_SYNCING = true;
@@ -3190,9 +3191,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     if (!params.startTime) {
                                         if (params.isGroup) {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
                                         } else {
-                                            mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true);
+                                            mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
                                         }
                                         if (typeof callback === 'function') {
                                             callback(params);
@@ -3225,7 +3226,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                                 MCK_LAST_SEEN_AT_MAP[userDetail.userId] = userDetail.lastSeenAtTime;
                                             }
                                         }
-                                        mckMessageLayout.updateUnreadCount('user_' + userDetail.userId, userDetail.unreadCount, false);
+                                        mckMessageLayout.updateUnreadCount('user_' + userDetail.userId, userDetail.unreadCount, false, calledFrom);
                                         var contact = mckMessageLayout.getContact('' + userDetail.userId);
                                         (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail): mckMessageLayout.updateContactDetail(contact, userDetail);
                                     });
@@ -5644,10 +5645,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 TAB_MESSAGE_DRAFT[tabId] = tab_draft;
             };
-            _this.updateUnreadCount = function(tabId, count, isTotalUpdate) {
+            _this.updateUnreadCount = function(tabId, count, isTotalUpdate, calledFrom) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
-                if (isTotalUpdate || $mckChatLauncherIcon.length > 0) {
+                if (calledFrom !== 'loadMessageList' && (isTotalUpdate || $mckChatLauncherIcon.length > 0)) {
                     MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;

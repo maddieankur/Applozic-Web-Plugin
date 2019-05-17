@@ -6045,7 +6045,7 @@ window.onload = function() {
                                 }
                             }
                         }
-                    } else if (messageType === "APPLOZIC_02" && !message.contentType == 102) {
+                    } else if (messageType === "APPLOZIC_02" && message.contentType != 102) {
                         if (((typeof message.oldKey === 'undefined' || $applozic("." + message.oldKey).length === 0) && $applozic("." + message.key).length === 0) || message.contentType === 10) {
                             if (mckContactListLength > 0) {
                                 mckMessageLayout.addContactsFromMessage(message, true);

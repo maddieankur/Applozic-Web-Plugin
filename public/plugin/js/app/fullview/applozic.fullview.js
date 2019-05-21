@@ -4120,12 +4120,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                      userIdArray.push(params.tabId);
                       mckContactService.getUsersDetail(userIdArray, { 'async': false,'callback':function(){
                           _this.addingConversationList(params, callback);
+                          _this.addingConversationListInUi(params, callback);
                      }
                   });  }else{
                         _this.addingConversationList(params, callback);
+                        _this.addingConversationListInUi(params, callback);
                     }
-                }
+                } else {
                    _this.addingConversationListInUi(params, callback);
+                }
             };
             _this.setProductProperties = function(topicDetail) {
                 $mck_product_title.html(topicDetail.title);

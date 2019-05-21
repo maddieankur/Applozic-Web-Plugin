@@ -3191,7 +3191,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     if (!params.startTime) {
                                         if (params.isGroup) {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
                                         } else {
                                             mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
                                         }
@@ -3233,7 +3233,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 if (data.groupFeeds.length > 0) {
                                     $applozic.each(data.groupFeeds, function(i, groupFeed) {
-                                        mckMessageLayout.updateUnreadCount('group_' + groupFeed.id, groupFeed.unreadCount, false);
+                                        mckMessageLayout.updateUnreadCount('group_' + groupFeed.id, groupFeed.unreadCount, false, calledFrom);
                                         mckGroupUtils.addGroup(groupFeed);
                                     });
                                 }

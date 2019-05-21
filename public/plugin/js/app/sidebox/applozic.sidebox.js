@@ -5882,9 +5882,7 @@ window.onload = function() {
                         if (!displayName && SHOW_USERNAME_OPEN_GROUP) {
                             mckContactService.getContactDisplayName([tabId], function(){
                                 var ele = document.getElementById('msgNameExpr-'+tabId);
-                                if (ele) {
-                                    ele.innerHTML = MCK_CONTACT_NAME_MAP[tabId];
-                                }
+                                ele && (ele.innerHTML = MCK_CONTACT_NAME_MAP[tabId]);
                             });
                         }
                     }

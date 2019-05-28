@@ -646,7 +646,7 @@
                 contentType: 'application/json',
                 success: function (response) {
                     if (options.success) {
-                        options.success(response, options.data.group);
+                        options.success(response, options.data);
                     }
                 },
                 error: function (response) {

@@ -10,17 +10,17 @@ var ALStorage = (function (win) {
     return {
 
         setEncryptionKey: function (encryptionKey) {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem('encryptionKey', encryptionKey);
             } else {
                 ENCRYPTION_KEY = encryptionKey;
             }
         },
         getEncryptionKey: function (encryptionKey) {
-            return (typeof (w.sessionStorage) !== 'undefined') ? w.sessionStorage.getItem("encryptionKey") : ENCRYPTION_KEY;
+            return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("encryptionKey") : ENCRYPTION_KEY;
         },
         removeEncryptionKey: function () {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('encryptionKey');
             }
         },
@@ -31,37 +31,37 @@ var ALStorage = (function (win) {
             ALStorage.updateMckMessageArray(messageArray);
         },
         getLatestMessageArray: function () {
-            return (typeof (w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
         },
         getFriendListGroupName: function () {
-            return (typeof (w.sessionStorage) !== 'undefined') ? w.sessionStorage.getItem("friendListGroupName") : FRIEND_LIST_GROUP_NAME;
+            return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("friendListGroupName") : FRIEND_LIST_GROUP_NAME;
         },
         setFriendListGroupName: function (friendListGroupName) {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem('friendListGroupName', friendListGroupName);
             } else {
                 FRIEND_LIST_GROUP_NAME = friendListGroupName;
             }
         },
         setFriendListGroupType: function (friendListGroupType) {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem('friendListGroupType', friendListGroupType);
             } else {
                 FRIEND_LIST_GROUP_TYPE = friendListGroupType;
             }
         },
         getFriendListGroupType: function () {
-            return (typeof (w.sessionStorage) !== 'undefined') ? w.sessionStorage.getItem("friendListGroupType") : FRIEND_LIST_GROUP_TYPE;
+            return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("friendListGroupType") : FRIEND_LIST_GROUP_TYPE;
         },
         setLatestMessageArray: function (messages) {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem('mckLatestMessageArray', w.JSON.stringify(messages));
             } else {
                 MCK_LATEST_MESSAGE_ARRAY = messages;
             }
         },
         updateLatestMessageArray: function (mckMessageArray) {
-            if (typeof (w.sessionStorage) !== "undefined") {
+            if (ALStorage.isSessionStorageAvailable()) {
                 var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckLatestMessageArray'));
                 if (mckLocalMessageArray !== null) {
                     mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
@@ -76,10 +76,10 @@ var ALStorage = (function (win) {
             }
         },
         getMckMessageArray: function () {
-            return (typeof (w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
         },
         clearMckMessageArray: function () {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('mckMessageArray');
                 w.sessionStorage.removeItem('mckLatestMessageArray');
             } else {
@@ -88,17 +88,17 @@ var ALStorage = (function (win) {
             }
         },
         clearAppHeaders: function () {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('mckAppHeaders');
             }
         },
         setAppHeaders: function (data) {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem("mckAppHeaders", w.JSON.stringify(data));
             }
         },
         getAppHeaders: function (data) {
-            return (typeof (w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem('mckAppHeaders')) : {};
+            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem('mckAppHeaders')) : {};
         },
         getMessageByKey: function (key) {
             return MCK_MESSAGE_MAP[key];
@@ -108,7 +108,7 @@ var ALStorage = (function (win) {
                 var message = mckMessageArray[i];
                 MCK_MESSAGE_MAP[message.key] = message;
             }
-            if (typeof (w.sessionStorage) !== "undefined") {
+            if (ALStorage.isSessionStorageAvailable()) {
                 var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckMessageArray'));
                 if (mckLocalMessageArray !== null) {
                     mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
@@ -123,17 +123,17 @@ var ALStorage = (function (win) {
             }
         },
         getMckContactNameArray: function () {
-            return (typeof (w.sessionStorage) !== "undefined") ? $applozic.parseJSON(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
         },
         setMckContactNameArray: function (mckContactNameArray) {
-            if (typeof (w.sessionStorage) !== "undefined") {
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.setItem('mckContactNameArray', w.JSON.stringify(mckContactNameArray));
             } else {
                 MCK_CONTACT_NAME_ARRAY = mckContactNameArray;
             }
         },
         updateMckContactNameArray: function (mckContactNameArray) {
-            if (typeof (w.sessionStorage) !== "undefined") {
+            if (ALStorage.isSessionStorageAvailable()) {
                 var mckLocalcontactNameArray = $applozic.parseJSON(w.sessionStorage.getItem('mckContactNameArray'));
                 if (mckLocalcontactNameArray !== null) {
                     mckContactNameArray = mckContactNameArray.concat(mckLocalcontactNameArray);
@@ -146,7 +146,8 @@ var ALStorage = (function (win) {
             }
         },
         clearMckContactNameArray: function () {
-            if (typeof (w.sessionStorage) !== 'undefined') {
+
+            if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('mckContactNameArray');
             } else {
                 MCK_CONTACT_NAME_ARRAY.length = 0;
@@ -157,6 +158,13 @@ var ALStorage = (function (win) {
             ALStorage.clearAppHeaders();
             ALStorage.clearMckContactNameArray();
             ALStorage.removeEncryptionKey();
+        },
+        isSessionStorageAvailable: function () {
+            try {
+                return typeof (w.sessionStorage) !== 'undefined';
+            } catch (error) {
+                return false;
+            }
         }
     };
 })(window);

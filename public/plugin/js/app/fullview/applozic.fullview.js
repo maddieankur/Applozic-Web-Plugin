@@ -7195,17 +7195,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.updateMckMessageArray(messageArray);
             };
             _this.getLatestMessageArray = function() {
-                return (typeof(w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
+                return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
             };
             _this.setLatestMessageArray = function(messages) {
-                if (typeof(w.sessionStorage) !== 'undefined') {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.setItem('mckLatestMessageArray', w.JSON.stringify(messages));
                 } else {
                     MCK_LATEST_MESSAGE_ARRAY = messages;
                 }
             };
             _this.updateLatestMessageArray = function(mckMessageArray) {
-                if (typeof(w.sessionStorage) !== "undefined") {
+                if (ALStorage.isSessionStorageAvailable()) {
                     var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckLatestMessageArray'));
                     if (mckLocalMessageArray !== null) {
                         mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
@@ -7220,10 +7220,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.getMckMessageArray = function() {
-                return (typeof(w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
+                return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
             };
             _this.clearMckMessageArray = function() {
-                if (typeof(w.sessionStorage) !== 'undefined') {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.removeItem('mckMessageArray');
                     w.sessionStorage.removeItem('mckLatestMessageArray');
                 } else {
@@ -7232,17 +7232,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.clearAppHeaders = function() {
-                if (typeof(w.sessionStorage) !== 'undefined') {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.removeItem('mckAppHeaders');
                 }
             }
             _this.setAppHeaders = function(data) {
-                if (typeof(w.sessionStorage) !== 'undefined') {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.setItem("mckAppHeaders", w.JSON.stringify(data));
                 }
             };
             _this.getAppHeaders = function(data) {
-                return (typeof(w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem('mckAppHeaders')) : {};
+                return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem('mckAppHeaders')) : {};
             };
             _this.getMessageByKey = function(key) {
                 return MCK_MESSAGE_MAP[key];
@@ -7252,7 +7252,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var message = mckMessageArray[i];
                     MCK_MESSAGE_MAP[message.key] = message;
                 }
-                if (typeof(w.sessionStorage) !== "undefined") {
+                if (ALStorage.isSessionStorageAvailable()) {
                     var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckMessageArray'));
                     if (mckLocalMessageArray !== null) {
                         mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
@@ -7267,17 +7267,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.getMckContactNameArray = function() {
-                return (typeof(w.sessionStorage) !== "undefined") ? $applozic.parseJSON(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
+                return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
             };
             _this.setMckContactNameArray = function(mckContactNameArray) {
-                if (typeof(w.sessionStorage) !== "undefined") {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.setItem('mckContactNameArray', w.JSON.stringify(mckContactNameArray));
                 } else {
                     MCK_CONTACT_NAME_ARRAY = mckContactNameArray;
                 }
             };
             _this.updateMckContactNameArray = function(mckContactNameArray) {
-                if (typeof(w.sessionStorage) !== "undefined") {
+                if (ALStorage.isSessionStorageAvailable()) {
                     var mckLocalcontactNameArray = $applozic.parseJSON(w.sessionStorage.getItem('mckContactNameArray'));
                     if (mckLocalcontactNameArray !== null) {
                         mckContactNameArray = mckContactNameArray.concat(mckLocalcontactNameArray);
@@ -7290,7 +7290,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.clearMckContactNameArray = function() {
-                if (typeof(w.sessionStorage) !== 'undefined') {
+                if (ALStorage.isSessionStorageAvailable()) {
                     w.sessionStorage.removeItem('mckContactNameArray');
                 } else {
                     MCK_CONTACT_NAME_ARRAY.length = 0;

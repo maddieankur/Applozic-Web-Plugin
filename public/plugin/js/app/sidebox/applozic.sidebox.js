@@ -2141,6 +2141,12 @@ window.onload = function() {
                         'isGroup': false,
                         'isLaunch': true
                     });
+                } else {
+                    mckMessageService.loadMessageList({
+                        'tabId': '',
+                        'isGroup': false,
+                        'isLaunch': false
+                    });
                 }
 								alFileService.init(data);
                 alNotificationService.subscribeToServiceWorker();

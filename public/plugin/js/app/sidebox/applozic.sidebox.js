@@ -2135,13 +2135,11 @@ window.onload = function() {
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }
-                if (IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED) {
-                    mckMessageService.loadMessageList({
-                        'tabId': '',
-                        'isGroup': false,
-                        'isLaunch': true
-                    });
-                }
+                mckMessageService.loadMessageList({
+                    'tabId': '',
+                    'isGroup': false,
+                    'isLaunch': IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED
+                });
 								alFileService.init(data);
                 alNotificationService.subscribeToServiceWorker();
                 ALStorage.setAppHeaders(data);

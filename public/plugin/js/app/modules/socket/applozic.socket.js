@@ -65,9 +65,7 @@
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 if (typeof SockJS === 'function') {
-                    if (!SOCKET) {
-                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
-                    }
+                    SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     ALSocket.stompClient = Stomp.over(SOCKET);
                     ALSocket.stompClient.heartbeat.outgoing = 0;
                     ALSocket.stompClient.heartbeat.incoming = 0;

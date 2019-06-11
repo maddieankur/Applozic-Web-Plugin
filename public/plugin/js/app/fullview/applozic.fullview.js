@@ -459,7 +459,9 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
-            'onConnectFailed': function() {},
+            'onConnectFailed': function() {
+                window.Applozic.ALSocket.reconnect();
+            },
             'onConnect': function() {},
             'onMessageDelivered': function() {},
             'onMessageRead': function() {},

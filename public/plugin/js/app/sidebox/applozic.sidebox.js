@@ -500,7 +500,9 @@ window.onload = function() {
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         var events = {
-            'onConnectFailed': function(resp) {},
+            'onConnectFailed': function(resp) {
+                window.Applozic.ALSocket.reconnect();
+            },
             'onConnect': function(resp) {},
             'onMessageDelivered': function(resp) {},
             'onMessageRead': function(resp) {},

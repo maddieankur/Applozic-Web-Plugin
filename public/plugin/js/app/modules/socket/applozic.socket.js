@@ -207,7 +207,9 @@
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
             if (typeof ALSocket.events.onConnectFailed === "function") {
-                ALSocket.events.onConnectFailed();
+                setTimeout(function () {
+                    ALSocket.events.onConnectFailed();
+                }, 30000);
             }
         };
         ALSocket.sendStatus = function(status) {

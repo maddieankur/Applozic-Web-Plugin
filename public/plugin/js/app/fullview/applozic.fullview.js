@@ -1557,6 +1557,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },data);
                 }
                 mckInit.tabFocused();
+                w.addEventListener('online', function () {
+                    window.Applozic.ALSocket.reconnect();
+                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }
@@ -8224,29 +8227,26 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.connectToSocket = function(isFetchMessages) {
                 $mck_message_inner = mckMessageLayout.getMckMessageInner();
-                if (!stompClient.connected) {
-                    if (isFetchMessages) {
-                        var currTabId = $mck_message_inner.data('mck-id');
-                        if (currTabId) {
-                            var isGroup = $mck_message_inner.data('isgroup');
-                            var conversationId = $mck_message_inner.data('mck-conversationid');
-                            var topicId = $mck_message_inner.data('mck-topicid');
-                            mckStorage.clearMckMessageArray();
-                            mckMessageLayout.loadTab({
-                                'tabId': currTabId,
-                                'isGroup': isGroup,
-                                'conversationId': conversationId,
-                                'topicId': topicId
-                            });
-                        } else {
-                            mckStorage.clearMckMessageArray();
-                            mckMessageLayout.loadTab({
-                                'tabId': '',
-                                'isGroup': false
-                            });
-                        }
+                if (isFetchMessages) {
+                    var currTabId = $mck_message_inner.data('mck-id');
+                    if (currTabId) {
+                        var isGroup = $mck_message_inner.data('isgroup');
+                        var conversationId = $mck_message_inner.data('mck-conversationid');
+                        var topicId = $mck_message_inner.data('mck-topicid');
+                        mckStorage.clearMckMessageArray();
+                        mckMessageLayout.loadTab({
+                            'tabId': currTabId,
+                            'isGroup': isGroup,
+                            'conversationId': conversationId,
+                            'topicId': topicId
+                        });
+                    } else {
+                        mckStorage.clearMckMessageArray();
+                        mckMessageLayout.loadTab({
+                            'tabId': '',
+                            'isGroup': false
+                        });
                     }
-                    _this.init();
                 }
             };
             _this.stopConnectedCheck = function() {

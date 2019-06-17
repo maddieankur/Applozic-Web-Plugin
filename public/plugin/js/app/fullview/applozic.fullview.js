@@ -8399,16 +8399,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.onConnect = function() {
+                var channelId = (MCK_APP_ID && USER_DEVICE_KEY) ? MCK_APP_ID + "-" + USER_DEVICE_KEY : "";
                 if (stompClient.connected) {
                     if (subscriber) {
                         _this.unsubscibeToNotification();
                     }
-                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
+                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage, {id : channelId});
                     _this.sendStatus(1);
                     _this.checkConnected(true);
                 } else {
                     setTimeout(function() {
-                        subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
+                        subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage, {id : channelId});
                         _this.sendStatus(1);
                         _this.checkConnected(true);
                     }, 5000);

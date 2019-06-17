@@ -220,16 +220,17 @@
             }
         };
         ALSocket.onConnect = function() {
+            var channelId = (MCK_APPID && ALSocket.USER_DEVICE_KEY) ? MCK_APPID + "-" + ALSocket.USER_DEVICE_KEY : "";
             if (ALSocket.stompClient.connected) {
                 if (subscriber) {
                     ALSocket.unsubscibeToNotification();
                 }
-                subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);
+                subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage, {id : channelId});
                 ALSocket.sendStatus(1);
                 ALSocket.checkConnected(true);
             } else {
                 setTimeout(function() {
-                    subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);
+                    subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage, {id : channelId});
                     ALSocket.sendStatus(1);
                     ALSocket.checkConnected(true);
                 }, 5000);

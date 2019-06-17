@@ -3781,3 +3781,8 @@ fill:white;
 .mck-icon--video svg, .mck-icon-video-text{
 	vertical-align: middle;
 }
+.emoji-menu {
+    width: 100%;
+    left: auto;
+    bottom: 52px!important;
+}

@@ -501,7 +501,7 @@ window.onload = function() {
         w.MCK_OL_MAP = new Array();
         var events = {
             'onConnectFailed': function(resp) {
-                //window.Applozic.ALSocket.connectToSocket();
+                window.Applozic.ALSocket.connectToSocket();
             },
             'onConnect': function(resp) {},
             'onMessageDelivered': function(resp) {},
@@ -680,7 +680,7 @@ window.onload = function() {
                             });
                         }
                     }
-                    //window.Applozic.ALSocket.reconnect();
+                    window.Applozic.ALSocket.reconnect();
                 }
 			},
 			'onMessage': function(resp) {

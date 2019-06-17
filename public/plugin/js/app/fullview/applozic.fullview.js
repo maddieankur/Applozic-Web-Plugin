@@ -8516,7 +8516,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_message_inner = mckMessageLayout.getMckMessageInner();
                     var resp = $applozic.parseJSON(obj.body);
                     var messageType = resp.type;
-                    typeof resp.message == "object" && $mck_msg_inner.data('last-message-received-time', resp.message.createdAtTime);
+                    typeof resp.message == "object" && $mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);
                     if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
                         $applozic("." + resp.message.split(",")[0] + " .mck-message-status").removeClass('mck-icon-time').removeClass('mck-icon-sent').addClass('mck-icon-delivered');
                         mckMessageLayout.addTooltip(resp.message.split(",")[0]);

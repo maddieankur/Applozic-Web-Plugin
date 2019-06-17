@@ -685,7 +685,7 @@ window.onload = function() {
 			},
 			'onMessage': function(resp) {
                 var messageType = resp.type;
-                typeof resp.message == "object" && $mck_msg_inner.data('last-message-received-time', resp.message.createdAtTime);
+                typeof resp.message == "object" && mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
                     if(document.getElementById(resp.message.split(",")[0])){
                     var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];

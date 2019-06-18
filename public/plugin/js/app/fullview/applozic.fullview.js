@@ -8199,6 +8199,10 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_offline_message_box = $applozic("#mck-offline-message-box");
             var $mck_typing_label = $applozic(".mck-typing-box .name-text");
             var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner-right");
+            var socketStatus = '';
+            var CONNECTED = 'connected';
+            var CONNECTING = 'connecting';
+            var DISCONNECTED = 'disconnected';
             _this.init = function() {
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                     if (typeof w.SockJS === 'function') {
@@ -8209,6 +8213,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };
+                        if (socketStatus == CONNECTING) {
+                            return;
+                        }
+                        socketStatus = CONNECTING;
                         stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
                         w.addEventListener("beforeunload", function(e) {
                           var check_url=e.target.activeElement.href;
@@ -8221,6 +8229,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.checkConnected = function(isFetchMessages) {
                 if (stompClient.connected) {
+                    socketStatus = CONNECTED;
                     if (checkConnectedIntervalId) {
                         clearInterval(checkConnectedIntervalId);
                     }
@@ -8408,6 +8417,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.init();
             };
             _this.onError = function(err) {
+                socketStatus = DISCONNECTED;
                 w.console.log("Error in channel notification. " + err);
                 setTimeout(function () {
                     events.onConnectFailed();
@@ -8428,6 +8438,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
                     _this.sendStatus(1);
                     _this.checkConnected(true);
+                    socketStatus = CONNECTED;
                 } else {
                     setTimeout(function() {
                         subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);

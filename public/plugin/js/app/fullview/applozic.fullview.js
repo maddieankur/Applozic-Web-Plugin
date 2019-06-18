@@ -8202,9 +8202,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.init = function() {
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                     if (typeof w.SockJS === 'function') {
-                        if (!SOCKET) {
-                            SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
-                        }
+                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;
                         stompClient.heartbeat.incoming = 0;
@@ -8241,11 +8239,9 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.connectToSocket = function(isFetchMessages) {
                 $mck_message_inner = mckMessageLayout.getMckMessageInner();
-                console.log('entered connectToSocket');
                 if (!stompClient.connected) {
                     if (isFetchMessages) {
                         var currTabId = $mck_message_inner.data('mck-id');
-                        console.log('currTabId=',currTabId);
                         if (currTabId) {
                             var isGroup = $mck_message_inner.data('isgroup');
                             var conversationId = $mck_message_inner.data('mck-conversationid');

@@ -500,7 +500,9 @@ window.onload = function() {
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         var events = {
-            'onConnectFailed': function(resp) {},
+            'onConnectFailed': function(resp) {
+                window.Applozic.ALSocket.connectToSocket();
+            },
             'onConnect': function(resp) {},
             'onMessageDelivered': function(resp) {},
             'onMessageRead': function(resp) {},
@@ -659,13 +661,16 @@ window.onload = function() {
                         if (currTabId) {
                             var isGroup = mck_message_inner.data('isgroup');
                             var conversationId = mck_message_inner.data('mck-conversationid');
-                            var topicId = mck_message_inner.data('mck-topicid');
+                            var topicId = mck_message_inner.data('mck-topicid'); 
+                            var latestMessageReceivedTime = mck_message_inner.data('last-message-received-time') + 1;
                             ALStorage.clearMckMessageArray();
-                            mckMessageLayout.loadTab({
+                            mckMessageService.loadMessageList({
                                 'tabId': currTabId,
                                 'isGroup': isGroup,
                                 'conversationId': conversationId,
-                                'topicId': topicId
+                                'topicId': topicId,
+                                "latestMessageReceivedTime":latestMessageReceivedTime,
+                                "allowReload": true
                             });
                         } else {
                             ALStorage.clearMckMessageArray();
@@ -675,11 +680,12 @@ window.onload = function() {
                             });
                         }
                     }
-                    window.Applozic.ALSocket.init();
+                    window.Applozic.ALSocket.reconnect();
                 }
 			},
 			'onMessage': function(resp) {
                 var messageType = resp.type;
+                typeof resp.message == "object" && mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
                     if(document.getElementById(resp.message.split(",")[0])){
                     var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
@@ -2132,6 +2138,9 @@ window.onload = function() {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }
                 mckInit.tabFocused();
+                w.addEventListener('online', function () {
+                    window.Applozic.ALSocket.reconnect();
+                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }
@@ -3507,6 +3516,7 @@ window.onload = function() {
                 var isConvReq = false;
                 var calledFrom = 'loadMessageList';
                 var data = {};
+                var append = false;
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
                     if (params.isGroup) {
                         data.groupId = params.tabId;
@@ -3534,10 +3544,17 @@ window.onload = function() {
                     }
                     data.mainPageSize = 60;
                 }
-                if (!params.startTime) {
+                if (!params.startTime && !params.allowReload) {
                     $mck_msg_inner.html('');
                 }
-                $mck_loading.removeClass('n-vis').addClass('vis');
+                if(params.latestMessageReceivedTime){
+                    data.startTime = params.latestMessageReceivedTime;
+                }
+                if(!params.allowReload){
+                    $mck_loading.removeClass('n-vis').addClass('vis');
+                }else{
+                    append= true;
+                }
                 window.Applozic.ALApiService.getMessages({
                     data: data,
                     success: function(response) {
@@ -3585,10 +3602,10 @@ window.onload = function() {
                                 if (individual) {
                                     if (isMessages) {
                                         if (params.startTime > 0) {
-                                            mckMessageLayout.processMessageList(data, false, true);
+                                            mckMessageLayout.processMessageList(data, false, true, append);
                                         } else {
                                             if (!params.isGroup) {
-                                                mckMessageLayout.processMessageList(data, true, true);
+                                                mckMessageLayout.processMessageList(data, true, true, append);
                                                 $mck_tab_message_option.removeClass('n-vis').addClass('vis');
                                             }
                                         }
@@ -3727,7 +3744,7 @@ window.onload = function() {
                                                     $mck_loading.removeClass('vis').addClass('n-vis');
                                                     if (isMessages) {
                                                         $mck_no_messages.removeClass('vis').addClass('n-vis');
-                                                        mckMessageLayout.processMessageList(data, true, validated);
+                                                        mckMessageLayout.processMessageList(data, true, validated, append, params.allowReload);
                                                         if (group.type !== 6) {
                                                             $mck_tab_message_option.removeClass('n-vis').addClass('vis');
                                                         }
@@ -4223,10 +4240,12 @@ window.onload = function() {
             $applozic.template("messageTemplate", markup);
             $applozic.template('contactTemplate', contactbox);
             $applozic.template("searchContactbox", searchContactbox);
+            _this.latestMessageReceivedTime ="";
             _this.openConversation = function() {
                 if ($mck_sidebox.css('display') === 'none') {
                     $applozic('.mckModal').mckModal('hide');
                     $mck_sidebox.mckModal();
+                    $mck_msg_inner.html('');
                 }
                 $mck_msg_to.focus();
             };
@@ -4446,12 +4465,16 @@ window.onload = function() {
             _this.getTopicLink = function(topicLink) {
                 return (topicLink) ? '<img src="' + topicLink + '">' : '<span class="mck-icon-no-image"></span>';
             };
-            _this.processMessageList = function(data, scroll, isValidated) {
+            _this.processMessageList = function(data, scroll, isValidated, append, allowReload) {
                 var showMoreDateTime;
                 var $scrollToDiv = $mck_msg_inner.children("div[name='message']:first");
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data('isgroup');
+                var enableAttachment = "";
+                append  = typeof append !=="undefined" ? append: false;
                 var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
+                scroll && $mck_msg_inner.data('last-message-received-time', data.message[0].createdAtTime)
+                allowReload  && (scroll = false);
                 if (typeof data.message.length === 'undefined') {
                     var messageArray = [];
                     messageArray.push(data.message);
@@ -4462,8 +4485,9 @@ window.onload = function() {
                     ALStorage.updateMckMessageArray(data.message);
                     $applozic.each(data.message, function(i, message) {
                         if (!(typeof message.to === 'undefined')) {
-                            _this.addMessage(message, contact, false, false, isValidated);
+                            _this.addMessage(message, contact, append, false, isValidated);
                             showMoreDateTime = message.createdAtTime;
+                            allowReload && !scroll && message.contentType != 10 && (scroll = true)
                         }
                     });
                 }

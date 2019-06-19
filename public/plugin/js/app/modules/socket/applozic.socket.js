@@ -65,9 +65,7 @@
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 if (typeof SockJS === 'function') {
-                    if (!SOCKET) {
-                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
-                    }
+                    SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     ALSocket.stompClient = Stomp.over(SOCKET);
                     ALSocket.stompClient.heartbeat.outgoing = 0;
                     ALSocket.stompClient.heartbeat.incoming = 0;
@@ -209,7 +207,9 @@
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
             if (typeof ALSocket.events.onConnectFailed === "function") {
-                ALSocket.events.onConnectFailed();
+                setTimeout(function () {
+                    ALSocket.events.onConnectFailed();
+                }, 30000);
             }
         };
         ALSocket.sendStatus = function(status) {

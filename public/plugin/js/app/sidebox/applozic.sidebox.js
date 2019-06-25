@@ -407,6 +407,7 @@ window.onload = function() {
         var MCK_GETTOPICDETAIL = appOptions.getTopicDetail;
         var MCK_GETUSERNAME = appOptions.contactDisplayName;
         var MCK_MSG_VALIDATION = appOptions.validateMessage;
+        var MCK_MSG_VALIDATION_ALERT = (typeof appOptions.validateMessageAlert === 'string') ? appOptions.validateMessageAlert : 'Cannot send message with phone number';
         var MCK_PRICE_DETAIL = appOptions.finalPriceResponse;
         var MCK_GETUSERIMAGE = appOptions.contactDisplayImage;
         var MCK_PRICE_WIDGET_ENABLED = appOptions.priceWidget;
@@ -1334,6 +1335,7 @@ window.onload = function() {
            MCK_GETTOPICDETAIL = optns.getTopicDetail;
            MCK_FILEMAXSIZE = optns.maxAttachmentSize;
            MCK_MSG_VALIDATION = optns.validateMessage;
+           var MCK_MSG_VALIDATION_ALERT = (typeof appOptions.validateMessageAlert === 'string') ? appOptions.validateMessageAlert : 'Cannot send message with phone number';
            MCK_GETUSERNAME = optns.contactDisplayName;
            MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
            MCK_PRICE_DETAIL = optns.finalPriceResponse;
@@ -2975,6 +2977,7 @@ window.onload = function() {
                         return false;
                     }
                     if (typeof(MCK_MSG_VALIDATION) === 'function' && !MCK_MSG_VALIDATION(message)) {
+                        alert(MCK_MSG_VALIDATION_ALERT);
                         return false;
                     }
                     var messagePxy = {

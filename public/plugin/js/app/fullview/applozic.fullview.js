@@ -4408,7 +4408,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']") : $applozic.tmpl("messageTemplate", msgList).prependTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']");
                 var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = msg.message.replace(/\n/g, '<br/>');
+                    var msg_text = msg.message.replace(/\n/g, '<br/>').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);

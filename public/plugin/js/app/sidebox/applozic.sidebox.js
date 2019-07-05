@@ -4712,7 +4712,7 @@ window.onload = function() {
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo("#mck-message-cell .mck-message-inner") : $applozic.tmpl("messageTemplate", msgList).prependTo("#mck-message-cell .mck-message-inner");
 								var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = msg.message.replace(/\n/g, '<br/>');
+                    var msg_text = msg.message.replace(/\n/g, '<br/>').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);

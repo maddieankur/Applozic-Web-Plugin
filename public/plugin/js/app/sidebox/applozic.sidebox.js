@@ -5858,8 +5858,8 @@ window.onload = function() {
             _this.updateUnreadCount = function(tabId, count, isTotalUpdate, calledFrom) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
-				MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                 if (calledFrom !== 'loadMessageList' && (isTotalUpdate || $mckChatLauncherIcon.length > 0)) {
+                    MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;
                     }

@@ -460,7 +460,9 @@ var MCK_CLIENT_GROUP_MAP = [];
         w.MCK_OL_MAP = new Array();
         _this.events = {
             'onConnectFailed': function() {
-                mckInitializeChannel.reconnect();
+                if (navigator.onLine) {
+                    mckInitializeChannel.reconnect();
+                }
             },
             'onConnect': function() {},
             'onMessageDelivered': function() {},

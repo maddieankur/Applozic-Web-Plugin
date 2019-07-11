@@ -501,7 +501,6 @@ window.onload = function() {
         w.MCK_OL_MAP = new Array();
         var events = {
             'onConnectFailed': function(resp) {
-                console.log('navigator=',navigator);
                 if (navigator.onLine) {
                     window.Applozic.ALSocket.reconnect();
                 }

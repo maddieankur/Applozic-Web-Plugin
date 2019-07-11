@@ -459,9 +459,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
-            'onConnectFailed': function() {
-                mckInitializeChannel.reconnect();
-            },
+            'onConnectFailed': function() {},
             'onConnect': function() {},
             'onMessageDelivered': function() {},
             'onMessageRead': function() {},
@@ -1557,9 +1555,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },data);
                 }
                 mckInit.tabFocused();
-                w.addEventListener('online', function () {
-                    mckInitializeChannel.reconnect();
-                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }
@@ -3036,7 +3031,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var isConvReq = false;
                 var calledFrom = 'loadMessageList';
                 var reqData = '';
-                var append = false;
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
                     MESSAGE_SYNCING = true;
                     reqData = (params.isGroup) ? "&groupId=" + params.tabId : "&userId=" + encodeURIComponent(params.tabId);
@@ -3057,18 +3051,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_msg_loading.removeClass('n-vis').addClass('vis');
                 } else {
                     CONTACT_SYNCING = true;
-                    if (params.startTime && !params.allowReload) {
+                    if (params.startTime) {
                         reqData += "&endTime=" + params.startTime;
                     }
                     reqData += '&mainPageSize=60';
-                    if(params.latestMessageReceivedTime){
-                        reqData +="&startTime="+params.latestMessageReceivedTime;
-                    }
-                    if(!params.allowReload){
-                        $mck_loading.removeClass('n-vis').addClass('vis');
-                    }else{
-                        append= true;
-                    }
                 }
                 if (!params.startTime) {
                     $mck_msg_inner.html('');
@@ -3106,9 +3092,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 if (data + '' !== 'null' && data.status !== 'error') {
                                     if (isMessages) {
                                         if (params.startTime > 0) {
-                                            mckMessageLayout.processMessageList(data, false, true, append);
+                                            mckMessageLayout.processMessageList(data, false);
                                         } else {
-                                            mckMessageLayout.processMessageList(data, true, true, append);
+                                            mckMessageLayout.processMessageList(data, true);
                                             $mck_tab_message_option.removeClass('n-vis').addClass('vis');
                                         }
                                     }
@@ -3883,14 +3869,12 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getMckMessageInner = function() {
                 return $mck_msg_inner;
             }
-            _this.latestMessageReceivedTime = "";
             _this.openConversation = function() {
                 if ($mck_sidebox.css('display') === 'none') {
                     $applozic('.mckModal').mckModal('hide');
                     $mck_sidebox.mckModal();
                 }
                 $mck_msg_to.focus();
-                $mck_msg_inner.html('');
             };
             _this.initEmojis = function() {
                 try {
@@ -4162,13 +4146,11 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getTopicLink = function(topicLink) {
                 return (topicLink) ? '<img src="' + topicLink + '">' : '<span class="mck-icon-no-image"></span>';
             };
-            _this.processMessageList = function(data, scroll, isValidated, append, allowReload) {
+            _this.processMessageList = function(data, scroll) {
                 var showMoreDateTime;
                 var $scrollToDiv = $mck_msg_inner.children("div[name='message']:first");
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data('isgroup');
-                var enableAttachment = "";
-                append  = typeof append !=="undefined" ? append: false;
                 var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
                 scroll && $mck_msg_inner.data('last-message-received-time', data.message[0].createdAtTime)
                 allowReload  && (scroll = false);
@@ -4176,7 +4158,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var messageArray = [];
                     messageArray.push(data.message);
                     mckStorage.updateMckMessageArray(messageArray);
-                    _this.addMessage(data.message, contact, append, false, isValidated);
+                    _this.addMessage(data.message, contact, false, false, isValidated);
                     showMoreDateTime = data.createdAtTime;
                 } else {
                     mckStorage.updateMckMessageArray(data.message);
@@ -8204,24 +8186,18 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_offline_message_box = $applozic("#mck-offline-message-box");
             var $mck_typing_label = $applozic(".mck-typing-box .name-text");
             var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner-right");
-            var socketStatus = '';
-            var CONNECTED = 'connected';
-            var CONNECTING = 'connecting';
-            var DISCONNECTED = 'disconnected';
             _this.init = function() {
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                     if (typeof w.SockJS === 'function') {
-                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
+                        if (!SOCKET) {
+                          SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
+                        }
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;
                         stompClient.heartbeat.incoming = 0;
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };
-                        if (socketStatus == CONNECTING) {
-                            return;
-                        }
-                        socketStatus = CONNECTING;
                         stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
                         w.addEventListener("beforeunload", function(e) {
                           var check_url=e.target.activeElement.href;
@@ -8234,7 +8210,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.checkConnected = function(isFetchMessages) {
                 if (stompClient.connected) {
-                    socketStatus = CONNECTED;
                     if (checkConnectedIntervalId) {
                         clearInterval(checkConnectedIntervalId);
                     }
@@ -8260,15 +8235,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                             var isGroup = $mck_message_inner.data('isgroup');
                             var conversationId = $mck_message_inner.data('mck-conversationid');
                             var topicId = $mck_message_inner.data('mck-topicid');
-                            var latestMessageReceivedTime =$mck_message_inner.data('last-message-received-time') + 1;
                             mckStorage.clearMckMessageArray();
                             mckMessageLayout.loadTab({
                                 'tabId': currTabId,
                                 'isGroup': isGroup,
                                 'conversationId': conversationId,
-                                'topicId': topicId,
-                                'latestMessageReceivedTime':latestMessageReceivedTime,
-                                'allowReload': true
+                                'topicId': topicId
                             });
                         } else {
                             mckStorage.clearMckMessageArray();
@@ -8278,7 +8250,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             });
                         }
                     }
-                    mckInitializeChannel.reconnect();
+                    m_this.init();
                 }
             };
             _this.stopConnectedCheck = function() {
@@ -8422,11 +8394,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.init();
             };
             _this.onError = function(err) {
-                socketStatus = DISCONNECTED;
                 w.console.log("Error in channel notification. " + err);
-                setTimeout(function () {
-                    events.onConnectFailed();
-                }, 30000);
+                events.onConnectFailed();
             };
             _this.sendStatus = function(status) {
                 if (stompClient && stompClient.connected) {
@@ -8443,7 +8412,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
                     _this.sendStatus(1);
                     _this.checkConnected(true);
-                    socketStatus = CONNECTED;
                 } else {
                     setTimeout(function() {
                         subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
@@ -8528,7 +8496,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_message_inner = mckMessageLayout.getMckMessageInner();
                     var resp = $applozic.parseJSON(obj.body);
                     var messageType = resp.type;
-                    typeof resp.message == "object" && $mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);
                     if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
                         $applozic("." + resp.message.split(",")[0] + " .mck-message-status").removeClass('mck-icon-time').removeClass('mck-icon-sent').addClass('mck-icon-delivered');
                         mckMessageLayout.addTooltip(resp.message.split(",")[0]);

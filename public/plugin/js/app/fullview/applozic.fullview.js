@@ -5752,10 +5752,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var isValidMeta = mckMessageLayout.isValidMetaData(message);
                 var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                 if (!message.metadata || isValidMeta) {
-                    (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-                      mckMessageLayout.updateRecentConversationList(group, message, update);
-                    }): mckMessageLayout.addContactsFromMessage(message, true);
-                }
+                    (message.groupId) ? ((!message.metadata || message.metadata.hide !== 'true') ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                            mckMessageLayout.updateRecentConversationList(group, message, update);
+                        }) : "") :
+                        mckMessageLayout.addContactsFromMessage(message, true);
                 if (typeof tabId !== 'undefined' && tabId === contact.contactId && isGroupTab === contact.isGroup) {
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                         if (typeof contact !== 'undefined') {

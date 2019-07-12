@@ -5956,11 +5956,11 @@ window.onload = function() {
                 if ((typeof tabId === 'undefined') || tabId === '') {
                     var mckContactListLength = $applozic("#mck-contact-list").length;
                     if (mckContactListLength > 0 && isValidMeta) {
-                        (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-													_this.updateRecentConversationList(group, message, update);
-												}): mckMessageLayout.addContactsFromMessage(message, true);
-                    }
-										else {
+                        (message.groupId) ? ((!message.metadata || message.metadata.hide !== 'true') ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                            _this.updateRecentConversationList(group, message, update);
+                        }) : "") :
+                        mckMessageLayout.addContactsFromMessage(message, true);
+                    }else {
                         mckMessageLayout.addContactsFromMessageList({message: [message]}, '');
                     }
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {

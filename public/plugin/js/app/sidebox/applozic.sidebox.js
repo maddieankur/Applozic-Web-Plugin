@@ -5956,6 +5956,7 @@ window.onload = function() {
                 if ((typeof tabId === 'undefined') || tabId === '') {
                     var mckContactListLength = $applozic("#mck-contact-list").length;
                     if (mckContactListLength > 0 && isValidMeta) {
+                        notifyUser = (message.metadata && message.metadata.hide) ? false : notifyUser;
                         (message.groupId) ? ((!message.metadata || message.metadata.hide !== 'true') ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
                             _this.updateRecentConversationList(group, message, update);
                         }) : "") :
@@ -5980,7 +5981,9 @@ window.onload = function() {
                             if (message.contentType !== 10 && message.contentType !== 102) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-														mckNotificationService.notifyUser(message);
+							if(notifyUser) {
+                                mckNotificationService.notifyUser(message);
+                            }
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
 												var clientGroupIdHtmlExpr = mckContactUtils.formatContactId('' + contact.clientGroupId);

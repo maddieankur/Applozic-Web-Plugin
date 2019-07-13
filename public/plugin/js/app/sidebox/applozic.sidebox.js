@@ -2358,6 +2358,7 @@ window.onload = function() {
                     success: function (data) {
                         if (data.status === 'success') {
                             MCK_TOTAL_UNREAD_COUNT = data.response[0].unreadCount;
+                            console.log('MCK_TOTAL_UNREAD_COUNT=',MCK_TOTAL_UNREAD_COUNT);
                             if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                                 $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                             }
@@ -3701,7 +3702,7 @@ window.onload = function() {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
 																						_this.dropInUnreadCountUpdate(params.tabId,true);
 																						_this.dropInUnreadCountUpdate(params.clientGroupId,true,true);
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
                                         } else {
                                             mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
 																						_this.dropInUnreadCountUpdate(params.tabId,false);

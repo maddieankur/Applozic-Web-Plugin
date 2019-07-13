@@ -2358,7 +2358,6 @@ window.onload = function() {
                     success: function (data) {
                         if (data.status === 'success') {
                             MCK_TOTAL_UNREAD_COUNT = data.response[0].unreadCount;
-                            console.log('MCK_TOTAL_UNREAD_COUNT=',MCK_TOTAL_UNREAD_COUNT);
                             if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                                 $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                             }

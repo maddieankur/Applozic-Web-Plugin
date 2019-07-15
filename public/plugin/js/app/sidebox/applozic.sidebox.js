@@ -3701,7 +3701,7 @@ window.onload = function() {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
 																						_this.dropInUnreadCountUpdate(params.tabId,true);
 																						_this.dropInUnreadCountUpdate(params.clientGroupId,true,true);
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
                                         } else {
                                             mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
 																						_this.dropInUnreadCountUpdate(params.tabId,false);
@@ -4712,7 +4712,7 @@ window.onload = function() {
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo("#mck-message-cell .mck-message-inner") : $applozic.tmpl("messageTemplate", msgList).prependTo("#mck-message-cell .mck-message-inner");
 								var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = msg.message.replace(/\n/g, '<br/>');
+                    var msg_text = _this.formatHtmlTags(msg.message.replace(/\n/g, '<br/>'));
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);
@@ -4753,12 +4753,14 @@ window.onload = function() {
                 if (emoji_template.indexOf('emoji-inner') === -1 && msg.contentType === 0) {
                     var nodes = emoji_template.split("<br/>");
                     for (var i = 0; i < nodes.length; i++) {
-                        var x = d.createElement('div');
-                        x.appendChild(d.createTextNode(nodes[i]));
-                        if (nodes[i] && nodes[i].match(LINK_MATCHER)) {
-                            x = $applozic(x).linkify({
-                                target: '_blank'
-                            });
+                        if (nodes[i] === "") {
+                            var x = d.createElement('BR');
+                        } else {
+                            var x = d.createElement('div');
+                            x.appendChild(d.createTextNode(nodes[i]));
+                                x = $applozic(x).linkify({
+                                    target: '_blank'
+                                });
                         }
                         $textMessage.append(x);
                     }
@@ -4806,6 +4808,9 @@ window.onload = function() {
                     });
                 }
             };
+            _this.formatHtmlTags = function(message) {  
+                return message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
             _this.addContactForSearchList = function(contact, $listId, append) {
                 var groupUserCount = contact.userCount;
                 var isGroupTab = contact.isGroup;
@@ -5764,7 +5769,7 @@ window.onload = function() {
                     if (message.contentType === 2) {
                         emoji_template = 'Shared location';
                     } else if (message.message) {
-                        var msg = message.message;
+                        var msg = _this.formatHtmlTags(message.message);
                         if (mckUtils.startsWith(msg, "<img")) {
                             emoji_template = 'Image attachment';
                         } else {
@@ -5853,8 +5858,8 @@ window.onload = function() {
             _this.updateUnreadCount = function(tabId, count, isTotalUpdate, calledFrom) {
                 var previousCount = _this.getUnreadCount(tabId);
                 MCK_UNREAD_COUNT_MAP[tabId] = count;
-				MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                 if (calledFrom !== 'loadMessageList' && (isTotalUpdate || $mckChatLauncherIcon.length > 0)) {
+                    MCK_TOTAL_UNREAD_COUNT += count - previousCount;
                     if (MCK_TOTAL_UNREAD_COUNT < 0) {
                         MCK_TOTAL_UNREAD_COUNT = 0;
                     }

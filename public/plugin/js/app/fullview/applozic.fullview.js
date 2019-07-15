@@ -4408,7 +4408,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']") : $applozic.tmpl("messageTemplate", msgList).prependTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']");
                 var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = msg.message.replace(/\n/g, '<br/>');
+                    var msg_text = _this.formatHtmlTags(msg.message.replace(/\n/g, '<br/>'));
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);
@@ -4447,12 +4447,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (emoji_template.indexOf('emoji-inner') === -1 && msg.contentType === 0) {
                     var nodes = emoji_template.split("<br/>");
                     for (var i = 0; i < nodes.length; i++) {
-                        var x = d.createElement('div');
-                        x.appendChild(d.createTextNode(nodes[i]));
-                        if (nodes[i] && nodes[i].match(LINK_MATCHER)) {
-                            x = $applozic(x).linkify({
-                                target: '_blank'
-                            });
+                        if (nodes[i] === "") {
+                            var x = d.createElement('BR');
+                        } else {
+                            var x = d.createElement('div');
+                            x.appendChild(d.createTextNode(nodes[i]));
+                                x = $applozic(x).linkify({
+                                    target: '_blank'
+                                });
                         }
                         $textMessage.append(x);
                     }
@@ -4505,6 +4507,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
             };
+            _this.formatHtmlTags = function(message){  
+                return message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
             _this.addContactForSearchList = function(contact, $listId,append) {
                 var groupUserCount = contact.userCount;
                 var isGroupTab = contact.isGroup;
@@ -5581,7 +5586,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (message.contentType === 2) {
                         emoji_template = 'Shared location';
                     } else if (message.message) {
-                        var msg = message.message;
+                        var msg = _this.formatHtmlTags(message.message);
                         if (mckUtils.startsWith(msg, "<img")) {
                             emoji_template = 'Image attachment';
                         } else {

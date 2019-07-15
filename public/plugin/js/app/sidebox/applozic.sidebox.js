@@ -3701,7 +3701,7 @@ window.onload = function() {
                                             mckGroupLayout.addGroupStatus(mckGroupUtils.getGroup(params.tabId));
 																						_this.dropInUnreadCountUpdate(params.tabId,true);
 																						_this.dropInUnreadCountUpdate(params.clientGroupId,true,true);
-                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true, calledFrom);
+                                            mckMessageLayout.updateUnreadCount('group_' + params.tabId, 0, true);
                                         } else {
                                             mckMessageLayout.updateUnreadCount('user_' + params.tabId, 0, true, calledFrom);
 																						_this.dropInUnreadCountUpdate(params.tabId,false);

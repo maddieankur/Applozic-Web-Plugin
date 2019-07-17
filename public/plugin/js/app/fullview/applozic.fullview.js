@@ -3031,7 +3031,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
 
             _this.loadMessageList = function(params, callback) {
-                console.log('entered loadMessageList');
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var individual = false;
                 var isConvReq = false;
@@ -3079,7 +3078,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     type: 'get',
                     global: false,
                     success: function(data) {
-                        console.log('entered success function');
                         var isMessages = true;
                         var currTabId = $mck_msg_inner.data('mck-id');
                         var isGroupTab = $mck_msg_inner.data('isgroup');
@@ -8217,17 +8215,9 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONNECTED = 'connected';
             var CONNECTING = 'connecting';
             var DISCONNECTED = 'disconnected';
-            window.setInterval(function () {
-                mckMessageService.loadMessageList({
-                    'tabId': '',
-                    'isGroup': false,
-                    'latestMessageReceivedTime': 1563266274430
-                });
-            }, 3000);
             _this.init = function() {
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                     if (typeof w.SockJS === 'function') {
-                        MCK_WEBSOCKET_URL = 'albcahsbcakhj';
                         SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;

@@ -5956,11 +5956,15 @@ window.onload = function() {
                 if ((typeof tabId === 'undefined') || tabId === '') {
                     var mckContactListLength = $applozic("#mck-contact-list").length;
                     if (mckContactListLength > 0 && isValidMeta) {
-                        (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-													_this.updateRecentConversationList(group, message, update);
-												}): mckMessageLayout.addContactsFromMessage(message, true);
-                    }
-										else {
+                        notifyUser = !(message.metadata && message.metadata.hide) && notifyUser;
+                        if (message.groupId) {
+                            (!message.metadata || message.metadata.hide !== 'true') && mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                                _this.updateRecentConversationList(group, message, update);
+                            })
+                        } else {
+                            mckMessageLayout.addContactsFromMessage(message, true);
+                        }
+                    }else {
                         mckMessageLayout.addContactsFromMessageList({message: [message]}, '');
                     }
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
@@ -5980,7 +5984,7 @@ window.onload = function() {
                             if (message.contentType !== 10 && message.contentType !== 102) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-														mckNotificationService.notifyUser(message);
+                            notifyUser && mckNotificationService.notifyUser(message);
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
 												var clientGroupIdHtmlExpr = mckContactUtils.formatContactId('' + contact.clientGroupId);

@@ -5956,11 +5956,14 @@ window.onload = function() {
                 if ((typeof tabId === 'undefined') || tabId === '') {
                     var mckContactListLength = $applozic("#mck-contact-list").length;
                     if (mckContactListLength > 0 && isValidMeta) {
-                        notifyUser = (message.metadata && message.metadata.hide) ? false : notifyUser;
-                        (message.groupId) ? ((!message.metadata || message.metadata.hide !== 'true') ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
-                            _this.updateRecentConversationList(group, message, update);
-                        }) : "") :
-                        mckMessageLayout.addContactsFromMessage(message, true);
+                        notifyUser = !(message.metadata && message.metadata.hide) && notifyUser;
+                        if (message.groupId) {
+                            (!message.metadata || message.metadata.hide !== 'true') && mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                                _this.updateRecentConversationList(group, message, update);
+                            })
+                        } else {
+                            mckMessageLayout.addContactsFromMessage(message, true);
+                        }
                     }else {
                         mckMessageLayout.addContactsFromMessageList({message: [message]}, '');
                     }

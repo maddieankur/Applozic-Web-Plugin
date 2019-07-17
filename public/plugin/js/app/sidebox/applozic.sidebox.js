@@ -5984,9 +5984,7 @@ window.onload = function() {
                             if (message.contentType !== 10 && message.contentType !== 102) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-							if(notifyUser) {
-                                mckNotificationService.notifyUser(message);
-                            }
+                            notifyUser && mckNotificationService.notifyUser(message);
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
 												var clientGroupIdHtmlExpr = mckContactUtils.formatContactId('' + contact.clientGroupId);

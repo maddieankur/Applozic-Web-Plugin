@@ -5815,9 +5815,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             if (message.contentType !== 10) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-                            if (notifyUser) {
-                                mckNotificationService.notifyUser(message);
-                            }
+                            notifyUser && mckNotificationService.notifyUser(message);
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                         $applozic("#li-" + contactHtmlExpr + " .mck-unread-count-text").html(mckMessageLayout.getUnreadCount(ucTabId));

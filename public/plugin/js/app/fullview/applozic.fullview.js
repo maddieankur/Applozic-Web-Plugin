@@ -5758,7 +5758,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             mckMessageLayout.updateRecentConversationList(group, message, update);
                         });
                     } else {
-
+                        mckMessageLayout.addContactsFromMessage(message, true);
                     }
                 }
                 if (typeof tabId !== 'undefined' && tabId === contact.contactId && isGroupTab === contact.isGroup) {

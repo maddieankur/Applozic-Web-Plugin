@@ -500,11 +500,7 @@ window.onload = function() {
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         var events = {
-            'onConnectFailed': function(resp) {
-                if (navigator.onLine) {
-                    window.Applozic.ALSocket.reconnect();
-                }
-            },
+            'onConnectFailed': function(resp) {},
             'onConnect': function(resp) {},
             'onMessageDelivered': function(resp) {},
             'onMessageRead': function(resp) {},
@@ -682,7 +678,7 @@ window.onload = function() {
                             });
                         }
                     }
-                    window.Applozic.ALSocket.reconnect();
+                    window.Applozic.ALSocket.init();
                 }
 			},
 			'onMessage': function(resp) {
@@ -2099,7 +2095,7 @@ window.onload = function() {
 
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
-                    (IS_REINITIALIZE) ? window.Applozic.ALSocket.reconnect(): window.Applozic.ALSocket.init(MCK_APP_ID, data, events);
+                    window.Applozic.ALSocket.init(MCK_APP_ID, data, events);
                     // mckGroupService.loadGroups();
                 }
                 mckMessageLayout.createContactWithDetail({
@@ -2140,9 +2136,6 @@ window.onload = function() {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }
                 mckInit.tabFocused();
-                w.addEventListener('online', function () {
-                    window.Applozic.ALSocket.reconnect();
-                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }

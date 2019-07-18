@@ -20,6 +20,10 @@
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
         var mckUtils = new MckUtils();
+        var socketStatus = '';
+        var CONNECTED = 'connected';
+        var CONNECTING = 'connecting';
+        var DISCONNECTED = 'disconnected';
 
         /**
          * var events = {
@@ -63,7 +67,7 @@
             }
 
             ALSocket.events = _events;
-            if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
+            if (typeof MCK_WEBSOCKET_URL !== 'undefined' && && navigator.onLine) {
                 if (typeof SockJS === 'function') {
                     SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     ALSocket.stompClient = Stomp.over(SOCKET);
@@ -72,7 +76,13 @@
                     ALSocket.stompClient.onclose = function() {
                         ALSocket.disconnect();
                     };
-
+                    if (socketStatus == CONNECTING) {
+                        return;
+                    } else if (socketStatus == CONNECTED) {
+                        socketStatus = DISCONNECTED;
+                        _this.reconnect();
+                    }
+                    socketStatus = CONNECTING;
                     ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
                         var check_url;
@@ -86,6 +96,7 @@
         };
         ALSocket.checkConnected = function(isFetchMessages) {
             if (ALSocket.stompClient.connected) {
+                socketStatus = CONNECTED;
                 if (checkConnectedIntervalId) {
                     clearInterval(checkConnectedIntervalId);
                 }
@@ -202,9 +213,9 @@
             data.deviceKey = ALSocket.USER_DEVICE_KEY;
             data.websocketUrl = MCK_WEBSOCKET_URL;
             data.websocketPort = MCK_WEBSOCKET_PORT;
-            ALSocket.init(MCK_APP_ID, data, ALSocket.events);
         };
         ALSocket.onError = function(err) {
+            socketStatus = DISCONNECTED;
             console.log("Error in channel notification. " + err);
             if (typeof ALSocket.events.onConnectFailed === "function") {
                 setTimeout(function () {
@@ -227,6 +238,7 @@
                 subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);
                 ALSocket.sendStatus(1);
                 ALSocket.checkConnected(true);
+                socketStatus = CONNECTED;
             } else {
                 setTimeout(function() {
                     subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);

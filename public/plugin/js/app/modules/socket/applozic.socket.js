@@ -67,7 +67,7 @@
             }
 
             ALSocket.events = _events;
-            if (typeof MCK_WEBSOCKET_URL !== 'undefined' && && navigator.onLine) {
+            if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                 if (typeof SockJS === 'function') {
                     SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     ALSocket.stompClient = Stomp.over(SOCKET);
@@ -80,7 +80,7 @@
                         return;
                     } else if (socketStatus == CONNECTED) {
                         socketStatus = DISCONNECTED;
-                        _this.reconnect();
+                        ALSocket.reconnect();
                     }
                     socketStatus = CONNECTING;
                     ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');

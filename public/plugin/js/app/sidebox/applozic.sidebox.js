@@ -501,7 +501,9 @@ window.onload = function() {
         w.MCK_OL_MAP = new Array();
         var events = {
             'onConnectFailed': function(resp) {
-                window.Applozic.ALSocket.connectToSocket();
+                if (navigator.onLine) {
+                    window.Applozic.ALSocket.reconnect();
+                }
             },
             'onConnect': function(resp) {},
             'onMessageDelivered': function(resp) {},
@@ -4712,7 +4714,8 @@ window.onload = function() {
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo("#mck-message-cell .mck-message-inner") : $applozic.tmpl("messageTemplate", msgList).prependTo("#mck-message-cell .mck-message-inner");
 								var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = _this.formatHtmlTags(msg.message.replace(/\n/g, '<br/>'));
+                    var msg_text = _this.formatHtmlTags(msg.message);
+                    msg_text = msg_text.replace(/\n/g, '<br/>');
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);
@@ -5956,11 +5959,15 @@ window.onload = function() {
                 if ((typeof tabId === 'undefined') || tabId === '') {
                     var mckContactListLength = $applozic("#mck-contact-list").length;
                     if (mckContactListLength > 0 && isValidMeta) {
-                        (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-													_this.updateRecentConversationList(group, message, update);
-												}): mckMessageLayout.addContactsFromMessage(message, true);
-                    }
-										else {
+                        notifyUser = !(message.metadata && message.metadata.hide) && notifyUser;
+                        if (message.groupId) {
+                            (!message.metadata || message.metadata.hide !== 'true') && mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                                _this.updateRecentConversationList(group, message, update);
+                            })
+                        } else {
+                            mckMessageLayout.addContactsFromMessage(message, true);
+                        }
+                    }else {
                         mckMessageLayout.addContactsFromMessageList({message: [message]}, '');
                     }
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
@@ -5980,7 +5987,7 @@ window.onload = function() {
                             if (message.contentType !== 10 && message.contentType !== 102) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-														mckNotificationService.notifyUser(message);
+                            notifyUser && mckNotificationService.notifyUser(message);
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
 												var clientGroupIdHtmlExpr = mckContactUtils.formatContactId('' + contact.clientGroupId);

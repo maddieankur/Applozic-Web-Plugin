@@ -460,7 +460,9 @@ var MCK_CLIENT_GROUP_MAP = [];
         w.MCK_OL_MAP = new Array();
         _this.events = {
             'onConnectFailed': function() {
-                mckInitializeChannel.reconnect();
+                if (navigator.onLine) {
+                    mckInitializeChannel.reconnect();
+                }
             },
             'onConnect': function() {},
             'onMessageDelivered': function() {},
@@ -4408,7 +4410,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 append ? $applozic.tmpl("messageTemplate", msgList).appendTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']") : $applozic.tmpl("messageTemplate", msgList).prependTo(".mck-message-inner[data-mck-id='" + contact.contactId + "'][data-isgroup='" + contact.isGroup + "']");
                 var emoji_template = '';
                 if (msg.message) {
-                    var msg_text = _this.formatHtmlTags(msg.message.replace(/\n/g, '<br/>'));
+                    var msg_text = _this.formatHtmlTags(msg.message);
+                    msg_text = msg_text.replace(/\n/g, '<br/>');
                     if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                         emoji_template = w.emoji.replace_unified(msg_text);
                         emoji_template = w.emoji.replace_colons(emoji_template);
@@ -5752,9 +5755,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var isValidMeta = mckMessageLayout.isValidMetaData(message);
                 var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                 if (!message.metadata || isValidMeta) {
-                    (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-                      mckMessageLayout.updateRecentConversationList(group, message, update);
-                    }): mckMessageLayout.addContactsFromMessage(message, true);
+                    notifyUser = !(message.metadata && message.metadata.hide) && notifyUser;
+                    if (message.groupId) {
+                        (!message.metadata || message.metadata.hide !== 'true') && mckGroupService.addGroupFromMessage(message, true, function(group, message, update) {
+                            mckMessageLayout.updateRecentConversationList(group, message, update);
+                        });
+                    } else {
+                        mckMessageLayout.addContactsFromMessage(message, true);
+                    }
                 }
                 if (typeof tabId !== 'undefined' && tabId === contact.contactId && isGroupTab === contact.isGroup) {
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
@@ -5810,7 +5818,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             if (message.contentType !== 10) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
-                            mckNotificationService.notifyUser(message);
+                            notifyUser && mckNotificationService.notifyUser(message);
                         }
                         var contactHtmlExpr = (message.groupId) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                         $applozic("#li-" + contactHtmlExpr + " .mck-unread-count-text").html(mckMessageLayout.getUnreadCount(ucTabId));

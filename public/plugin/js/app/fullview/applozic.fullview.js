@@ -8216,6 +8216,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;
                         stompClient.heartbeat.incoming = 0;
+                        stompClient.reconnect_delay = 5000;
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };
@@ -8298,6 +8299,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.disconnect = function() {
                 if (stompClient && stompClient.connected) {
+                    socketStatus = DISCONNECTED;
                     _this.sendStatus(0);
                     stompClient.disconnect();
                 }

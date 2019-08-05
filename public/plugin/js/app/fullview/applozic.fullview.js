@@ -459,11 +459,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
-            'onConnectFailed': function() {
-                if (navigator.onLine) {
-                    mckInitializeChannel.reconnect();
-                }
-            },
+            'onConnectFailed': function() {},
             'onConnect': function() {},
             'onMessageDelivered': function() {},
             'onMessageRead': function() {},
@@ -1510,7 +1506,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
-                    (IS_REINITIALIZE) ? mckInitializeChannel.reconnect(): mckInitializeChannel.init();
+                    mckInitializeChannel.init();
                     // mckGroupService.loadGroups();
                 }
                 mckMessageLayout.createContactWithDetail({
@@ -1559,9 +1555,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },data);
                 }
                 mckInit.tabFocused();
-                w.addEventListener('online', function () {
-                    mckInitializeChannel.reconnect();
-                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }
@@ -8217,17 +8210,21 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONNECTING = 'connecting';
             var DISCONNECTED = 'disconnected';
             _this.init = function() {
-                if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
+                if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                     if (typeof w.SockJS === 'function') {
                         SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;
                         stompClient.heartbeat.incoming = 0;
+                        stompClient.reconnect_delay = 5000;
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };
                         if (socketStatus == CONNECTING) {
                             return;
+                        } else if (socketStatus == CONNECTED) {
+                            socketStatus = DISCONNECTED;
+                            _this.reconnect();
                         }
                         socketStatus = CONNECTING;
                         stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
@@ -8286,7 +8283,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             });
                         }
                     }
-                    mckInitializeChannel.reconnect();
+                    _this.init();
                 }
             };
             _this.stopConnectedCheck = function() {
@@ -8302,6 +8299,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.disconnect = function() {
                 if (stompClient && stompClient.connected) {
+                    socketStatus = DISCONNECTED;
                     _this.sendStatus(0);
                     stompClient.disconnect();
                 }
@@ -8427,7 +8425,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.unsubscibeToTypingChannel();
                 _this.unsubscibeToNotification();
                 _this.disconnect();
-                _this.init();
             };
             _this.onError = function(err) {
                 socketStatus = DISCONNECTED;

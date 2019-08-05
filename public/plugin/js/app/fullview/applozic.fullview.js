@@ -8227,7 +8227,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             _this.reconnect();
                         }
                         socketStatus = CONNECTING;
-                        stompClient.connect("user", "user", _this.onConnect, _this.onError, '/');
+                        stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
                         w.addEventListener("beforeunload", function(e) {
                           var check_url=e.target.activeElement.href;
                           if(!check_url || 0 === check_url.length){

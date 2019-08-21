@@ -76,6 +76,9 @@
             MCK_BASE_URL = serverUrl;
         }
 
+        ALApiService.login = function (options) {
+            ALApiService.connect(options);
+        }
 
         /**
          * Login user to the chat session, must be done once in a session.

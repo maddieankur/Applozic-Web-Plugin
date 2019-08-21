@@ -2140,9 +2140,6 @@ window.onload = function() {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }
                 mckInit.tabFocused();
-                w.addEventListener('online', function () {
-                    window.Applozic.ALSocket.reconnect();
-                });
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
                     $mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
                 }

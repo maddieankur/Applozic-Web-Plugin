@@ -63,16 +63,16 @@
             }
 
             ALSocket.events = _events;
-            if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
+            if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                 if (typeof SockJS === 'function') {
                     SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
                     ALSocket.stompClient = Stomp.over(SOCKET);
                     ALSocket.stompClient.heartbeat.outgoing = 0;
                     ALSocket.stompClient.heartbeat.incoming = 0;
+                    ALSocket.stompClient.reconnect_delay = 5000;
                     ALSocket.stompClient.onclose = function() {
                         ALSocket.disconnect();
                     };
-
                     ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
                         var check_url;
@@ -122,7 +122,6 @@
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 ALSocket.sendStatus(0);
                 ALSocket.stompClient.disconnect();
-                SOCKET='';
             }
         };
         ALSocket.unsubscibeToTypingChannel = function() {

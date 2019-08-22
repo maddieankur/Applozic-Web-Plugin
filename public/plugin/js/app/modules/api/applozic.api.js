@@ -76,6 +76,9 @@
             MCK_BASE_URL = serverUrl;
         }
 
+        /**
+         * For backward compatibility
+         */
         ALApiService.login = function (options) {
             ALApiService.connect(options);
         }

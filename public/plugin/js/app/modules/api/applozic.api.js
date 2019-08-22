@@ -76,13 +76,19 @@
             MCK_BASE_URL = serverUrl;
         }
 
+        /**
+         * For backward compatibility
+         */
+        ALApiService.login = function (options) {
+            ALApiService.connect(options);
+        }
 
         /**
          * Login user to the chat session, must be done once in a session.
          * Usage Example:
-         * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.connect({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
-        ALApiService.login = function (options) {
+        ALApiService.connect = function (options) {
             MCK_APP_ID = options.data.alUser.applicationId;
             MCK_BASE_URL = options.data.baseUrl ? options.data.baseUrl : "https://apps.applozic.com";
             MCK_CUSTOM_UPLOAD_SETTINGS = options.data.alUser.fileupload;

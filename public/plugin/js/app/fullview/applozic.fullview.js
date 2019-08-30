@@ -418,6 +418,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var IS_CONTACT_FROM_FRIEND_LIST = (typeof appOptions.isContactFromFriendList === "boolean") ? appOptions.isContactFromFriendList : false;
         var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
+        var SHARE_SESSION_STORAGE = (typeof appOptions.shareSessionStorage == "boolean") ? appOptions.shareSessionStorage : false;
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
@@ -482,6 +483,17 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
+            if(SHARE_SESSION_STORAGE) {
+                ALStorage.useLocalStorage(true);
+                window.addEventListener("storage", function () {
+                    console.log('listener fired');
+                    console.log('mckStatus=',ALStorage.getLoggedInStatus());
+                    var mckStatus = ALStorage.getLoggedInStatus();
+                    if (ALStorage.getLoggedInStatus() === 'false') {
+                        _this.logout();
+                    }
+                });
+            }
             notificationtoneoption.loop = false;
             mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
             alFileService.get(appOptions);
@@ -795,6 +807,7 @@ var MCK_CLIENT_GROUP_MAP = [];
           IS_AUTO_TYPE_SEARCH_ENABLED = (typeof optns.autoTypeSearchEnabled === "boolean") ? optns.autoTypeSearchEnabled : false;
           MCK_CHECK_USER_BUSY_STATUS = (typeof optns.checkUserBusyWithStatus === "boolean") ? (optns.checkUserBusyWithStatus) : false;
           IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof optns.launchOnUnreadMessage === "boolean") ? optns.launchOnUnreadMessage : false;
+          SHARE_SESSION_STORAGE = (typeof appOptions.shareSessionStorage == "boolean") ? appOptions.shareSessionStorage : false;
 
         }
 
@@ -808,6 +821,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic.fn.applozic("reset",appOptions);
                 $applozic(".mck-container").hide();
                 $applozic(".mck-contacts-inner").empty();
+                if (SHARE_SESSION_STORAGE) {
+                if (ALStorage.getLoggedInStatus() === 'true') {
+                    ALStorage.setLoggedInStatus('false');
+                }
+                window.Applozic.ALApiService.clearAjaxHeaders();
+                ALStorage.clearSessionStorageElements();
+            }
             }
             IS_LOGGED_IN = false;
         };
@@ -1470,6 +1490,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             }
             _this.onInitApp = function(data) {
+                if (SHARE_SESSION_STORAGE) {
+                    ALStorage.setLoggedInStatus('true');
+                }
                 _this.appendLauncher();
                 _this.setLabels();
                 $applozic('.applozic-launcher').each(function() {

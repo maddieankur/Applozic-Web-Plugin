@@ -445,6 +445,7 @@ window.onload = function() {
         var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
         var IS_CONTACT_FROM_FRIEND_LIST = (typeof appOptions.isContactFromFriendList === "boolean") ? appOptions.isContactFromFriendList : false;
         var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
+        var SHARE_SESSION_STORAGE = (typeof appOptions.shareSessionStorage == "boolean") ? appOptions.shareSessionStorage : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var FRIEND_LIST_MAP = {};
@@ -1047,6 +1048,17 @@ window.onload = function() {
             return appOptions;
         };
         _this.init = function() {
+            if(SHARE_SESSION_STORAGE) {
+                ALStorage.useLocalStorage(true);
+                window.addEventListener("storage", function () {
+                    console.log('listener fired');
+                    console.log('mckStatus=',ALStorage.getLoggedInStatus());
+                    var mckStatus = ALStorage.getLoggedInStatus();
+                    if (ALStorage.getLoggedInStatus() === 'false') {
+                        _this.logout();
+                    }
+                });
+            }
 						window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
 						alFileService.get(appOptions);
 						alMessageService.init(appOptions);
@@ -1366,17 +1378,25 @@ window.onload = function() {
            IS_AUTO_TYPE_SEARCH_ENABLED = (typeof optns.autoTypeSearchEnabled === "boolean") ? optns.autoTypeSearchEnabled : false;
            MCK_CHECK_USER_BUSY_STATUS = (typeof optns.checkUserBusyWithStatus === "boolean") ? (optns.checkUserBusyWithStatus) : false;
            IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof optns.launchOnUnreadMessage === "boolean") ? optns.launchOnUnreadMessage : false;
+           SHARE_SESSION_STORAGE = (typeof appOptions.shareSessionStorage == "boolean") ? appOptions.shareSessionStorage : false;
 
        }
 
        _this.logout = function() {
-          if (typeof window.Applozic.ALSocket !== 'undefined') {
-              window.Applozic.ALSocket.disconnect();
-              ALStorage.clearMckMessageArray();
-              window.Applozic.AlCustomService && window.Applozic.AlCustomService.logout();
-              $applozic.fn.applozic("reset",appOptions);
-              $applozic("#mck-sidebox").hide();
-              $applozic("#mck-sidebox-launcher").hide();
+        if (typeof window.Applozic.ALSocket !== 'undefined') {
+            window.Applozic.ALSocket.disconnect();
+            ALStorage.clearMckMessageArray();
+            window.Applozic.AlCustomService && window.Applozic.AlCustomService.logout();
+            $applozic.fn.applozic("reset",appOptions);
+            $applozic("#mck-sidebox").hide();
+            $applozic("#mck-sidebox-launcher").hide();
+            if (SHARE_SESSION_STORAGE) {
+                if (ALStorage.getLoggedInStatus() === 'true') {
+                    ALStorage.setLoggedInStatus('false');
+                }
+                window.Applozic.ALApiService.clearAjaxHeaders();
+                ALStorage.clearSessionStorageElements();
+            }
           }
           IS_LOGGED_IN = false;
       };
@@ -1934,30 +1954,29 @@ window.onload = function() {
                     );
 
                 } else {
-                        if (IS_CALL_ENABLED) {
-                                mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
-                            }
-                   }
-									 $applozic(d).on('click', '.imageview', function(e) {
-										 	// click event while opening the image for preview
-											 var $this = $applozic(this);
-											 var that = this;
-											 var href = $this.data('url');
-											 if(href === ""){
-														 var key;
-														 var fileUrl;
-														 key = $this.data("blobkey");
-														 alFileService.generateCloudUrl(key, function(result) {
-															 fileUrl= result;
-															 that.dataset.url=fileUrl;
-															 _this.setImageViewParams(fileUrl, that);
-														 });
+                    if (IS_CALL_ENABLED) {
+                        mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
+                    }
+                }
+				$applozic(d).on('click', '.imageview', function(e) {
+				    // click event while opening the image for preview
+				    var $this = $applozic(this);
+				    var that = this;
+				    var href = $this.data('url');
+				    if(href === ""){
+					    var key;
+					    var fileUrl;
+					    key = $this.data("blobkey");
+					    alFileService.generateCloudUrl(key, function(result) {
+					        ileUrl= result;
+						    that.dataset.url=fileUrl;
+						    _this.setImageViewParams(fileUrl, that);
+					    });
 
-											 }
-											 else {
-												 _this.setImageViewParams(href, this);
-											 }
-									 });
+				    } else {
+					    _this.setImageViewParams(href, this);
+				    }
+			    });
             };
 
 						$applozic(d).on('click', '.file-preview-link', function(e) {
@@ -2064,6 +2083,9 @@ window.onload = function() {
             }
 
             _this.onInitApp = function(data) {
+                if (SHARE_SESSION_STORAGE) {
+                    ALStorage.setLoggedInStatus('true');
+                }
                 _this.appendLauncher();
                 _this.setLabels();
                 $applozic('.applozic-launcher').each(function() {

@@ -1921,7 +1921,7 @@ window.onload = function() {
                 if (!isValidated) {
                     userPxy.applicationId =  MCK_APP_ID;
               //    window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
-                    window.Applozic.ALApiService.login(
+                    window.Applozic.ALApiService.connect(
                         {
                             data: {alUser: userPxy,baseUrl: MCK_BASE_URL},
                             success: function(result) {
@@ -4244,7 +4244,7 @@ window.onload = function() {
                 if ($mck_sidebox.css('display') === 'none') {
                     $applozic('.mckModal').mckModal('hide');
                     $mck_sidebox.mckModal();
-                    $mck_msg_inner.html('');
+                    //$mck_msg_inner.html('');
                 }
                 $mck_msg_to.focus();
             };

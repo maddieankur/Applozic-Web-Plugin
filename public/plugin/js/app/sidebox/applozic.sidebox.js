@@ -4244,7 +4244,7 @@ window.onload = function() {
                 if ($mck_sidebox.css('display') === 'none') {
                     $applozic('.mckModal').mckModal('hide');
                     $mck_sidebox.mckModal();
-                    $mck_msg_inner.html('');
+                    //$mck_msg_inner.html('');
                 }
                 $mck_msg_to.focus();
             };

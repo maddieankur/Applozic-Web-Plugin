@@ -1913,7 +1913,7 @@ window.onload = function() {
                     userPxy.userTypeId = USER_TYPE_ID;
                 }
                 userPxy.enableEncryption = true;
-                userPxy.appVersionCode = 108;
+                userPxy.appVersionCode = 111;
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
                 USER_DEVICE_KEY = '';
@@ -2072,10 +2072,6 @@ window.onload = function() {
                     }
                 });
                 MCK_TOKEN = data.token;
-                mckUtils.setEncryptionKey(data.encryptionKey);
-								if (typeof (data.encryptionKey) !== 'undefined'){
-								ALStorage.setEncryptionKey(data.encryptionKey);
-								}
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
                     data.websocketUrl = MCK_WEBSOCKET_URL;
@@ -2094,6 +2090,7 @@ window.onload = function() {
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
 
 				window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+                window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
 
                 _this.setUnreadCountOnStartup(MCK_USER_ID);
 
@@ -5615,7 +5612,8 @@ window.onload = function() {
 								mckUtils.ajax({
 											url: url,
 											type: 'get',
-											global: false,
+                                            global: false,
+                                            encryptionKey: window.Applozic.ALApiService.getEncryptionKey(),
 											success: function (data) {
 											console.log(data);
 											if (data.success) {
@@ -8333,7 +8331,7 @@ window.onload = function() {
                 mckUtils.ajax({
                     url: MCK_BASE_URL + "/twilio/token",
                     type: 'post',
-										skipEncryption: true,
+					skipEncryption: true,
                     contentType: 'application/x-www-form-urlencoded',
                     data: { "identity": userId, "device": deviceKey },
                     success: function(result) {

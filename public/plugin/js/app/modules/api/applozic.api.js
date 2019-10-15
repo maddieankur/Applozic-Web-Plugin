@@ -59,6 +59,7 @@
         var DEVICE_KEY;
         var APP_MODULE_NAME;
         var AUTH_CODE;
+        var ENCRYPTION_KEY, USER_ENCRYPTION_KEY;
         var MCK_CUSTOM_UPLOAD_SETTINGS;
 
         function getAsUriParameters(data) {
@@ -86,7 +87,7 @@
         /**
          * Login user to the chat session, must be done once in a session.
          * Usage Example:
-         * Applozic.ALApiService.connect({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.connect({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 111, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.connect = function (options) {
             MCK_APP_ID = options.data.alUser.applicationId;
@@ -103,13 +104,12 @@
                     'Application-Key': MCK_APP_ID
                 },
                 success: function (response) {
-                    mckUtils.setEncryptionKey(response.encryptionKey);
                     AUTH_CODE = btoa(response.userId + ':' + response.deviceKey);
                     DEVICE_KEY = response.deviceKey;
                     ACCESS_TOKEN = options.data.alUser.password;
                     APP_MODULE_NAME = options.data.alUser.appModuleName;
                     ALApiService.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
-
+                    ALApiService.setEncryptionKeys(response.encryptionKey, response.userEncryptionKey);
                     if (options.success) {
                         options.success(response);
                     }
@@ -134,6 +134,13 @@
             }
             return headers;
         },
+        ALApiService.getEncryptionKey = function() {
+            return ENCRYPTION_KEY;
+        }
+        ALApiService.setEncryptionKeys = function(encryptionKey, userEncryptionKey) {
+            ENCRYPTION_KEY = encryptionKey;
+            USER_ENCRYPTION_KEY = userEncryptionKey;
+        },
             ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
                 MCK_APP_ID = appId;
                 AUTH_CODE = authcode;
@@ -152,33 +159,14 @@
             }
 
             var reqOptions = extend({}, {}, options);
-            if (!(options.skipEncryption === true) && mckUtils.getEncryptionKey()) {
-                var key = aesjs.util.convertStringToBytes(mckUtils.getEncryptionKey());
-                var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            if (!(options.skipEncryption === true) && ENCRYPTION_KEY) {
 
                 if (reqOptions.type.toLowerCase() === 'post') {
-                    // encrypt Data
-                    while (options.data && options.data.length % 16 != 0) {
-                        options.data += ' ';
-                    }
-                    var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                    var bytes = aesjs.util.convertStringToBytes(options.data);
-                    var encryptedBytes = aesCtr.encrypt(bytes);
-                    var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
-                    reqOptions.data = btoa(encryptedStr);
+                    reqOptions.data = mckUtils.encrypt(options.data, ENCRYPTION_KEY);
                 }
 
                 reqOptions.success = function (data) {
-                    // Decrypt response
-                    var decodedData = atob(data);
-                    var arr = [];
-                    for (var i = 0; i < decodedData.length; i++) {
-                        arr.push(decodedData.charCodeAt(i));
-                    }
-                    var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                    var decryptedBytes = aesCtr.decrypt(arr);
-                    var res = aesjs.util.convertBytesToString(decryptedBytes);
-                    res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+                    res = mckUtils.decrypt(data, ENCRYPTION_KEY);
                     if (mckUtils.isJsonString(res)) {
                         options.success(JSON.parse(res));
                     } else {

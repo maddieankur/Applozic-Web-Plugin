@@ -8,22 +8,6 @@ var ALStorage = (function (win) {
     var ENCRYPTION_KEY;
 
     return {
-
-        setEncryptionKey: function (encryptionKey) {
-            if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.setItem('encryptionKey', encryptionKey);
-            } else {
-                ENCRYPTION_KEY = encryptionKey;
-            }
-        },
-        getEncryptionKey: function (encryptionKey) {
-            return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("encryptionKey") : ENCRYPTION_KEY;
-        },
-        removeEncryptionKey: function () {
-            if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.removeItem('encryptionKey');
-            }
-        },
         updateLatestMessage: function (message) {
             var messageArray = [];
             messageArray.push(message);
@@ -146,7 +130,6 @@ var ALStorage = (function (win) {
             }
         },
         clearMckContactNameArray: function () {
-
             if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('mckContactNameArray');
             } else {
@@ -157,7 +140,6 @@ var ALStorage = (function (win) {
             ALStorage.clearMckMessageArray();
             ALStorage.clearAppHeaders();
             ALStorage.clearMckContactNameArray();
-            ALStorage.removeEncryptionKey();
         },
         isSessionStorageAvailable: function () {
             try {

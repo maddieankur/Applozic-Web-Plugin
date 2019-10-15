@@ -189,7 +189,7 @@ function MckUtils() {
         if (!encryptionKey) {
             return data;
         }
-        
+
         var key = aesjs.util.convertStringToBytes(encryptionKey);
         var decodedData = atob(data);
         var arr = [];
@@ -205,7 +205,7 @@ function MckUtils() {
     _this.ajax = function(options) {
         //var reqOptions = Object.assign({}, options);
         var reqOptions = $applozic.extend({}, {}, options);
-        if (!(options.skipEncryption === true) && options.encryptionKey) {
+        if (!options.skipEncryption && options.encryptionKey) {
             if (reqOptions.type.toLowerCase() === 'post') {
                 reqOptions.data = encrypt(options.data, options.encryptionKey);
             }

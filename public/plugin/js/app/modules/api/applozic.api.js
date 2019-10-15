@@ -159,7 +159,7 @@
             }
 
             var reqOptions = extend({}, {}, options);
-            if (!(options.skipEncryption === true) && ENCRYPTION_KEY) {
+            if (!options.skipEncryption && ENCRYPTION_KEY) {
 
                 if (reqOptions.type.toLowerCase() === 'post') {
                     reqOptions.data = mckUtils.encrypt(options.data, ENCRYPTION_KEY);

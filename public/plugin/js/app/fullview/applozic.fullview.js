@@ -1295,7 +1295,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     userPxy.userTypeId = USER_TYPE_ID;
                 }
                 userPxy.enableEncryption = true;
-                userPxy.appVersionCode = 108;
+                userPxy.appVersionCode = 111;
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
                 USER_DEVICE_KEY = '';
@@ -1479,7 +1479,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
 
                 MCK_TOKEN = data.token;
-                mckUtils.setEncryptionKey(data.encryptionKey);
                 MCK_USER_ID = data.userId;
                 USER_COUNTRY_CODE = data.countryCode;
                 USER_DEVICE_KEY = data.deviceKey;
@@ -1504,6 +1503,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+                window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
+
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
                     mckInitializeChannel.init();
@@ -8209,6 +8210,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONNECTED = 'connected';
             var CONNECTING = 'connecting';
             var DISCONNECTED = 'disconnected';
+            var USER_ENCRYPTION_KEY;
             _this.init = function() {
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                     if (typeof w.SockJS === 'function') {
@@ -8440,18 +8442,20 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }, MCK_TOKEN + "," + USER_DEVICE_KEY + "," + status);
                 }
             };
-            _this.onConnect = function() {
+            _this.onConnect = function(userEncryptionKey) {
+                USER_ENCRYPTION_KEY = userEncryptionKey;
+                var topic = "/topic/" + (USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
                 if (stompClient.connected) {
                     if (subscriber) {
                         _this.unsubscibeToNotification();
                     }
-                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
+                    subscriber = stompClient.subscribe(topic, _this.onMessage);
                     _this.sendStatus(1);
                     _this.checkConnected(true);
                     socketStatus = CONNECTED;
                 } else {
                     setTimeout(function() {
-                        subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
+                        subscriber = stompClient.subscribe(topic, _this.onMessage);
                         _this.sendStatus(1);
                         _this.checkConnected(true);
                     }, 5000);

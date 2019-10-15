@@ -105,6 +105,7 @@ function AlUserService() {
       url: MCK_BASE_URL + USER_BLOCK_URL,
       type: 'get',
       data: data,
+      encryptionKey: window.Applozic.ALApiService.getEncryptionKey(),
       success: function(data) {
         if (typeof data === 'object') {
           if (data.status === 'success') {

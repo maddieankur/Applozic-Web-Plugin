@@ -1283,6 +1283,7 @@ window.onload = function() {
            ALStorage.clearSessionStorageElements();
            MCK_TOKEN = '';
            AUTH_CODE = '';
+           window.Applozic.ALApiService.AUTH_TOKEN = null;
            FILE_META = [];
            MCK_GROUP_MAP = [];
            IS_LOGGED_IN = true;
@@ -1916,6 +1917,7 @@ window.onload = function() {
                 userPxy.appVersionCode = 111;
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
+                window.Applozic.ALApiService.AUTH_TOKEN = null;
                 USER_DEVICE_KEY = '';
                 var isValidated = _this.validateAppSession(userPxy);
                 if (!isValidated) {
@@ -2089,6 +2091,7 @@ window.onload = function() {
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
 
+                window.Applozic.ALApiService.AUTH_TOKEN = data.authToken;
 				window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
 
@@ -2167,6 +2170,9 @@ window.onload = function() {
 
             };
             _this.setHeaders = function(jqXHR) {
+                if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                    jqXHR.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                }
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (AUTH_CODE) {
                     jqXHR.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
@@ -7728,7 +7734,10 @@ window.onload = function() {
 												});
 												var url = MCK_CUSTOM_URL + CUSTOM_FILE_UPLOAD_URL;
 
-												xhr.open('post', url , true);
+                                                xhr.open('post', url , true);
+                                                if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                                                    xhr.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                                                }
 												xhr.setRequestHeader("UserId-Enabled", true);
                                                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                                                 xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -7828,7 +7837,10 @@ window.onload = function() {
 												});
 												var url = MCK_STORAGE_URL + CUSTOM_FILE_UPLOAD_URL;
 
-												xhr.open('post', url , true);
+                                                xhr.open('post', url , true);
+                                                if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                                                    xhr.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                                                }
 												xhr.setRequestHeader("UserId-Enabled", true);
                                                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                                                 xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -7934,6 +7946,9 @@ window.onload = function() {
                                 var fd = new FormData();
                                 fd.append('files[]', file);
                                 xhr.open("POST", result, true);
+                                if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                                    xhr.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                                }
                                 xhr.setRequestHeader("UserId-Enabled", true);
                                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                                 xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -8033,6 +8048,9 @@ window.onload = function() {
 												var url = MCK_BASE_URL + ATTACHMENT_UPLOAD_URL
 
                         xhr.open('post', url , true);
+                        if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                            xhr.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                        }
                         xhr.setRequestHeader("UserId-Enabled", true);
                         xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                         xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -8098,6 +8116,9 @@ window.onload = function() {
                     });
                     data.append("file", file);
                     xhr.open('post', MCK_BASE_URL + FILE_AWS_UPLOAD_URL, true);
+                    if (window.Applozic.ALApiService.AUTH_TOKEN) {
+                        xhr.setRequestHeader("X-Authorization", window.Applozic.ALApiService.AUTH_TOKEN);
+                    }
                     xhr.setRequestHeader("UserId-Enabled", true);
                     xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                     xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);

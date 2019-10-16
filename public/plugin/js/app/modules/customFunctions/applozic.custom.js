@@ -4,6 +4,7 @@
   var AlCustomService = {};
 AlCustomService.logout = function() {
    if (typeof window.Applozic.ALSocket !== 'undefined') {
+        window.Applozic.ALApiService.AUTH_TOKEN = null;
         window.Applozic.ALApiService.setAjaxHeaders('','','','','');
         window.Applozic.ALApiService.setEncryptionKeys(null, null);
         window.Applozic.ALSocket.disconnect();

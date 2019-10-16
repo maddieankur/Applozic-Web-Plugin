@@ -8560,7 +8560,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (subscriber != null && subscriber.id === obj.headers.subscription) {
                     $mck_message_inner = mckMessageLayout.getMckMessageInner();
 
-                    res = mckUtils.decrypt(obj.body, USER_ENCRYPTION_KEY);
+                    var res = mckUtils.decrypt(obj.body, USER_ENCRYPTION_KEY);
                     var resp = $applozic.parseJSON(res);
                     var messageType = resp.type;
                     typeof resp.message == "object" && $mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);

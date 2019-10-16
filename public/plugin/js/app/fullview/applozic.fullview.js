@@ -492,13 +492,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
-            if(EMOJI_LIBRARY) { // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
-               mckMessageLayout.initEmojis();
-            }
-            else {              // EMOJI_LIBRARY = false ->hide emoticon from chat widget
-               document.getElementById('mck-btn-smiley').setAttribute('class', 'n-vis');
-               document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
-            }
             if (IS_CALL_ENABLED) {
               notificationtoneoption.loop = true;
              ringToneService = new RingToneService();
@@ -1507,6 +1500,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                 window.Applozic.ALApiService.AUTH_TOKEN = data.authToken;
                 window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
+
+                if (!EMOJI_LIBRARY || data.encryptionKey) { 
+                    // EMOJI_LIBRARY = false ->hide emoticon from chat widget
+                    document.getElementById('mck-btn-smiley').setAttribute('class', 'n-vis');
+                    document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
+                } else {              
+                    // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
+                    mckMessageLayout.initEmojis();
+                }
 
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
@@ -7645,6 +7647,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             url: MCK_FILE_URL + FILE_UPLOAD_URL,
                             global: false,
                             data: "data=" + new Date().getTime(),
+                            skipEncryption: true,
                             crosDomain: true,
                             success: function(result) {
                                 var fd = new FormData();
@@ -7848,11 +7851,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             }
                         });
                         var url = MCK_STORAGE_URL + CUSTOM_FILE_UPLOAD_URL;
-
                         xhr.open('post', url , true);
                         window.Applozic.ALApiService.addRequestHeaders(xhr);
                         xhr.send(data);
-
                     }
                     return false;
                 }

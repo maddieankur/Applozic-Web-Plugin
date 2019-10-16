@@ -1057,13 +1057,6 @@ window.onload = function() {
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
-						if(EMOJI_LIBRARY) { // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
-							 mckMessageLayout.initEmojis();
-						}
-						else {              // EMOJI_LIBRARY = false ->hide emoticon from chat widget
-							 document.getElementById('mck-textbox-container').getElementsByTagName('div')[0].setAttribute('class', 'n-vis');
-							 document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
-						}
             if (IS_CALL_ENABLED) {
              ringToneService = new RingToneService();
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
@@ -2094,6 +2087,15 @@ window.onload = function() {
                 window.Applozic.ALApiService.AUTH_TOKEN = data.authToken;
 				window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
+
+                if (!EMOJI_LIBRARY || data.encryptionKey) { 
+                    // EMOJI_LIBRARY = false ->hide emoticon from chat widget
+                    document.getElementById('mck-textbox-container').getElementsByTagName('div')[0].setAttribute('class', 'n-vis');
+                    document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
+                } else {              
+                    // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
+                    mckMessageLayout.initEmojis();
+                }
 
                 _this.setUnreadCountOnStartup(MCK_USER_ID);
 
@@ -7716,7 +7718,6 @@ window.onload = function() {
                                                 xhr.open('post', url , true);
                                                 window.Applozic.ALApiService.addRequestHeaders(xhr);
 												xhr.send(data);
-
 										}
 										return false;
 								}

@@ -108,6 +108,7 @@
                     DEVICE_KEY = response.deviceKey;
                     ACCESS_TOKEN = options.data.alUser.password;
                     APP_MODULE_NAME = options.data.alUser.appModuleName;
+                    ALApiService.AUTH_TOKEN = response.authToken;
                     ALApiService.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
                     ALApiService.setEncryptionKeys(response.encryptionKey, response.userEncryptionKey);
                     if (options.success) {
@@ -129,6 +130,9 @@
                 'Application-Key': MCK_APP_ID,
                 'Device-Key': DEVICE_KEY
             };
+            if (ALApiService.AUTH_TOKEN) {
+                headers["X-Authorization"] = ALApiService.AUTH_TOKEN;
+            }
             if (ACCESS_TOKEN) {
                 headers['Access-Token'] = ACCESS_TOKEN;
             }
@@ -141,13 +145,13 @@
             ENCRYPTION_KEY = encryptionKey;
             USER_ENCRYPTION_KEY = userEncryptionKey;
         },
-            ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
-                MCK_APP_ID = appId;
-                AUTH_CODE = authcode;
-                DEVICE_KEY = devKey;
-                ACCESS_TOKEN = accToken;
-                APP_MODULE_NAME = modName;
-            }
+        ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
+            MCK_APP_ID = appId;
+            AUTH_CODE = authcode;
+            DEVICE_KEY = devKey;
+            ACCESS_TOKEN = accToken;
+            APP_MODULE_NAME = modName;
+        },
         ALApiService.ajax = function (options) {
 
             function extend() {
@@ -203,6 +207,10 @@
             MCK_BASE_URL = MCK_BASE_URL ? MCK_BASE_URL : "https://apps.applozic.com";
             if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
                 request.setRequestHeader("UserId-Enabled", true);
+
+                if (ALApiService.AUTH_TOKEN) {
+                    request.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+                }
 
                 if (AUTH_CODE) {
                     request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
@@ -1187,6 +1195,9 @@
                 var file = options.data.file;
                 data.append('files[]', file);
                 xhr.open("POST", response, true);
+                if (ALApiService.AUTH_TOKEN) {
+                    xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+                }
                 xhr.setRequestHeader("UserId-Enabled", true);
                 xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                 xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -1220,6 +1231,9 @@
           });
           data.append("file", options.data.file);
           xhr.open("post", attachmentURL, true);
+          if (ALApiService.AUTH_TOKEN) {
+            xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+          }
           xhr.setRequestHeader("UserId-Enabled", true);
           xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
           xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
@@ -1249,6 +1263,9 @@
           });
           data.append("files[]", options.data.file);
           xhr.open("post", attachmentURL, true);
+          if (ALApiService.AUTH_TOKEN) {
+            xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+          }
           xhr.setRequestHeader("UserId-Enabled", true);
           xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
           xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);

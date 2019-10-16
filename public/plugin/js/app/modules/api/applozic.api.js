@@ -122,9 +122,7 @@
                 }
             });
         },
-        ALApiService.addRequestHeaders = function (request) {
-            request.setRequestHeader("UserId-Enabled", true);
-            
+        ALApiService.addRequestHeaders = function (request) {            
             if (ALApiService.AUTH_TOKEN) {
                 request.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
             } else {
@@ -141,6 +139,7 @@
                 if (APP_MODULE_NAME) {
                     request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
                 }
+                request.setRequestHeader("UserId-Enabled", true);
             }
             request.setRequestHeader("Application-Key", MCK_APP_ID);
         },

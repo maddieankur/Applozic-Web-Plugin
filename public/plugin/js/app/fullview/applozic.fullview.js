@@ -8211,7 +8211,11 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONNECTING = 'connecting';
             var DISCONNECTED = 'disconnected';
             var USER_ENCRYPTION_KEY;
-            _this.init = function() {
+            _this.init = function(data) {
+                if (typeof data !== "undefined") {
+                    USER_ENCRYPTION_KEY = data.userEncryptionKey;
+                }
+
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                     if (typeof w.SockJS === 'function') {
                         SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
@@ -8442,9 +8446,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }, MCK_TOKEN + "," + USER_DEVICE_KEY + "," + status);
                 }
             };
-            _this.onConnect = function(userEncryptionKey) {
-                USER_ENCRYPTION_KEY = userEncryptionKey;
-                var topic = "/topic/" + (USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
+            _this.onConnect = function() {
+                var topic = "/topic/" + (USER_ENCRYPTION_KEY ? "encr-":"") + MCK_TOKEN;
                 if (stompClient.connected) {
                     if (subscriber) {
                         _this.unsubscibeToNotification();
@@ -8535,7 +8538,9 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.onMessage = function(obj) {
                 if (subscriber != null && subscriber.id === obj.headers.subscription) {
                     $mck_message_inner = mckMessageLayout.getMckMessageInner();
-                    var resp = $applozic.parseJSON(obj.body);
+
+                    res = mckUtils.decrypt(obj.body, USER_ENCRYPTION_KEY);
+                    var resp = $applozic.parseJSON(res);
                     var messageType = resp.type;
                     typeof resp.message == "object" && $mck_message_inner.data('last-message-received-time', resp.message.createdAtTime);
                     if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {

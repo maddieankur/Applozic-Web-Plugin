@@ -19,7 +19,7 @@
         var MCK_WEBSOCKET_PORT = "80";
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
-        var USER_ENCRYPTION_KEY;
+        ALSocket.USER_ENCRYPTION_KEY;
         var mckUtils = new MckUtils();
 
         /**
@@ -54,6 +54,7 @@
             if (typeof data !== "undefined") {
                 ALSocket.MCK_TOKEN = data.token;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
+                ALSocket.USER_ENCRYPTION_KEY = data.userEncryptionKey;
                 MCK_WEBSOCKET_URL = data.websocketUrl;
 
                 if (typeof data.websocketPort === "undefined") {
@@ -74,7 +75,7 @@
                     ALSocket.stompClient.onclose = function() {
                         ALSocket.disconnect();
                     };
-                    ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect(data.userEncryptionKey), ALSocket.onError, '/');
+                    ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
                         var check_url;
                         (e.target.activeElement) && (check_url=e.target.activeElement.href);
@@ -220,9 +221,8 @@
                 }, ALSocket.MCK_TOKEN + "," + ALSocket.USER_DEVICE_KEY + "," + status);
             }
         };
-        ALSocket.onConnect = function(userEncryptionKey) {
-            USER_ENCRYPTION_KEY = userEncryptionKey;
-            var topic = "/topic/" + (USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
+        ALSocket.onConnect = function() {
+            var topic = "/topic/" + (ALSocket.USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
             if (ALSocket.stompClient.connected) {
                 if (subscriber) {
                     ALSocket.unsubscibeToNotification();
@@ -248,8 +248,8 @@
         };
         ALSocket.onMessage = function (obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
-                res = mckUtils.decrypt(obj.body, USER_ENCRYPTION_KEY);
-                
+                res = mckUtils.decrypt(obj.body, ALSocket.USER_ENCRYPTION_KEY);
+
                 var resp = JSON.parse(res);
                 var messageType = resp.type;
                 if (typeof ALSocket.events.onMessage === "function") {

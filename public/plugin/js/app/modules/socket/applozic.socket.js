@@ -248,7 +248,7 @@
         };
         ALSocket.onMessage = function (obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
-                res = mckUtils.decrypt(obj.body, ALSocket.USER_ENCRYPTION_KEY);
+                var res = mckUtils.decrypt(obj.body, ALSocket.USER_ENCRYPTION_KEY);
 
                 var resp = JSON.parse(res);
                 var messageType = resp.type;

@@ -121,21 +121,47 @@
                     }
                 }
             });
-        }
+        },
+        ALApiService.addRequestHeaders = function (request) {
+            request.setRequestHeader("UserId-Enabled", true);
+            
+            if (ALApiService.AUTH_TOKEN) {
+                request.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+            } else {
+                if (AUTH_CODE) {
+                    request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    request.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
+                }
+                if (DEVICE_KEY) {
+                    request.setRequestHeader("Device-Key", DEVICE_KEY);
+                }
+                if (ACCESS_TOKEN) {
+                    request.setRequestHeader("Access-Token", ACCESS_TOKEN);
+                }
+                if (APP_MODULE_NAME) {
+                    request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
+                }
+            }
+            request.setRequestHeader("Application-Key", MCK_APP_ID);
+        },
         ALApiService.getAttachmentHeaders = function () {
-            var headers = {
-                'UserId-Enabled': true,
-                'Authorization': "Basic " + AUTH_CODE,
-                "Application-User": "Basic " + AUTH_CODE,
-                'Application-Key': MCK_APP_ID,
-                'Device-Key': DEVICE_KEY
-            };
+            var headers = {};
             if (ALApiService.AUTH_TOKEN) {
                 headers["X-Authorization"] = ALApiService.AUTH_TOKEN;
+            } else {
+                headers = {
+                    'UserId-Enabled': true,
+                    'Authorization': "Basic " + AUTH_CODE,
+                    "Application-User": "Basic " + AUTH_CODE,
+                    'Application-Key': MCK_APP_ID,
+                    'Device-Key': DEVICE_KEY
+                };
+                
+                if (ACCESS_TOKEN) {
+                    headers['Access-Token'] = ACCESS_TOKEN;
+                }
             }
-            if (ACCESS_TOKEN) {
-                headers['Access-Token'] = ACCESS_TOKEN;
-            }
+
             return headers;
         },
         ALApiService.getEncryptionKey = function() {
@@ -145,6 +171,7 @@
             ENCRYPTION_KEY = encryptionKey;
             USER_ENCRYPTION_KEY = userEncryptionKey;
         },
+        
         ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
             MCK_APP_ID = appId;
             AUTH_CODE = authcode;
@@ -206,26 +233,7 @@
             //authorizationrequestheaders
             MCK_BASE_URL = MCK_BASE_URL ? MCK_BASE_URL : "https://apps.applozic.com";
             if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
-                request.setRequestHeader("UserId-Enabled", true);
-
-                if (ALApiService.AUTH_TOKEN) {
-                    request.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
-                }
-
-                if (AUTH_CODE) {
-                    request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                    request.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                }
-                request.setRequestHeader("Application-Key", MCK_APP_ID);
-                if (DEVICE_KEY) {
-                    request.setRequestHeader("Device-Key", DEVICE_KEY);
-                }
-                if (ACCESS_TOKEN) {
-                    request.setRequestHeader("Access-Token", ACCESS_TOKEN);
-                }
-                if (APP_MODULE_NAME) {
-                    request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
-                }
+                ALApiService.addRequestHeaders(request);
             }
             if (reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
                 request.setRequestHeader("Application-Key", MCK_APP_ID);
@@ -1195,14 +1203,7 @@
                 var file = options.data.file;
                 data.append('files[]', file);
                 xhr.open("POST", response, true);
-                if (ALApiService.AUTH_TOKEN) {
-                    xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
-                }
-                xhr.setRequestHeader("UserId-Enabled", true);
-                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
+                ALApiService.addRequestHeaders(xhr);
                 xhr.send(data);
                 },
               error: function (response) {
@@ -1231,17 +1232,7 @@
           });
           data.append("file", options.data.file);
           xhr.open("post", attachmentURL, true);
-          if (ALApiService.AUTH_TOKEN) {
-            xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
-          }
-          xhr.setRequestHeader("UserId-Enabled", true);
-          xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-          xhr.setRequestHeader("Device-Key", DEVICE_KEY);
-          if (ACCESS_TOKEN) {
-              xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
-          }
+          ALApiService.addRequestHeaders(xhr);
           xhr.send(data);
       };
 
@@ -1263,17 +1254,7 @@
           });
           data.append("files[]", options.data.file);
           xhr.open("post", attachmentURL, true);
-          if (ALApiService.AUTH_TOKEN) {
-            xhr.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
-          }
-          xhr.setRequestHeader("UserId-Enabled", true);
-          xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-          xhr.setRequestHeader("Device-Key", DEVICE_KEY);
-          if (ACCESS_TOKEN) {
-              xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
-          }
+          ALApiService.addRequestHeaders(xhr);
           xhr.send(data);
         };
         /**

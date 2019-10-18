@@ -6898,7 +6898,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var group = mckGroupUtils.getGroup(groupId);
                 if (params.users) {
                     for (var index in params.users) {
-                        document.getElementById('user-'+params.users[index].userId+'-role').innerHTML=ROLE_MAP[params.users[index].role];
+                        var userRoleElement = document.getElementById('user-'+params.users[index].userId+'-role');
+                        if (userRoleElement) {
+                            userRoleElement.innerHTML=ROLE_MAP[params.users[index].role];
+                        }
+
                         if (params.users[index].userId) {
                             group.users[params.users[index].userId] = params.users[index];
                         }

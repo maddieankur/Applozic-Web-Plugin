@@ -157,22 +157,6 @@ function MckUtils() {
         }
     };
 
-    this.encryptionKey = null;
-    this.getEncryptionKey = function() {
-       var setEncryptionKey;
-      if(this.encryptionKey === null) {
-        setEncryptionKey = ALStorage.getEncryptionKey();
-        return setEncryptionKey;
-      }
-      else {
-        return this.encryptionKey;
-      }
-
-    }
-    this.setEncryptionKey = function(key) {
-        this.encryptionKey = key;
-    }
-
     _this.b64EncodeUnicode = function(str) {
         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
             return String.fromCharCode('0x' + p1);
@@ -185,36 +169,50 @@ function MckUtils() {
         }).join(''));
     };
 
+    _this.encrypt = function(data, encryptionKey) {
+        if (!encryptionKey) {
+            return data;
+        }
+
+        while (data && data.length % 16 != 0) {
+            data += ' ';
+        }
+        var key = aesjs.util.convertStringToBytes(encryptionKey);
+        var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+        var bytes = aesjs.util.convertStringToBytes(data);
+        var encryptedBytes = aesCtr.encrypt(bytes);
+        var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
+        return btoa(encryptedStr);
+    },
+
+    _this.decrypt = function(data, encryptionKey) {  
+        if (!encryptionKey) {
+            return data;
+        }
+
+        var key = aesjs.util.convertStringToBytes(encryptionKey);
+        var decodedData = atob(data);
+        var arr = [];
+        for (var i = 0; i < decodedData.length; i++) {
+            arr.push(decodedData.charCodeAt(i));
+        }
+        var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+        var decryptedBytes = aesCtr.decrypt(arr);
+        var res = aesjs.util.convertBytesToString(decryptedBytes);
+        return res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+    },
+
     _this.ajax = function(options) {
         //var reqOptions = Object.assign({}, options);
         var reqOptions = $applozic.extend({}, {}, options);
-        if (!(options.skipEncryption === true) && mckUtils.getEncryptionKey()) {
-            var key = aesjs.util.convertStringToBytes(mckUtils.getEncryptionKey());
-            var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
+        if (!options.skipEncryption && options.encryptionKey) {
             if (reqOptions.type.toLowerCase() === 'post') {
-                // encrypt Data
-                while (options.data && options.data.length % 16 != 0) {
-                    options.data += ' ';
-                }
-                var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                var bytes = aesjs.util.convertStringToBytes(options.data);
-                var encryptedBytes = aesCtr.encrypt(bytes);
-                var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
-                reqOptions.data = btoa(encryptedStr);
+                reqOptions.data = encrypt(options.data, options.encryptionKey);
             }
 
             reqOptions.success = function (data) {
-                // Decrypt response
-                var decodedData = atob(data);
-                var arr = [];
-                for (var i = 0; i < decodedData.length; i++) {
-                    arr.push(decodedData.charCodeAt(i));
-                }
-                var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                var decryptedBytes = aesCtr.decrypt(arr);
-                var res = aesjs.util.convertBytesToString(decryptedBytes);
-                res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+                res = _this.decrypt(data, options.encryptionKey);
+
                 if (mckUtils.isJsonString(res)) {
                     options.success(JSON.parse(res));
                 } else {

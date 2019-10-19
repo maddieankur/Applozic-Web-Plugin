@@ -8,22 +8,6 @@ var ALStorage = (function (win) {
     var ENCRYPTION_KEY;
 
     return {
-
-        setEncryptionKey: function (encryptionKey) {
-            if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.setItem('encryptionKey', encryptionKey);
-            } else {
-                ENCRYPTION_KEY = encryptionKey;
-            }
-        },
-        getEncryptionKey: function (encryptionKey) {
-            return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("encryptionKey") : ENCRYPTION_KEY;
-        },
-        removeEncryptionKey: function () {
-            if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.removeItem('encryptionKey');
-            }
-        },
         updateLatestMessage: function (message) {
             var messageArray = [];
             messageArray.push(message);
@@ -89,16 +73,16 @@ var ALStorage = (function (win) {
         },
         clearAppHeaders: function () {
             if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.removeItem('mckAppHeaders');
+                w.sessionStorage.removeItem('chatheaders');
             }
         },
         setAppHeaders: function (data) {
             if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.setItem("mckAppHeaders", w.JSON.stringify(data));
+                w.sessionStorage.setItem("chatheaders", btoa(w.JSON.stringify(data)));
             }
         },
-        getAppHeaders: function (data) {
-            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem('mckAppHeaders')) : {};
+        getAppHeaders: function () {
+            return (ALStorage.isSessionStorageAvailable() && w.sessionStorage.getItem('chatheaders')) ? $applozic.parseJSON(atob(w.sessionStorage.getItem('chatheaders'))) : {};
         },
         getMessageByKey: function (key) {
             return MCK_MESSAGE_MAP[key];
@@ -146,7 +130,6 @@ var ALStorage = (function (win) {
             }
         },
         clearMckContactNameArray: function () {
-
             if (ALStorage.isSessionStorageAvailable()) {
                 w.sessionStorage.removeItem('mckContactNameArray');
             } else {
@@ -157,7 +140,6 @@ var ALStorage = (function (win) {
             ALStorage.clearMckMessageArray();
             ALStorage.clearAppHeaders();
             ALStorage.clearMckContactNameArray();
-            ALStorage.removeEncryptionKey();
         },
         isSessionStorageAvailable: function () {
             try {

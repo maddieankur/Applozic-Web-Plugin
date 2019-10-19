@@ -19,6 +19,7 @@
         var MCK_WEBSOCKET_PORT = "80";
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
+        ALSocket.USER_ENCRYPTION_KEY;
         var mckUtils = new MckUtils();
 
         /**
@@ -53,6 +54,7 @@
             if (typeof data !== "undefined") {
                 ALSocket.MCK_TOKEN = data.token;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
+                ALSocket.USER_ENCRYPTION_KEY = data.userEncryptionKey;
                 MCK_WEBSOCKET_URL = data.websocketUrl;
 
                 if (typeof data.websocketPort === "undefined") {
@@ -196,9 +198,10 @@
             ALSocket.unsubscibeToTypingChannel();
             ALSocket.unsubscibeToNotification();
             ALSocket.disconnect();
-            var data ={};
+            var data = {};
             data.token = ALSocket.MCK_TOKEN ;
             data.deviceKey = ALSocket.USER_DEVICE_KEY;
+            data.userEncryptionKey = ALSocket.USER_ENCRYPTION_KEY;
             data.websocketUrl = MCK_WEBSOCKET_URL;
             data.websocketPort = MCK_WEBSOCKET_PORT;
             ALSocket.init(MCK_APP_ID, data, ALSocket.events);
@@ -219,16 +222,17 @@
             }
         };
         ALSocket.onConnect = function() {
+            var topic = "/topic/" + (ALSocket.USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
             if (ALSocket.stompClient.connected) {
                 if (subscriber) {
                     ALSocket.unsubscibeToNotification();
                 }
-                subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);
+                subscriber = ALSocket.stompClient.subscribe(topic, ALSocket.onMessage);
                 ALSocket.sendStatus(1);
                 ALSocket.checkConnected(true);
             } else {
                 setTimeout(function() {
-                    subscriber = ALSocket.stompClient.subscribe("/topic/" + ALSocket.MCK_TOKEN, ALSocket.onMessage);
+                    subscriber = ALSocket.stompClient.subscribe(topic, ALSocket.onMessage);
                     ALSocket.sendStatus(1);
                     ALSocket.checkConnected(true);
                 }, 5000);
@@ -244,7 +248,9 @@
         };
         ALSocket.onMessage = function (obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
-                var resp = JSON.parse(obj.body);
+                var res = mckUtils.decrypt(obj.body, ALSocket.USER_ENCRYPTION_KEY);
+
+                var resp = JSON.parse(res);
                 var messageType = resp.type;
                 if (typeof ALSocket.events.onMessage === "function") {
                     ALSocket.events.onMessage(resp);

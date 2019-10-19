@@ -59,6 +59,7 @@
         var DEVICE_KEY;
         var APP_MODULE_NAME;
         var AUTH_CODE;
+        var ENCRYPTION_KEY, USER_ENCRYPTION_KEY;
         var MCK_CUSTOM_UPLOAD_SETTINGS;
 
         function getAsUriParameters(data) {
@@ -86,7 +87,7 @@
         /**
          * Login user to the chat session, must be done once in a session.
          * Usage Example:
-         * Applozic.ALApiService.connect({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.connect({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 111, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.connect = function (options) {
             MCK_APP_ID = options.data.alUser.applicationId;
@@ -103,13 +104,13 @@
                     'Application-Key': MCK_APP_ID
                 },
                 success: function (response) {
-                    mckUtils.setEncryptionKey(response.encryptionKey);
                     AUTH_CODE = btoa(response.userId + ':' + response.deviceKey);
                     DEVICE_KEY = response.deviceKey;
                     ACCESS_TOKEN = options.data.alUser.password;
                     APP_MODULE_NAME = options.data.alUser.appModuleName;
+                    ALApiService.AUTH_TOKEN = response.authToken;
                     ALApiService.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
-
+                    ALApiService.setEncryptionKeys(response.encryptionKey, response.userEncryptionKey);
                     if (options.success) {
                         options.success(response);
                     }
@@ -120,27 +121,63 @@
                     }
                 }
             });
-        }
-        ALApiService.getAttachmentHeaders = function () {
-            var headers = {
-                'UserId-Enabled': true,
-                'Authorization': "Basic " + AUTH_CODE,
-                "Application-User": "Basic " + AUTH_CODE,
-                'Application-Key': MCK_APP_ID,
-                'Device-Key': DEVICE_KEY
-            };
-            if (ACCESS_TOKEN) {
-                headers['Access-Token'] = ACCESS_TOKEN;
+        },
+        ALApiService.addRequestHeaders = function (request) {            
+            if (ALApiService.AUTH_TOKEN) {
+                request.setRequestHeader("X-Authorization", ALApiService.AUTH_TOKEN);
+            } else {
+                if (AUTH_CODE) {
+                    request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                    request.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
+                }
+                if (DEVICE_KEY) {
+                    request.setRequestHeader("Device-Key", DEVICE_KEY);
+                }
+                if (ACCESS_TOKEN) {
+                    request.setRequestHeader("Access-Token", ACCESS_TOKEN);
+                }
+                if (APP_MODULE_NAME) {
+                    request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
+                }
+                request.setRequestHeader("UserId-Enabled", true);
             }
+            request.setRequestHeader("Application-Key", MCK_APP_ID);
+        },
+        ALApiService.getAttachmentHeaders = function () {
+            var headers = {};
+            if (ALApiService.AUTH_TOKEN) {
+                headers["X-Authorization"] = ALApiService.AUTH_TOKEN;
+            } else {
+                headers = {
+                    'UserId-Enabled': true,
+                    'Authorization': "Basic " + AUTH_CODE,
+                    "Application-User": "Basic " + AUTH_CODE,
+                    'Application-Key': MCK_APP_ID,
+                    'Device-Key': DEVICE_KEY
+                };
+                
+                if (ACCESS_TOKEN) {
+                    headers['Access-Token'] = ACCESS_TOKEN;
+                }
+            }
+
             return headers;
         },
-            ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
-                MCK_APP_ID = appId;
-                AUTH_CODE = authcode;
-                DEVICE_KEY = devKey;
-                ACCESS_TOKEN = accToken;
-                APP_MODULE_NAME = modName;
-            }
+        ALApiService.getEncryptionKey = function() {
+            return ENCRYPTION_KEY;
+        }
+        ALApiService.setEncryptionKeys = function(encryptionKey, userEncryptionKey) {
+            ENCRYPTION_KEY = encryptionKey;
+            USER_ENCRYPTION_KEY = userEncryptionKey;
+        },
+        
+        ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
+            MCK_APP_ID = appId;
+            AUTH_CODE = authcode;
+            DEVICE_KEY = devKey;
+            ACCESS_TOKEN = accToken;
+            APP_MODULE_NAME = modName;
+        },
         ALApiService.ajax = function (options) {
 
             function extend() {
@@ -152,33 +189,14 @@
             }
 
             var reqOptions = extend({}, {}, options);
-            if (!(options.skipEncryption === true) && mckUtils.getEncryptionKey()) {
-                var key = aesjs.util.convertStringToBytes(mckUtils.getEncryptionKey());
-                var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            if (!options.skipEncryption && ENCRYPTION_KEY) {
 
                 if (reqOptions.type.toLowerCase() === 'post') {
-                    // encrypt Data
-                    while (options.data && options.data.length % 16 != 0) {
-                        options.data += ' ';
-                    }
-                    var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                    var bytes = aesjs.util.convertStringToBytes(options.data);
-                    var encryptedBytes = aesCtr.encrypt(bytes);
-                    var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
-                    reqOptions.data = btoa(encryptedStr);
+                    reqOptions.data = mckUtils.encrypt(options.data, ENCRYPTION_KEY);
                 }
 
                 reqOptions.success = function (data) {
-                    // Decrypt response
-                    var decodedData = atob(data);
-                    var arr = [];
-                    for (var i = 0; i < decodedData.length; i++) {
-                        arr.push(decodedData.charCodeAt(i));
-                    }
-                    var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-                    var decryptedBytes = aesCtr.decrypt(arr);
-                    var res = aesjs.util.convertBytesToString(decryptedBytes);
-                    res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+                    res = mckUtils.decrypt(data, ENCRYPTION_KEY);
                     if (mckUtils.isJsonString(res)) {
                         options.success(JSON.parse(res));
                     } else {
@@ -214,22 +232,7 @@
             //authorizationrequestheaders
             MCK_BASE_URL = MCK_BASE_URL ? MCK_BASE_URL : "https://apps.applozic.com";
             if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
-                request.setRequestHeader("UserId-Enabled", true);
-
-                if (AUTH_CODE) {
-                    request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                    request.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                }
-                request.setRequestHeader("Application-Key", MCK_APP_ID);
-                if (DEVICE_KEY) {
-                    request.setRequestHeader("Device-Key", DEVICE_KEY);
-                }
-                if (ACCESS_TOKEN) {
-                    request.setRequestHeader("Access-Token", ACCESS_TOKEN);
-                }
-                if (APP_MODULE_NAME) {
-                    request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
-                }
+                ALApiService.addRequestHeaders(request);
             }
             if (reqOptions.url.indexOf(S3_MIGRATION_URL) !== -1) {
                 request.setRequestHeader("Application-Key", MCK_APP_ID);
@@ -1199,11 +1202,7 @@
                 var file = options.data.file;
                 data.append('files[]', file);
                 xhr.open("POST", response, true);
-                xhr.setRequestHeader("UserId-Enabled", true);
-                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
+                ALApiService.addRequestHeaders(xhr);
                 xhr.send(data);
                 },
               error: function (response) {
@@ -1232,14 +1231,7 @@
           });
           data.append("file", options.data.file);
           xhr.open("post", attachmentURL, true);
-          xhr.setRequestHeader("UserId-Enabled", true);
-          xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-          xhr.setRequestHeader("Device-Key", DEVICE_KEY);
-          if (ACCESS_TOKEN) {
-              xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
-          }
+          ALApiService.addRequestHeaders(xhr);
           xhr.send(data);
       };
 
@@ -1261,14 +1253,7 @@
           });
           data.append("files[]", options.data.file);
           xhr.open("post", attachmentURL, true);
-          xhr.setRequestHeader("UserId-Enabled", true);
-          xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-          xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-          xhr.setRequestHeader("Device-Key", DEVICE_KEY);
-          if (ACCESS_TOKEN) {
-              xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
-          }
+          ALApiService.addRequestHeaders(xhr);
           xhr.send(data);
         };
         /**
@@ -1530,7 +1515,7 @@
           'registrationId': 'PUSH_NOTIFICATION_TOKEN', //Replace with FCM push notification token for Android devices and APNS push notification token for iOS devices
           'pushNotificationFormat' : '1', //1 for PhoneGap, 2 for Ionic
           'deviceType': '1',       //1 for Android, 4 for iOS
-          'appVersionCode': '108'
+          'appVersionCode': '111'
         };
         window.Applozic.ALApiService.registerClientApi({data: {"userPxy":userPxy}, success: function (result) {}, error: function () { } });
        */

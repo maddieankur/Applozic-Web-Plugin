@@ -1057,13 +1057,6 @@ window.onload = function() {
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
-						if(EMOJI_LIBRARY) { // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
-							 mckMessageLayout.initEmojis();
-						}
-						else {              // EMOJI_LIBRARY = false ->hide emoticon from chat widget
-							 document.getElementById('mck-textbox-container').getElementsByTagName('div')[0].setAttribute('class', 'n-vis');
-							 document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
-						}
             if (IS_CALL_ENABLED) {
              ringToneService = new RingToneService();
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
@@ -1283,6 +1276,7 @@ window.onload = function() {
            ALStorage.clearSessionStorageElements();
            MCK_TOKEN = '';
            AUTH_CODE = '';
+           window.Applozic.ALApiService.AUTH_TOKEN = null;
            FILE_META = [];
            MCK_GROUP_MAP = [];
            IS_LOGGED_IN = true;
@@ -1913,9 +1907,10 @@ window.onload = function() {
                     userPxy.userTypeId = USER_TYPE_ID;
                 }
                 userPxy.enableEncryption = true;
-                userPxy.appVersionCode = 108;
+                userPxy.appVersionCode = 111;
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
+                window.Applozic.ALApiService.AUTH_TOKEN = null;
                 USER_DEVICE_KEY = '';
                 var isValidated = _this.validateAppSession(userPxy);
                 if (!isValidated) {
@@ -2072,10 +2067,6 @@ window.onload = function() {
                     }
                 });
                 MCK_TOKEN = data.token;
-                mckUtils.setEncryptionKey(data.encryptionKey);
-								if (typeof (data.encryptionKey) !== 'undefined'){
-								ALStorage.setEncryptionKey(data.encryptionKey);
-								}
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined'){
                     data.websocketUrl = MCK_WEBSOCKET_URL;
@@ -2093,7 +2084,18 @@ window.onload = function() {
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
 
+                window.Applozic.ALApiService.AUTH_TOKEN = data.authToken;
 				window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+                window.Applozic.ALApiService.setEncryptionKeys(data.encryptionKey, data.userEncryptionKey);
+
+                if (!EMOJI_LIBRARY || data.encryptionKey) { 
+                    // EMOJI_LIBRARY = false ->hide emoticon from chat widget
+                    document.getElementById('mck-textbox-container').getElementsByTagName('div')[0].setAttribute('class', 'n-vis');
+                    document.getElementById('mck-text-box').classList.add('mck-text-box-width-increase');
+                } else {              
+                    // EMOJI_LIBRARY = true -> if we want to include the emoticons and the emoticon library
+                    mckMessageLayout.initEmojis();
+                }
 
                 _this.setUnreadCountOnStartup(MCK_USER_ID);
 
@@ -2110,7 +2112,7 @@ window.onload = function() {
                 $applozic.ajaxPrefilter(function(options) {
                     if (!options.beforeSend && (options.url.indexOf(MCK_BASE_URL) !== -1)) {
                         options.beforeSend = function(jqXHR) {
-                            _this.setHeaders(jqXHR);
+                            window.Applozic.ALApiService.addRequestHeaders(jqXHR);
                         };
                     }
                 });
@@ -2168,23 +2170,6 @@ window.onload = function() {
                     return false;
                 }
 
-            };
-            _this.setHeaders = function(jqXHR) {
-                jqXHR.setRequestHeader("UserId-Enabled", true);
-                if (AUTH_CODE) {
-                    jqXHR.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                    jqXHR.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                }
-                jqXHR.setRequestHeader("Application-Key", MCK_APP_ID);
-                if (USER_DEVICE_KEY) {
-                    jqXHR.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-                }
-                if (MCK_ACCESS_TOKEN) {
-                    jqXHR.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
-                }
-                if (MCK_APP_MODULE_NAME) {
-                    jqXHR.setRequestHeader("App-Module-Name", MCK_APP_MODULE_NAME);
-                }
             };
             _this.setLabels = function() {
                 $applozic('#mck-conversation-title').html(MCK_LABELS['conversations.title']).attr('title', MCK_LABELS['conversations.title']);
@@ -5615,7 +5600,8 @@ window.onload = function() {
 								mckUtils.ajax({
 											url: url,
 											type: 'get',
-											global: false,
+                                            global: false,
+                                            encryptionKey: window.Applozic.ALApiService.getEncryptionKey(),
 											success: function (data) {
 											console.log(data);
 											if (data.success) {
@@ -7079,7 +7065,10 @@ window.onload = function() {
                 var group = mckGroupUtils.getGroup(groupId);
                 if (params.users) {
                     for (var index in params.users) {
-                        document.getElementById(params.users[index].userId+'-role').innerHTML=ROLE_MAP[params.users[index].role];
+                        var userRoleElement = document.getElementById(params.users[index].userId+'-role');
+                        if (userRoleElement) {
+                            userRoleElement.innerHTML=ROLE_MAP[params.users[index].role];
+                        }
                         if (params.users[index].userId) {
                             group.users[params.users[index].userId] = params.users[index];
                         }
@@ -7729,19 +7718,9 @@ window.onload = function() {
 														}
 												});
 												var url = MCK_CUSTOM_URL + CUSTOM_FILE_UPLOAD_URL;
-
-												xhr.open('post', url , true);
-												xhr.setRequestHeader("UserId-Enabled", true);
-                                                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                                                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-												xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-												xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-
-												if (MCK_ACCESS_TOKEN) {
-														xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
-												}
+                                                xhr.open('post', url , true);
+                                                window.Applozic.ALApiService.addRequestHeaders(xhr);
 												xhr.send(data);
-
 										}
 										return false;
 								}
@@ -7829,17 +7808,8 @@ window.onload = function() {
 														}
 												});
 												var url = MCK_STORAGE_URL + CUSTOM_FILE_UPLOAD_URL;
-
-												xhr.open('post', url , true);
-												xhr.setRequestHeader("UserId-Enabled", true);
-                                                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                                                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-												xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-												xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-
-												if (MCK_ACCESS_TOKEN) {
-														xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
-												}
+                                                xhr.open('post', url , true);
+                                                window.Applozic.ALApiService.addRequestHeaders(xhr);
 												xhr.send(data);
 
 										}
@@ -7936,12 +7906,7 @@ window.onload = function() {
                                 var fd = new FormData();
                                 fd.append('files[]', file);
                                 xhr.open("POST", result, true);
-                                xhr.setRequestHeader("UserId-Enabled", true);
-                                xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                                xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                                xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-                                xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-                                xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
+                                window.Applozic.ALApiService.addRequestHeaders(xhr);
                                 xhr.send(fd);
                             },
                             error: function () { }
@@ -8032,17 +7997,9 @@ window.onload = function() {
                                 $file_remove.trigger('click');
                             }
                         });
-												var url = MCK_BASE_URL + ATTACHMENT_UPLOAD_URL
-
+						var url = MCK_BASE_URL + ATTACHMENT_UPLOAD_URL
                         xhr.open('post', url , true);
-                        xhr.setRequestHeader("UserId-Enabled", true);
-                        xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                        xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                        xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-                        xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-                        if (MCK_ACCESS_TOKEN) {
-                            xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
-                        }
+                        window.Applozic.ALApiService.addRequestHeaders(xhr);
                         xhr.send(data);
                     }
                     return false;
@@ -8100,14 +8057,7 @@ window.onload = function() {
                     });
                     data.append("file", file);
                     xhr.open('post', MCK_BASE_URL + FILE_AWS_UPLOAD_URL, true);
-                    xhr.setRequestHeader("UserId-Enabled", true);
-                    xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
-                    xhr.setRequestHeader("Application-User", "Basic " + AUTH_CODE);
-                    xhr.setRequestHeader("Application-Key", MCK_APP_ID);
-                    xhr.setRequestHeader("Device-Key", USER_DEVICE_KEY);
-                    if (MCK_ACCESS_TOKEN) {
-                        xhr.setRequestHeader("Access-Token", MCK_ACCESS_TOKEN);
-                    }
+                    window.Applozic.ALApiService.addRequestHeaders(xhr);
                     xhr.send(data);
                 }
             };
@@ -8333,7 +8283,7 @@ window.onload = function() {
                 mckUtils.ajax({
                     url: MCK_BASE_URL + "/twilio/token",
                     type: 'post',
-										skipEncryption: true,
+					skipEncryption: true,
                     contentType: 'application/x-www-form-urlencoded',
                     data: { "identity": userId, "device": deviceKey },
                     success: function(result) {

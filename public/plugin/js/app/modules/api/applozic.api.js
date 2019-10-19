@@ -1515,7 +1515,7 @@
           'registrationId': 'PUSH_NOTIFICATION_TOKEN', //Replace with FCM push notification token for Android devices and APNS push notification token for iOS devices
           'pushNotificationFormat' : '1', //1 for PhoneGap, 2 for Ionic
           'deviceType': '1',       //1 for Android, 4 for iOS
-          'appVersionCode': '108'
+          'appVersionCode': '111'
         };
         window.Applozic.ALApiService.registerClientApi({data: {"userPxy":userPxy}, success: function (result) {}, error: function () { } });
        */

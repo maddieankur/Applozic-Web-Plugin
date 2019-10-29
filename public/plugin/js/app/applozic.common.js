@@ -8,6 +8,49 @@ var mckUtils = new MckUtils();
 var mckDateUtils = new MckDateUtils();
 var mckContactUtils = new MckContactUtils();
 var mckMapUtils = new MckMapUtils();
+var messageUtils = new MessageUtils();
+
+function MessageUtils() {
+    var _this=this;
+    _this.getUserIdFromMessage = function(message) {
+        var tos = message.to;
+        if (tos.lastIndexOf(",") === tos.length - 1) {
+            tos = tos.substring(0, tos.length - 1);
+        }
+        return tos.split(",");
+    };
+    _this.getUserIdArrayFromMessageList = function(messages) {
+        var userIdArray = new Array();
+        
+        if (typeof messages.length === "undefined") {
+            userIdArray.concat(messageUtils.getUserIdFromMessage(messages));
+        } else {
+
+
+            //$applozic.each(messages, function(i, message) 
+            messages.foreach(function(i, message) {
+                if (!(typeof message.to === "undefined")) {
+                    userIdArray = userIdArray.concat(messageUtils.getUserIdFromMessage(message));
+                }
+            });
+        }
+        return userIdArray;
+    };
+
+    _this.getUserIdArrayFromMessageList = function(messages) {
+        var userIdArray = new Array();
+        if (typeof messages.length === "undefined") {
+            userIdArray.concat(messageUtils.getUserIdFromMessage(messages));
+        } else {
+            $applozic.each(messages, function(i, message) {
+                if (!(typeof message.to === "undefined")) {
+                    userIdArray = userIdArray.concat(messageUtils.getUserIdFromMessage(message));
+                }
+            });
+        }
+        return userIdArray;
+    };
+}
 function MckUtils() {
     var _this = this;
     var TEXT_NODE = 3,

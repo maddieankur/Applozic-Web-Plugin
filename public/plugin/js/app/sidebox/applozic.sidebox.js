@@ -465,7 +465,7 @@ window.onload = function() {
         var MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
         var MCK_TAB_CONVERSATION_MAP = new Array();
         var mckInit = new MckInit();
-				var mckUtils = new MckUtils();
+        var mckUtils = new MckUtils();
         var mckMapLayout = new MckMapLayout();
         var mckUserUtils = new MckUserUtils();
 		var subscriber = window.Applozic.ALSocket.subscriber;
@@ -783,12 +783,10 @@ window.onload = function() {
                                 mckInit.manageOfflineMessageTime(tabId);
                             }
                         }
-
-												mckUtils.hideElement(document.getElementsByClassName(".mck-user-ol-status." + contact.htmlId));
+								mckUtils.hideElement(document.getElementsByClassName(".mck-user-ol-status." + contact.htmlId));
 	                        if (document.getElementsByClassName("mck-user-ol-status " + contact.htmlId).length!==0) {
 	                            document.getElementsByClassName("mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
 	                        }
-
                         mckUtils.hideElement(document.querySelector("#li-user-" + htmlId + " .mck-ol-status"));
                         alUserService.updateUserStatus({
                             'userId': userId,
@@ -3288,12 +3286,10 @@ window.onload = function() {
                         }
                     }, error: function () { }
                 });
-
             };
             _this.submitMessage = function(messagePxy, optns) {
                 var randomId = messagePxy.key;
                 var metadata = messagePxy.metadata ? messagePxy.metadata : {};
-
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus: 4
@@ -5094,13 +5090,13 @@ window.onload = function() {
             };
 
             _this.addContactsFromMessage = function(message, update) {
-                var contactIdsArray = _this.getUserIdFromMessage(message);
+                var contactIdsArray = messageUtils.getUserIdFromMessage(message);
                 if (contactIdsArray.length > 0 && contactIdsArray[0]) {
                     for (var i = 0; i < contactIdsArray.length; i++) {
                         var contact = _this.fetchContact('' + contactIdsArray[i]);
                         _this.updateRecentConversationList(contact, message, update);
                     }
-                }
+                }createTextNode
             };
 
             _this.updateRecentConversationList = function(contact, message, update) {
@@ -5774,26 +5770,8 @@ window.onload = function() {
                 }
                 return emoji_template;
             };
-            _this.getUserIdFromMessage = function(message) {
-                var tos = message.to;
-                if (tos.lastIndexOf(",") === tos.length - 1) {
-                    tos = tos.substring(0, tos.length - 1);
-                }
-                return tos.split(",");
-            };
-            _this.getUserIdArrayFromMessageList = function(messages) {
-                var userIdArray = new Array();
-                if (typeof messages.length === "undefined") {
-                    userIdArray.concat(_this.getUserIdFromMessage(messages));
-                } else {
-                    $applozic.each(messages, function(i, message) {
-                        if (!(typeof message.to === "undefined")) {
-                            userIdArray = userIdArray.concat(_this.getUserIdFromMessage(message));
-                        }
-                    });
-                }
-                return userIdArray;
-            };
+            
+            
             _this.messageContextMenu = function(messageKey) {
                 var $messageBox = $applozic("." + messageKey + " .mck-msg-box");
                 if ($messageBox.addEventListener) {

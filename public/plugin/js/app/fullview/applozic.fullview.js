@@ -4872,7 +4872,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 return contact;
             };
             _this.addContactsFromMessage = function(message, update) {
-                var contactIdsArray = _this.getUserIdFromMessage(message);
+                var contactIdsArray = messageUtils.getUserIdFromMessage(message);
                 if (contactIdsArray.length > 0 && contactIdsArray[0]) {
                     for (var i = 0; i < contactIdsArray.length; i++) {
                         var contact = _this.fetchContact('' + contactIdsArray[i]);
@@ -5589,26 +5589,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 return emoji_template;
             };
-            _this.getUserIdFromMessage = function(message) {
-                var tos = message.to;
-                if (tos.lastIndexOf(",") === tos.length - 1) {
-                    tos = tos.substring(0, tos.length - 1);
-                }
-                return tos.split(",");
-            };
-            _this.getUserIdArrayFromMessageList = function(messages) {
-                var userIdArray = new Array();
-                if (typeof messages.length === "undefined") {
-                    userIdArray.concat(_this.getUserIdFromMessage(messages));
-                } else {
-                    $applozic.each(messages, function(i, message) {
-                        if (!(typeof message.to === "undefined")) {
-                            userIdArray = userIdArray.concat(_this.getUserIdFromMessage(message));
-                        }
-                    });
-                }
-                return userIdArray;
-            };
+            
             _this.messageContextMenu = function(messageKey) {
                 var $messageBox = $applozic("." + messageKey + " .mck-msg-box");
                 if ($messageBox.addEventListener) {

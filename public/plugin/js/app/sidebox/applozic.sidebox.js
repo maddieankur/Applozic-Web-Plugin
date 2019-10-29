@@ -5096,7 +5096,7 @@ window.onload = function() {
                         var contact = _this.fetchContact('' + contactIdsArray[i]);
                         _this.updateRecentConversationList(contact, message, update);
                     }
-                }createTextNode
+                }
             };
 
             _this.updateRecentConversationList = function(contact, message, update) {

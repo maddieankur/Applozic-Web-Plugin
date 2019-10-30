@@ -4,6 +4,14 @@ var mckGroupService = new MckGroupService();
 function MckGroupUtils() {
   var _this = this;
 
+  _this.getDeletedAtTime = function(groupId) {
+    if (typeof MCK_GROUP_MAP[groupId] === 'object') {
+        var group = MCK_GROUP_MAP[groupId];
+        return group['deletedAtTime'];
+    }
+};
+
+
   _this.getGroup = function(groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
       return MCK_GROUP_MAP[groupId];
@@ -480,13 +488,11 @@ function MckGroupService() {
   };
   _this.isGroupDeleted = function(tabId, isGroup) {
     if (isGroup) {
-      var deletedAtTime = mckGroupLayout.getDeletedAtTime(tabId);
+      var deletedAtTime = mckGroupUtils.getDeletedAtTime(tabId);
       return (typeof deletedAtTime !== 'undefined' && deletedAtTime > 0);
     }
     return false;
   };
-
-  //function mckGroupLayout
 
   _this.loadGroupsCallback = function(response) {
     var groups = response.data;
@@ -597,7 +603,7 @@ function MckGroupService() {
     return group;
   };
   _this.authenticateGroupUser = function(group) {
-    var isGroupLeft = mckGroupService.isGroupLeft(group);
+    var isGroupLeft = _this.isGroupLeft(group);
     var isGroupMemeber = false;
     if (!isGroupLeft && group.members.length > 0) {
       for (var i = 0; i < group.members.length; i++) {
@@ -629,7 +635,7 @@ function MckGroupService() {
   _this.isGroupLeft = function(group) {
     var isGroupLeft = false;
     if (group.removedMembersId && group.removedMembersId.length > 0) {
-      $applozic.each(group.removedMembersId, function(i, removedMemberId) {
+      group.removedMembersId.forEach(function(removedMemberId,i) { 
         if (removedMemberId === MCK_USER_ID) {
           isGroupLeft = true;
         }

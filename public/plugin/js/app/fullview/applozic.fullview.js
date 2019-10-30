@@ -4285,7 +4285,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (msg.contentType === 4 || msg.contentType === 10 || msg.contentType === 103) {
                     floatWhere = 'mck-msg-center';
                 }
-                statusIcon = alMessageService.getStatusIconName(msg);
+                statusIcon = _this.getStatusIconName(msg);
                 var replyId = msg.key;
                 var replyMessageParameters = "'" + msg.deviceKey + "'," + "'" + msg.to + "'" + ",'" + msg.to + "'" + ",'" + replyId + "'";
                 var displayName = '';
@@ -4872,7 +4872,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 return contact;
             };
             _this.addContactsFromMessage = function(message, update) {
-                var contactIdsArray = alMessageService.getUserIdFromMessage(message);
+                var contactIdsArray = _this.getUserIdFromMessage(message);
                 if (contactIdsArray.length > 0 && contactIdsArray[0]) {
                     for (var i = 0; i < contactIdsArray.length; i++) {
                         var contact = _this.fetchContact('' + contactIdsArray[i]);
@@ -5433,7 +5433,22 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckMessageService.initSearch();
             };
             _this.getStatusIcon = function(msg) {
-                return '<span class="' + alMessageService.getStatusIconName(msg) + ' move-right ' + msg.key + '_status status-icon"></span>';
+                return '<span class="' + _this.getStatusIconName(msg) + ' move-right ' + msg.key + '_status status-icon"></span>';
+            };
+            _this.getStatusIconName = function(msg) {
+                if (msg.type === 7 || msg.type === 6 || msg.type === 4 || msg.type === 0) {
+                    return '';
+                }
+                if (msg.status === 5) {
+                    return 'mck-icon-read';
+                }
+                if (msg.status === 4) {
+                    return 'mck-icon-delivered';
+                }
+                if (msg.type === 3 || msg.type === 5 || (msg.type === 1 && (msg.source === 0 || msg.source === 1))) {
+                    return 'mck-icon-sent';
+                }
+                return '';
             };
             _this.clearMessageField = function(keyboard) {
                 $mck_text_box.html('');
@@ -5574,7 +5589,26 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 return emoji_template;
             };
-            
+            _this.getUserIdFromMessage = function(message) {
+                var tos = message.to;
+                if (tos.lastIndexOf(",") === tos.length - 1) {
+                    tos = tos.substring(0, tos.length - 1);
+                }
+                return tos.split(",");
+            };
+            _this.getUserIdArrayFromMessageList = function(messages) {
+                var userIdArray = new Array();
+                if (typeof messages.length === "undefined") {
+                    userIdArray.concat(_this.getUserIdFromMessage(messages));
+                } else {
+                    $applozic.each(messages, function(i, message) {
+                        if (!(typeof message.to === "undefined")) {
+                            userIdArray = userIdArray.concat(_this.getUserIdFromMessage(message));
+                        }
+                    });
+                }
+                return userIdArray;
+            };
             _this.messageContextMenu = function(messageKey) {
                 var $messageBox = $applozic("." + messageKey + " .mck-msg-box");
                 if ($messageBox.addEventListener) {
@@ -5590,6 +5624,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
             };
+            _this.isValidMetaData = function(message) {
+                if (!message.metadata) {
+                    return true;
+                } else if (message.metadata.category === 'HIDDEN' || message.metadata.category === 'ARCHIVE') {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
             _this.updateDraftMessage = function(tabId, fileMeta) {
                 if (typeof fileMeta === 'object') {
                     var tab_draft = {
@@ -5690,7 +5733,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 alUserService.loadUserProfile(message.to);
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroupTab = $mck_msg_inner.data('isgroup');
-                var isValidMeta = alMessageService.isValidMetaData(message);
+                var isValidMeta = mckMessageLayout.isValidMetaData(message);
                 var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                 if (!message.metadata || isValidMeta) {
                     notifyUser = !(message.metadata && message.metadata.hide) && notifyUser;

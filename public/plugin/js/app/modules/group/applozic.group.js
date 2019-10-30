@@ -603,7 +603,7 @@ function MckGroupService() {
     return group;
   };
   _this.authenticateGroupUser = function(group) {
-    var isGroupLeft = mckGroupService.isGroupLeft(group);
+    var isGroupLeft = _this.isGroupLeft(group);
     var isGroupMemeber = false;
     if (!isGroupLeft && group.members.length > 0) {
       for (var i = 0; i < group.members.length; i++) {
@@ -635,7 +635,7 @@ function MckGroupService() {
   _this.isGroupLeft = function(group) {
     var isGroupLeft = false;
     if (group.removedMembersId && group.removedMembersId.length > 0) {
-      $applozic.each(group.removedMembersId, function(i, removedMemberId) {
+      group.removedMembersId.forEach(function(removedMemberId,i) { 
         if (removedMemberId === MCK_USER_ID) {
           isGroupLeft = true;
         }

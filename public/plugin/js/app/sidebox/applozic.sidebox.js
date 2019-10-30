@@ -6737,9 +6737,6 @@ window.onload = function() {
                     }
                 });
             };
-
-
-
             _this.validateOpenGroupUser = function(group) {
                 if (group.type === 6) {
                     var isGroupMember = mckGroupService.authenticateGroupUser(group);
@@ -6782,7 +6779,7 @@ window.onload = function() {
                 return true;
             };
             _this.addGroupStatus = function(group) {
-                var isGroupLeft = _this.isGroupLeft(group);
+                var isGroupLeft = mckGroupService.isGroupLeft(group);
                 if (group.type !== 6 && (isGroupLeft || IS_GROUP_SUBTITLE_HIDDEN)) {
                     if (isGroupLeft) {
                         mckGroupLayout.onGroupLeft('', {
@@ -6831,17 +6828,6 @@ window.onload = function() {
                 $mck_msg_form.removeClass('vis').addClass('n-vis');
                 $mck_tab_title.removeClass('mck-tab-title-w-status');
                 $mck_tab_status.removeClass('vis').addClass('n-vis');
-            };
-            _this.isGroupLeft = function(group) {
-                var isGroupLeft = false;
-                if (group.removedMembersId && group.removedMembersId.length > 0) {
-                    $applozic.each(group.removedMembersId, function(i, removedMemberId) {
-                        if (removedMemberId === MCK_USER_ID) {
-                            isGroupLeft = true;
-                        }
-                    });
-                }
-                return isGroupLeft;
             };
             _this.onGroupLeft = function(response, params) {
                 $mck_loading.removeClass('vis').addClass('n-vis');

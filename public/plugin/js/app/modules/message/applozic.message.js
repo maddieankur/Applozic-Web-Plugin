@@ -16,45 +16,10 @@ function AlMessageService() {
   var refreshIntervalId;
 
   _this.init = function(optns) {
-    MCK_FILE_URL = optns.fileBaseUrl; 
+    MCK_FILE_URL = optns.fileBaseUrl;
     IS_MCK_VISITOR = optns.visitor;
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
-
-  _this.getUserIdFromMessage = function(message) {
-    var tos = message.to;
-    if (tos.lastIndexOf(",") === tos.length - 1) {
-        tos = tos.substring(0, tos.length - 1);
-    }
-    return tos.split(",");
-};
-
-
-  _this.isValidMetaData = function(message) {
-    if (!message.metadata) {
-        return true;
-    } else if (message.metadata.category === 'HIDDEN' || message.metadata.category === 'ARCHIVE') {
-        return false;
-    } else {
-        return true;
-    }
-  };
-
-  _this.getStatusIconName = function(msg) {
-    if (msg.type === 7 || msg.type === 6 || msg.type === 4 || msg.type === 0) {
-        return '';
-    }
-    if (msg.status === 5) {
-        return 'mck-icon-read';
-    }
-    if (msg.status === 4) {
-        return 'mck-icon-delivered';
-    }
-    if (msg.type === 3 || msg.type === 5 || (msg.type === 1 && (msg.source === 0 || msg.source === 1))) {
-        return 'mck-icon-sent';
-    }
-    return '';
-};
 
   _this.addMessageToTab = function(messagePxy, contact, callback) {
     var message = {

@@ -4014,7 +4014,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                       $mck_attachfile_box.removeClass('n-vis').addClass('vis');
                   }
                   var name = _this.getTabDisplayName(params.tabId, params.isGroup, params.userName);
-                  if (_this.isGroupDeleted(params.tabId, params.isGroup)) {
+                  if (mckGroupService.isGroupDeleted(params.tabId, params.isGroup)) {
                       $mck_msg_error.html(MCK_LABELS['group.deleted']);
                       $mck_msg_error.removeClass('n-vis').addClass('vis').addClass('mck-no-mb');
                       $mck_msg_form.removeClass('vis').addClass('n-vis');
@@ -5638,14 +5638,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 } else {
                     return MCK_UNREAD_COUNT_MAP[tabId];
                 }
-            };
-
-            _this.isGroupDeleted = function(tabId, isGroup) {
-                if (isGroup) {
-                    var deletedAtTime = mckGroupLayout.getDeletedAtTime(tabId);
-                    return (typeof deletedAtTime !== 'undefined' && deletedAtTime > 0);
-                }
-                return false;
             };
             _this.getTabDisplayName = function(tabId, isGroup, userName) {
                 var displayName = '';

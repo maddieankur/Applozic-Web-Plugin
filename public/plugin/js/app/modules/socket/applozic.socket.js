@@ -64,6 +64,13 @@
                 }
             }
 
+            ALSocket.setOnline = function() {
+                console.log("dog");
+                if (typeof mckInitializeChannel !== 'undefined') {
+                    mckInitializeChannel.sendStatus(1);
+                }
+            };
+
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                 if (typeof SockJS === 'function') {

@@ -30,7 +30,7 @@ window.onload = function() {
         maxAttachmentSize: 25, // default size is 25MB
         notification: true,
         launchOnUnreadMessage: false,
-        loadOwnContacts: false,
+        loadOwnContacts: false,                                                 
         maxGroupSize: 100,
         authenticationTypeId: 0,
 		//	isAnonymousChat: true,
@@ -214,7 +214,7 @@ window.onload = function() {
                         return 'success';
                         break;
                     case 'setOnline':
-                        oInstance.setOnline();
+                        window.Applozic.ALSocket.setOnline();
                         return 'success';
                         break;
                    case 'reset':
@@ -1393,11 +1393,6 @@ window.onload = function() {
      _this.deleteFriendContactList = function(param) {
            mckContactService.deleteFriendList(param);
       };
-        _this.setOnline = function() {
-            if (typeof window.Applozic.ALSocket !== 'undefined') {
-                window.Applozic.ALSocket.sendStatus(1);
-            }
-        };
       _this.getUserStatus = function(params) {
             if (typeof params.callback === 'function') {
                 if (typeof params.userIds !== 'undefined') {

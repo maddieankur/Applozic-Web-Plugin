@@ -818,11 +818,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             mckContactService.getFriendList(friendListGroupName,friendListGroupType);
         };
-        _this.setOnline = function() {
-            if (typeof mckInitializeChannel !== 'undefined') {
-                mckInitializeChannel.sendStatus(1);
-            }
-        };
         _this.getUserStatus = function(params) {
             if (typeof params.callback === 'function') {
                 if (typeof params.userIds !== 'undefined') {

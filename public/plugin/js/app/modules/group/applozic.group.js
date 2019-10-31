@@ -89,8 +89,8 @@ function MckGroupService() {
   var MCK_LAST_SEEN_AT_MAP = [];
   var MCK_BLOCKED_TO_MAP = [];
   var GROUP_LIST_URL = "/rest/ws/group/list";
-  var GROUP_FEED_URL = "/risGroupDeletedest/ws/group/info";
-  var GROUP_LEAVE_URL = "/isGroupDeletedrest/ws/group/left";
+  var GROUP_FEED_URL = "/rest/ws/group/info";
+  var GROUP_LEAVE_URL = "/rest/ws/group/left";
   var GROUP_UPDATE_INFO_URisGroupDeletedL = "/rest/ws/group/update";
   var GROUP_ADD_MEMBER_URLisGroupDeleted = "/rest/ws/group/add/member";
   var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";

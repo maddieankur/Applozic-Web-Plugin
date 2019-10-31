@@ -240,12 +240,12 @@ window.onload = function() {
                         oInstance.getUserStatus(params);
                         return 'success';
                         break;
-										case 'getGroup':
-		                        oInstance.getGroup(params);
-		                        return 'success';
-		                        break;
+					case 'getGroup':
+		                oInstance.getGroup(params);
+		                return 'success';
+		                break;
                     case 'getGroupList':
-                        oInstance.getGroupList(params);
+                        mckGroupService.getGroupList(params);
                         return 'success';
                         break;
                     case 'leaveGroup':
@@ -1417,15 +1417,6 @@ window.onload = function() {
 				   return "Callback Function Required";
 			    }
 		    };
-        _this.getGroupList = function(params) {
-            if (typeof params.callback === 'function') {
-                params.apzCallback = mckGroupLayout.loadGroups;
-                mckGroupService.loadGroups(params);
-                return 'success';
-            } else {
-                return 'Callback Function Required';
-            }
-        };
         _this.leaveGroup = function(params) {
             if (typeof params !== 'object') {
                 return 'Unsupported Format. Please check format';
@@ -3796,7 +3787,8 @@ window.onload = function() {
                                             if (!individual) {
                                                 ALStorage.setLatestMessageArray(data.message);
                                             }
-                                        } else if (params.startTime) {
+                                        } 
+                                        else if (params.startTime) {
                                             params.isReload = false;
                                             if (!individual) {
                                                 ALStorage.updateLatestMessageArray(data.message);
@@ -3806,12 +3798,13 @@ window.onload = function() {
                                             ALStorage.updateMckMessageArray(data.message);
                                         }
                                         mckMessageLayout.addContactsFromMessageList(data, params);
-                                    } else {
+                                    } 
+                                    else {
                                         $mck_msg_inner.data('datetime', '');
                                     }
-																		if (typeof callback === 'function') {
+									if (typeof callback === 'function') {
 																			 callback(params);
-																	  }
+									}
                                     if (params.isLaunch) {
                                         mckMessageLayout.updateUnreadCountonChatIcon(data.userDetails);
                                     }
@@ -6721,16 +6714,6 @@ window.onload = function() {
                 } else {
                     $mck_group_create_title.addClass('mck-req-border');
                 }
-            };
-   _this.loadGroups = function(response) {
-                var groups = response.data;
-                MCK_GROUP_ARRAY.length = 0;
-                $applozic.each(groups, function(i, group) {
-                    if ((typeof group.id !== 'undefined')) {
-                        var group = mckGroupUtils.addGroup(group);
-                        MCK_GROUP_ARRAY.push(group);
-                    }
-                });
             };
             _this.validateOpenGroupUser = function(group) {
                 if (group.type === 6) {

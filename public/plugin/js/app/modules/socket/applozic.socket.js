@@ -65,7 +65,6 @@
             }
 
             ALSocket.setOnline = function() {
-                console.log("dog");
                 if (typeof mckInitializeChannel !== 'undefined') {
                     mckInitializeChannel.sendStatus(1);
                 }

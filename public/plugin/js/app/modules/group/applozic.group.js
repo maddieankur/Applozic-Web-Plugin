@@ -1,5 +1,21 @@
-var mckGroupUtils = new MckGroupUtils;
+var mckGroupUtils = new MckGroupUtils();
 var mckGroupService = new MckGroupService();
+var mckGroupLayout = new MckGroupLayout(); 
+
+function MckGroupLayout() {
+  _this = this;
+  _this.loadGroups = function(response) {
+    var groups = response.data;
+    MCK_GROUP_ARRAY.length = 0;
+    $applozic.each(groups, function(i, group) {
+        if ((typeof group.id !== 'undefined')) {
+            var group = mckGroupUtils.addGroup(group);
+            MCK_GROUP_ARRAY.push(group);
+        }
+    });
+};
+}
+
 
 function MckGroupUtils() {
   var _this = this;
@@ -100,6 +116,16 @@ function MckGroupService() {
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
     MCK_OPEN_GROUP_SETTINGS = optns.openGroupSettings;
   };
+
+  _this.getGroupList = function(params) {
+    if (typeof params.callback === 'function') {
+        params.apzCallback = mckGroupLayout.loadGroups;
+        _this.loadGroups(params);
+        return 'success';
+    } else {
+        return 'Callback Function Required';
+    }
+};
 
   _this.loadGroups = function(params) {
     var response = new Object();

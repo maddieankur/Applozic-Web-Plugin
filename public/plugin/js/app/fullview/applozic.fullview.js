@@ -220,7 +220,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         return 'success';
                         break;
                     case 'getGroupList':
-                        oInstance.getGroupList(params);
+                        mckGroupService.getGroupList(params);
                         return 'success';
                         break;
                     case 'leaveGroup':
@@ -831,15 +831,6 @@ var MCK_CLIENT_GROUP_MAP = [];
 	                    });
 										});
                 }
-            }
-        };
-        _this.getGroupList = function(params) {
-            if (typeof params.callback === 'function') {
-                params.apzCallback = mckGroupLayout.loadGroups;
-                mckGroupService.loadGroups(params);
-                return 'success';
-            } else {
-                return 'Callback Function Required';
             }
         };
         _this.leaveGroup = function(params) {

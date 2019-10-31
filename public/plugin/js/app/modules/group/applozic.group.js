@@ -98,7 +98,7 @@ function MckGroupService() {
   _this.addGroups = function(response) {
     var groups = response.data;
     MCK_GROUP_ARRAY.length = 0;
-    $applozic.each(groups, function(i, group) {
+    groups.forEach(function(group,i) {
         if ((typeof group.id !== 'undefined')) {
             var group = mckGroupUtils.addGroup(group);
             MCK_GROUP_ARRAY.push(group);

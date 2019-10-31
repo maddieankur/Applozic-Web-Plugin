@@ -3787,8 +3787,7 @@ window.onload = function() {
                                             if (!individual) {
                                                 ALStorage.setLatestMessageArray(data.message);
                                             }
-                                        } 
-                                        else if (params.startTime) {
+                                        } else if (params.startTime) {
                                             params.isReload = false;
                                             if (!individual) {
                                                 ALStorage.updateLatestMessageArray(data.message);
@@ -3798,8 +3797,7 @@ window.onload = function() {
                                             ALStorage.updateMckMessageArray(data.message);
                                         }
                                         mckMessageLayout.addContactsFromMessageList(data, params);
-                                    } 
-                                    else {
+                                    } else {
                                         $mck_msg_inner.data('datetime', '');
                                     }
 									if (typeof callback === 'function') {

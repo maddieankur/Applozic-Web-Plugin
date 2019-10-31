@@ -80,7 +80,6 @@ function MckGroupUtils() {
   };
 }
 
-
 function MckGroupService() {
   var _this = this;
   var IS_MCK_VISITOR;
@@ -91,8 +90,8 @@ function MckGroupService() {
   var GROUP_LIST_URL = "/rest/ws/group/list";
   var GROUP_FEED_URL = "/rest/ws/group/info";
   var GROUP_LEAVE_URL = "/rest/ws/group/left";
-  var GROUP_UPDATE_INFO_URisGroupDeletedL = "/rest/ws/group/update";
-  var GROUP_ADD_MEMBER_URLisGroupDeleted = "/rest/ws/group/add/member";
+  var GROUP_UPDATE_INFO_URL = "/rest/ws/group/update";
+  var GROUP_ADD_MEMBER_URL = "/rest/ws/group/add/member";
   var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
   MCK_GROUP_ARRAY = new Array();
 

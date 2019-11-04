@@ -101,15 +101,15 @@ window.onload = function() {
                     case 'loadBroadcastTab':
                         params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
                         params.type = 5;
-                        return oInstance.initGroupTab(params);
+                        return mckGroupUtils.initGroupTab(params);
                         break;
                     case 'initBroadcastTab':
                         params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
                         params.type = 5;
-                        return oInstance.initGroupTab(params);
+                        return mckGroupUtils.initGroupTab(params);
                         break;
                     case 'initGroupTab':
-                        return oInstance.initGroupTab(params);
+                        return mckGroupUtils.initGroupTab(params);
                         break;
                     case 'loadGroupTab':
                         return oInstance.loadGroupTab(params);
@@ -1654,31 +1654,6 @@ window.onload = function() {
                 }
             } else {
                 return 'Unsupported Format. Please check format';
-            }
-        };
-
-        _this.initGroupTab = function(params) {
-            if (typeof params === "object") {
-                var users = params.users;
-                if (typeof users === 'undefined' || users.length < 1) {
-                    return 'Users List Required';
-                }
-                if (users.length > MCK_GROUPMAXSIZE) {
-                    return 'Users limit exceeds ' + MCK_GROUPMAXSIZE + '. Max number of users allowed is ' + MCK_GROUPMAXSIZE + '.';
-                }
-                if (!params.groupName) {
-                    return 'Group name required';
-                }
-                if (typeof params.type === 'undefined') {
-                    return 'Group type required';
-                }
-                if (GROUP_TYPE_MAP.indexOf(params.type) === -1) {
-                    return 'Invalid group type';
-                }
-                mckMessageService.getGroup(params);
-                return 'success';
-            } else {
-                return 'Unsupported format. Please check format';
             }
         };
 

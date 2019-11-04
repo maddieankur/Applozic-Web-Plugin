@@ -65,10 +65,10 @@
             }
 
             ALSocket.setOnline = function() {
-                if (typeof mckInitializeChannel !== 'undefined') {
-                    mckInitializeChannel.sendStatus(1);
-                }
-            };
+              if (typeof window.Applozic.ALSocket !== 'undefined') {
+                window.Applozic.ALSocket.sendStatus(1);	
+            }	
+        };
 
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {

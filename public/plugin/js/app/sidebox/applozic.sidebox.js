@@ -96,7 +96,7 @@ window.onload = function() {
                         return oInstance.sendGroupMessage(params);
                         break;
                     case 'createGroup':
-                        return oInstance.createGroup(params);
+                        return mckGroupService.createGroup(params);
                         break;
                     case 'loadBroadcastTab':
                         params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
@@ -1607,56 +1607,6 @@ window.onload = function() {
                 return 'Unsupported format. Please check format';
             }
         };
-
-	    _this.createGroup = function(params) {
-            if (typeof params === 'object') {
-                if (typeof params.callback === 'function') {
-                    var users = params.users;
-                    if (typeof users === 'undefined' || users.length < 1) {
-                        params.callback({
-                            'status': 'error',
-                            'errorMessage': 'Users list required'
-                        });
-                        return;
-                    }
-                    if (users.length > MCK_GROUPMAXSIZE) {
-                        params.callback({
-                            'status': 'error',
-                            'errorMessage': "Users limit exceeds " + MCK_GROUPMAXSIZE + ". Max number of users allowed is " + MCK_GROUPMAXSIZE + "."
-                        });
-                        return;
-                    }
-                    if (!params.groupName) {
-                        params.callback({
-                            'status': 'error',
-                            'errorMessage': 'Group name required'
-                        });
-                        return;
-                    }
-                    if (typeof params.type === 'undefined' || params.type === '') {
-                        params.callback({
-                            'status': 'error',
-                            'errorMessage': 'Group type required'
-                        });
-                        return;
-                    }
-                    if (GROUP_TYPE_MAP.indexOf(params.type) === -1) {
-                        params.callback({
-                            'status': 'error',
-                            'errorMessage': 'Invalid group type'
-                        });
-                        return;
-                    }
-                    mckMessageService.getGroup(params);
-                    return 'success';
-                } else {
-                    return 'Callback function required';
-                }
-            } else {
-                return 'Unsupported Format. Please check format';
-            }
-        };
-
         _this.getTotalUnreadCount = function() {
             return MCK_TOTAL_UNREAD_COUNT;
         };

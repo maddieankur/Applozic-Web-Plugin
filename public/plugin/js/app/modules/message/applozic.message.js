@@ -21,6 +21,20 @@ function AlMessageService() {
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
 
+  _this.addWelcomeMessage = function(params) {
+    if (typeof params === "object") {
+        if (typeof params.sender === 'undefined' || params.sender === '') {
+            return 'Sender Field Required';
+        }
+        if (typeof params.messageContent === 'undefined' || params.messageContent === '') {
+            return 'Message Content Required';
+        }
+        mckMessageService.sendWelcomeMessage(params);
+    } else {
+        return 'Unsupported format. Please check format';
+    }
+};
+
   _this.getUserIdFromMessage = function(message) {
     var tos = message.to;
     if (tos.lastIndexOf(",") === tos.length - 1) {

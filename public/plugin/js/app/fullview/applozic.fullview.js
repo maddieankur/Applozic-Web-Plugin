@@ -77,7 +77,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         oInstance.audioAttach(params);
                         break;
                     case 'addWelcomeMessage':
-                        oInstance.addWelcomeMessage(params);
+                        alMessageService.addWelcomeMessage(params);
                         break;
                     case 'loadContacts':
                         oInstance.loadContacts(params);
@@ -990,19 +990,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 mckMessageService.sendMessage(messagePxy);
                 return 'success';
-            } else {
-                return 'Unsupported format. Please check format';
-            }
-        };
-        _this.addWelcomeMessage = function(params) {
-            if (typeof params === "object") {
-                if (typeof params.sender === 'undefined' || params.sender === '') {
-                    return 'Sender Field Required';
-                }
-                if (typeof params.messageContent === 'undefined' || params.messageContent === '') {
-                    return 'Message Content Required';
-                }
-                mckMessageService.sendWelcomeMessage(params);
             } else {
                 return 'Unsupported format. Please check format';
             }

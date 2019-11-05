@@ -157,7 +157,7 @@ window.onload = function() {
                         return 'success';
                         break;
                     case 'leaveGroup':
-                        return oInstance.leaveGroup(params);
+                        return mckGroupUtils.leaveGroup(params);
                         break;
                     case 'addGroupMember':
                         return oInstance.addGroupMember(params);
@@ -1325,25 +1325,6 @@ window.onload = function() {
 				   return "Callback Function Required";
 			    }
 		    };
-        _this.leaveGroup = function(params) {
-            if (typeof params !== 'object') {
-                return 'Unsupported Format. Please check format';
-            }
-            if (typeof params.callback === 'function') {
-                if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
-                    params.callback({
-                        'status': 'error',
-                        'errorMessage': 'GroupId or Client GroupId Required'
-                    });
-                    return;
-                }
-                params.apzCallback = mckGroupLayout.onGroupLeft;
-                mckGroupService.leaveGroup(params);
-                return "success";
-            } else {
-                return "Callback Function Required";
-            }
-        };
 
         _this.addGroupMember = function(params) {
             if (typeof params !== 'object') {

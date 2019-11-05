@@ -9,7 +9,27 @@ function MckGroupUtils() {
         var group = MCK_GROUP_MAP[groupId];
         return group['deletedAtTime'];
     }
-};
+  };
+
+  _this.leaveGroup = function(params) {
+    if (typeof params !== 'object') {
+        return 'Unsupported Format. Please check format';
+    }
+    if (typeof params.callback === 'function') {
+        if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'GroupId or Client GroupId Required'
+            });
+            return;
+        }
+        params.apzCallback = mckGroupLayout.onGroupLeft;
+        mckGroupService.leaveGroup(params);
+        return "success";
+    } else {
+        return "Callback Function Required";
+    }
+  };
 
 _this.initGroupTab = function(params) {
   if (typeof params === "object") {

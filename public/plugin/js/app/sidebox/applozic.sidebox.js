@@ -163,7 +163,7 @@ window.onload = function() {
                         return oInstance.addGroupMember(params);
                         break;
                     case 'removeGroupMember':
-                        return oInstance.removeGroupMember(params);
+                        return mckGroupService.removeGroupMember(params);
                         break;
                     case 'updateGroupInfo':
                         return oInstance.updateGroupInfo(params);
@@ -1376,33 +1376,6 @@ window.onload = function() {
 
                 params.apzCallback = mckGroupLayout.onAddedGroupMember;
                 mckGroupService.addGroupMember(params);
-                return 'success';
-            } else {
-                return 'Callback function required';
-            }
-        };
-
-       _this.removeGroupMember = function(params) {
-            if (typeof params !== 'object') {
-                return 'Unsupported Format. Please check format';
-            }
-            if (typeof params.callback === 'function') {
-                if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
-                    params.callback({
-                        'status': 'error',
-                        'errorMessage': 'GroupId or clientGroupId required'
-                    });
-                    return;
-                }
-                if (typeof params.userId === 'undefined' || params.userId === '') {
-                    params.callback({
-                        'status': 'error',
-                        'errorMessage': 'UserId required'
-                    });
-                    return;
-                }
-                params.apzCallback = mckGroupLayout.onRemovedGroupMember;
-                mckGroupService.removeGroupMemberFromChat(params);
                 return 'success';
             } else {
                 return 'Callback function required';

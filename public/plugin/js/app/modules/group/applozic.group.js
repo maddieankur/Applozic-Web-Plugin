@@ -130,6 +130,33 @@ function MckGroupService() {
     });
   };
 
+  _this.removeGroupMember = function(params) {
+    if (typeof params !== 'object') {
+        return 'Unsupported Format. Please check format';
+    }
+    if (typeof params.callback === 'function') {
+        if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'GroupId or clientGroupId required'
+            });
+            return;
+        }
+        if (typeof params.userId === 'undefined' || params.userId === '') {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'UserId required'
+            });
+            return;
+        }
+        params.apzCallback = mckGroupLayout.onRemovedGroupMember;
+        mckGroupService.removeGroupMemberFromChat(params);
+        return 'success';
+    } else {
+        return 'Callback function required';
+    }
+};
+
   _this.createGroup = function(params) {
     if (typeof params === 'object') {
         if (typeof params.callback === 'function') {

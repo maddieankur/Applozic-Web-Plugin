@@ -21,6 +21,14 @@ function AlMessageService() {
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
 
+  _this.getConversation = function(params) {
+    _this.getTopicId({
+        'conversationId': params.conversationId
+    }, function(params){
+      mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
+    });
+  };
+
   _this.addWelcomeMessage = function(params) {
     if (typeof params === "object") {
         if (typeof params.sender === 'undefined' || params.sender === '') {

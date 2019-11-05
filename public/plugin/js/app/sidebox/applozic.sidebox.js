@@ -184,7 +184,7 @@ window.onload = function() {
                         return oInstance.subscribeToEvents(params);
                         break;
                     case 'getConversation':
-                        return oInstance.getConversation(params);
+                        return alMessageService.getConversation(params);
                         break;
                 }
             } else if ($applozic.type(appOptions) === 'object') {
@@ -1606,15 +1606,6 @@ window.onload = function() {
                 }
             };
         };
-
-        _this.getConversation = function(params) {
-            alMessageService.getTopicId({
-                'conversationId': params.conversationId
-            }, function(params){
-							mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-						});
-        };
-
 
         function MckInit() {
             var _this = this;
@@ -3726,7 +3717,7 @@ window.onload = function() {
                     'users': usersArray,
                     'type': params.type
                 };
-								if (params.admin) {
+				if (params.admin) {
                     groupInfo.admin = params.admin;
                 }
                 if (params.clientGroupId) {

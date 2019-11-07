@@ -5,6 +5,7 @@ function MckGroupUtils() {
   var _this = this;
   _this.GROUP_ROLE_MAP = [0, 1, 2, 3];
   _this.GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
+  _this.CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
   _this.ROLE_MAP = {
     0: 'User',
     1: 'Admin',

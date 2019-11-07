@@ -328,7 +328,6 @@ var MCK_CLIENT_GROUP_MAP = [];
         var FRIEND_LIST_GROUP_NAME = (typeof appOptions.friendListGroupName === "string") ? appOptions.friendListGroupName : '';
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var SHOW_USERNAME_OPEN_GROUP = appOptions.showUsernameInOpenGroup ? appOptions.showUsernameInOpenGroup : false;
-        var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var FRIEND_LIST_MAP = {};
         var TAB_FILE_DRAFT = new Object();
@@ -563,9 +562,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     params.userName = optns.userName;
                 }
                 if (optns.topicStatus) {
-                    params.topicStatus = (CONVERSATION_STATUS_MAP.indexOf(optns.topicStatus) === -1) ? CONVERSATION_STATUS_MAP[0] : optns.topicStatus.toString();
+                    params.topicStatus = (mckGroupUtils.CONVERSATION_STATUS_MAP.indexOf(optns.topicStatus) === -1) ? mckGroupUtils.CONVERSATION_STATUS_MAP[0] : optns.topicStatus.toString();
                 } else {
-                    params.topicStatus = CONVERSATION_STATUS_MAP[0];
+                    params.topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                 }
                 if (typeof(MCK_GETTOPICDETAIL) === 'function') {
                     var topicDetail = MCK_GETTOPICDETAIL(optns.topicId);
@@ -870,7 +869,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (params.id) {
                     params.tabId = params.id;
                 }
-                params.topicStatus = CONVERSATION_STATUS_MAP[0];
+                params.topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                 var conversationId = MCK_TOPIC_CONVERSATION_MAP[params.topicId];
                 if (conversationId && typeof MCK_CONVERSATION_MAP[conversationId] === 'object') {
                     params.conversationId = conversationId;
@@ -1743,9 +1742,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     topicId = (typeof topicId !== "undefined" && topicId !== '') ? topicId.toString() : '';
                     var topicStatus = $applozic(this).data("mck-topic-status");
                     if (topicStatus) {
-                        topicStatus = (CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
+                        topicStatus = (mckGroupUtils.CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? mckGroupUtils.CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
                     } else {
-                        topicStatus = CONVERSATION_STATUS_MAP[0];
+                        topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                     }
                     if (typeof(MCK_GETTOPICDETAIL) === "function") {
                         var topicDetail = MCK_GETTOPICDETAIL(topicId);
@@ -1772,9 +1771,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     topicId = (typeof topicId !== "undefined" && topicId !== '') ? topicId.toString() : '';
                     var topicStatus = $applozic(this).data("mck-topic-status");
                     if (topicStatus) {
-                        topicStatus = (CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
+                        topicStatus = (mckGroupUtils.CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? mckGroupUtils.CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
                     } else {
-                        topicStatus = CONVERSATION_STATUS_MAP[0];
+                        topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                     }
                     var params = {
                         'tabId': tabId,
@@ -1817,9 +1816,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (topicId && !conversationId) {
                         var topicStatus = $applozic(this).data("mck-topic-status");
                         if (topicStatus) {
-                            topicStatus = (CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
+                            topicStatus = (mckGroupUtils.CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? mckGroupUtils.CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
                         } else {
-                            topicStatus = CONVERSATION_STATUS_MAP[0];
+                            topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                         }
                         mckMessageService.getConversationId({
                             'tabId': tabId,
@@ -2180,9 +2179,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (topicId && !conversationId) {
                     var topicStatus = $applozic(elem).data("mck-topic-status");
                     if (topicStatus) {
-                        topicStatus = (CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
+                        topicStatus = (mckGroupUtils.CONVERSATION_STATUS_MAP.indexOf(topicStatus) === -1) ? mckGroupUtils.CONVERSATION_STATUS_MAP[0] : topicStatus.toString();
                     } else {
-                        topicStatus = CONVERSATION_STATUS_MAP[0];
+                        topicStatus = mckGroupUtils.CONVERSATION_STATUS_MAP[0];
                     }
                     mckMessageService.getConversationId({
                         'tabId': tabId,
@@ -3067,7 +3066,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.getConversationId = function(params) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
-                if (!params.isGroup && !params.isMessage && (params.topicStatus !== CONVERSATION_STATUS_MAP[1])) {
+                if (!params.isGroup && !params.isMessage && (params.topicStatus !== mckGroupUtils.CONVERSATION_STATUS_MAP[1])) {
                     var conversationId = MCK_TOPIC_CONVERSATION_MAP[params.topicId];
                     if (conversationId) {
                         conversationPxy = MCK_CONVERSATION_MAP[conversationId];

@@ -267,7 +267,6 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_APP_ID = appOptions.appId;
         var OPEN_GROUP_SUBSCRIBER_MAP = [];
         var MCK_CONNECTED_CLIENT_COUNT = 0;
-        var GROUP_ROLE_MAP = [0, 1, 2, 3];
         var GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
         var MCK_TOPIC_CONVERSATION_MAP = [];
         var IS_MCK_USER_DEACTIVATED = false;
@@ -743,7 +742,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             }
         };
-
         _this.addGroupMember = function(params) {
             if (typeof params !== 'object') {
                 return "Unsupported Format. Please check format";
@@ -763,7 +761,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                     return;
                 }
-                if (typeof params.role !== 'undefined' && GROUP_ROLE_MAP.indexOf(params.role) === -1) {
+                if (typeof params.role !== 'undefined' && mckGroupUtils.GROUP_ROLE_MAP.indexOf(params.role) === -1) {
                     params.callback({
                         'status': 'error',
                         'errorMessage': 'Incorrect member role'
@@ -802,7 +800,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (params.users && params.users.length > 0) {
                     var users = [];
                     $applozic.each(params.users, function(i, user) {
-                        if (user.userId && (typeof user.role !== 'undefined') && GROUP_ROLE_MAP.indexOf(user.role) !== -1) {
+                        if (user.userId && (typeof user.role !== 'undefined') && mckGroupUtils.GROUP_ROLE_MAP.indexOf(user.role) !== -1) {
                             users.push(user);
                         }
                     })
@@ -1360,7 +1358,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 } else {
                     return false;
                 }
-
             };
             /*$applozic(w).on('resize', function() {
                 if ($mck_file_menu.css('display') === 'block') {
@@ -3381,7 +3378,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var usersArray = [];
                 $applozic.each(params.users, function(i, user) {
                     if (typeof user.userId !== 'undefined') {
-                        if (typeof user.groupRole === 'undefined' || GROUP_ROLE_MAP.indexOf(user.groupRole) !== -1) {
+                        if (typeof user.groupRole === 'undefined' || mckGroupUtils.GROUP_ROLE_MAP.indexOf(user.groupRole) !== -1) {
                             usersArray.push(user);
                         }
                     }

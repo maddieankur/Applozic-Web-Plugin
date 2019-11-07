@@ -3,7 +3,7 @@ var mckGroupService = new MckGroupService();
 
 function MckGroupUtils() {
   var _this = this;
-
+  _this.GROUP_ROLE_MAP = [0, 1, 2, 3];
   _this.getDeletedAtTime = function(groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
         var group = MCK_GROUP_MAP[groupId];

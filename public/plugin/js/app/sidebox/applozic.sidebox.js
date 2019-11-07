@@ -287,7 +287,6 @@ window.onload = function() {
         var MCK_APP_ID = appOptions.appId;
         var OPEN_GROUP_SUBSCRIBER_MAP = [];
         var MCK_CONNECTED_CLIENT_COUNT = 0;
-        var GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
         var MCK_TOPIC_CONVERSATION_MAP = [];
         var IS_MCK_USER_DEACTIVATED = false;
         var MCK_LAUNCHER = appOptions.launcher;
@@ -6419,7 +6418,7 @@ window.onload = function() {
                     }
                     if (groupType) {
                         groupType = parseInt(groupType);
-                        if (GROUP_TYPE_MAP.indexOf(groupType) !== -1) {
+                        if (mckGroupUtils.GROUP_TYPE_MAP.indexOf(groupType) !== -1) {
                             params.type = groupType;
                         }
                     }

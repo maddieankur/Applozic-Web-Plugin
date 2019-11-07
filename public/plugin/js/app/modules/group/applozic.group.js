@@ -1,16 +1,68 @@
-var mckGroupUtils = new MckGroupUtils;
+var mckGroupUtils = new MckGroupUtils();
 var mckGroupService = new MckGroupService();
 
 function MckGroupUtils() {
   var _this = this;
-
+  _this.GROUP_ROLE_MAP = [0, 1, 2, 3];
+  _this.GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
+  _this.CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
+  _this.ROLE_MAP = {
+    0: 'User',
+    1: 'Admin',
+    2: 'Moderator',
+    3: 'Member'
+  };
   _this.getDeletedAtTime = function(groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
         var group = MCK_GROUP_MAP[groupId];
         return group['deletedAtTime'];
     }
-};
+  };
 
+  _this.leaveGroup = function(params) {
+    if (typeof params !== 'object') {
+        return 'Unsupported Format. Please check format';
+    }
+    if (typeof params.callback === 'function') {
+        if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'GroupId or Client GroupId Required'
+            });
+            return;
+        }
+        params.apzCallback = mckGroupLayout.onGroupLeft;
+        mckGroupService.leaveGroup(params);
+        return "success";
+    } else {
+        return "Callback Function Required";
+    }
+  };
+
+_this.initGroupTab = function(params) {
+  if (typeof params === "object") {
+      var users = params.users;
+      if (typeof users === 'undefined' || users.length < 1) {
+          return 'Users List Required';
+      }
+      if (users.length > MCK_GROUPMAXSIZE) {
+          return 'Users limit exceeds ' + MCK_GROUPMAXSIZE + '. Max number of users allowed is ' + MCK_GROUPMAXSIZE + '.';
+      }
+      if (!params.groupName) {
+          return 'Group name required';
+      }
+      if (typeof params.type === 'undefined') {
+          return 'Group type required';
+      }
+      if (GROUP_TYPE_MAP.indexOf(params.type) === -1) {
+          return 'Invalid group type';
+      }
+      mckMessageService.getGroup(params);
+      return 'success';
+  } else {
+    return 'Unsupported format. Please check format';
+  }
+};
 
   _this.getGroup = function(groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
@@ -80,7 +132,6 @@ function MckGroupUtils() {
   };
 }
 
-
 function MckGroupService() {
   var _this = this;
   var IS_MCK_VISITOR;
@@ -95,11 +146,109 @@ function MckGroupService() {
   var GROUP_ADD_MEMBER_URL = "/rest/ws/group/add/member";
   var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
   MCK_GROUP_ARRAY = new Array();
+
+  _this.addGroups = function(response) {
+    var groups = response.data;
+    MCK_GROUP_ARRAY.length = 0;
+    groups.forEach(function(group,i) {
+        if ((typeof group.id !== 'undefined')) {
+            var group = mckGroupUtils.addGroup(group);
+            MCK_GROUP_ARRAY.push(group);
+        }
+    });
+  };
+
+  _this.removeGroupMember = function(params) {
+    if (typeof params !== 'object') {
+        return 'Unsupported Format. Please check format';
+    }
+    if (typeof params.callback === 'function') {
+        if ((typeof params.groupId === 'undefined' || params.groupId === '') && (typeof params.clientGroupId === 'undefined' || params.clientGroupId === '')) {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'GroupId or clientGroupId required'
+            });
+            return;
+        }
+        if (typeof params.userId === 'undefined' || params.userId === '') {
+            params.callback({
+                'status': 'error',
+                'errorMessage': 'UserId required'
+            });
+            return;
+        }
+        params.apzCallback = mckGroupLayout.onRemovedGroupMember;
+        mckGroupService.removeGroupMemberFromChat(params);
+        return 'success';
+    } else {
+        return 'Callback function required';
+    }
+};
+
+  _this.createGroup = function(params) {
+    if (typeof params === 'object') {
+        if (typeof params.callback === 'function') {
+            var users = params.users;
+            if (typeof users === 'undefined' || users.length < 1) {
+                params.callback({
+                    'status': 'error',
+                    'errorMessage': 'Users list required'
+                });
+                return;
+            }
+            if (users.length > MCK_GROUPMAXSIZE) {
+                params.callback({
+                    'status': 'error',
+                    'errorMessage': "Users limit exceeds " + MCK_GROUPMAXSIZE + ". Max number of users allowed is " + MCK_GROUPMAXSIZE + "."
+                });
+                return;
+            }
+            if (!params.groupName) {
+                params.callback({
+                    'status': 'error',
+                    'errorMessage': 'Group name required'
+                });
+                return;
+            }
+            if (typeof params.type === 'undefined' || params.type === '') {
+                params.callback({
+                    'status': 'error',
+                    'errorMessage': 'Group type required'
+                });
+                return;
+            }
+            if (GROUP_TYPE_MAP.indexOf(params.type) === -1) {
+                params.callback({
+                    'status': 'error',
+                    'errorMessage': 'Invalid group type'
+                });
+                return;
+            }
+            mckMessageService.getGroup(params);
+            return 'success';
+        } else {
+            return 'Callback function required';
+        }
+    } else {
+        return 'Unsupported Format. Please check format';
+    }
+};
+
   _this.init = function(optns) {
     IS_MCK_VISITOR = optns.visitor;
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
     MCK_OPEN_GROUP_SETTINGS = optns.openGroupSettings;
   };
+
+  _this.getGroupList = function(params) {
+    if (typeof params.callback === 'function') {
+        params.apzCallback = _this.addGroups;
+        _this.loadGroups(params);
+        return 'success';
+    } else {
+        return 'Callback Function Required';
+    }
+};
 
   _this.loadGroups = function(params) {
     var response = new Object();
@@ -478,8 +627,8 @@ function MckGroupService() {
     var group = mckGroupUtils.getGroup('' + groupId);
     if (typeof group === 'undefined') {
       group = mckGroupUtils.createGroup(groupId);
-      mckGroupService.loadGroups({
-        apzCallback: mckGroupLayout.loadGroups
+      _this.loadGroups({
+        apzCallback: _this.addGroups
       });
     }
     if (typeof callback === "function") {

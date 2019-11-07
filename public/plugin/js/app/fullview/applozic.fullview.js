@@ -5976,12 +5976,6 @@ var MCK_CLIENT_GROUP_MAP = [];
 
         function MckGroupLayout() {
             var _this = this;
-            var ROLE_MAP = {
-                0: 'User',
-                1: 'Admin',
-                2: 'Moderator',
-                3: 'Member'
-            }
             var $mck_tab_info = $applozic("#mck-tab-info");
             var $mck_msg_form = $applozic("#mck-msg-form");
             var $mck_msg_error = $applozic("#mck-msg-error");
@@ -6570,7 +6564,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     for (var index in params.users) {
                         var userRoleElement = document.getElementById('user-'+params.users[index].userId+'-role');
                         if (userRoleElement) {
-                            userRoleElement.innerHTML=ROLE_MAP[params.users[index].role];
+                            userRoleElement.innerHTML=mckGroupUtils.ROLE_MAP[params.users[index].role];
                         }
 
                         if (params.users[index].userId) {
@@ -6701,7 +6695,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var roleValue = 3;
                 if (groupUser && typeof groupUser.role !== 'undefined') {
                     roleValue = groupUser.role;
-                    roleExpr = ROLE_MAP[groupUser.role];
+                    roleExpr = mckGroupUtils.ROLE_MAP[groupUser.role];
                 }
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
                 if (contact.contactId === group.adminName) {

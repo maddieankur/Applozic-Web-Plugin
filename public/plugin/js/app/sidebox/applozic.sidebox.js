@@ -6182,18 +6182,10 @@ window.onload = function() {
 				}
         function MckGroupLayout() {
             var _this = this;
-
-						var ROLE_MAP = {
-                0: MCK_LABELS['user'],
-                1: MCK_LABELS['admin'],
-                2: MCK_LABELS['moderator'],
-                3: MCK_LABELS['member']
-            };
-
-						var select = document.getElementById( 'mck-group-create-type' );
-                        select.options[select.options.length] = new Option( MCK_LABELS['public'], '2');
-						select.options[select.options.length] = new Option( MCK_LABELS['private'], '1');
-						select.options[select.options.length] = new Option( MCK_LABELS['open'], '6');
+			var select = document.getElementById( 'mck-group-create-type' );
+            select.options[select.options.length] = new Option( MCK_LABELS['public'], '2');
+			select.options[select.options.length] = new Option( MCK_LABELS['private'], '1');
+			select.options[select.options.length] = new Option( MCK_LABELS['open'], '6');
 
             var $mck_msg_form = $applozic("#mck-msg-form");
             var $mck_msg_error = $applozic("#mck-msg-error");
@@ -6691,7 +6683,7 @@ window.onload = function() {
                     for (var index in params.users) {
                         var userRoleElement = document.getElementById(params.users[index].userId+'-role');
                         if (userRoleElement) {
-                            userRoleElement.innerHTML=ROLE_MAP[params.users[index].role];
+                            userRoleElement.innerHTML=mckGroupUtils.ROLE_MAP[params.users[index].role];
                         }
                         if (params.users[index].userId) {
                             group.users[params.users[index].userId] = params.users[index];
@@ -6817,7 +6809,7 @@ window.onload = function() {
                 var roleValue = 3;
                 if (groupUser && typeof groupUser.role !== 'undefined') {
                     roleValue = groupUser.role;
-                    roleExpr = ROLE_MAP[groupUser.role];
+                    roleExpr = mckGroupUtils.ROLE_MAP[groupUser.role];
                 }
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
                 if (contact.contactId === group.adminName) {

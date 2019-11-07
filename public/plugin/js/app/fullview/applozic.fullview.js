@@ -7998,7 +7998,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var DISCONNECTED = 'disconnected';
             var USER_ENCRYPTION_KEY;
             _this.init = function(data) {
-                if (typeof data !== "undefined") {
+                if (typeof data !== "undefined" && data.encryptionKey) {
                     USER_ENCRYPTION_KEY = data.userEncryptionKey;
                 }
 

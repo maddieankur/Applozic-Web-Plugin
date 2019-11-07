@@ -54,7 +54,9 @@
             if (typeof data !== "undefined") {
                 ALSocket.MCK_TOKEN = data.token;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
-                ALSocket.USER_ENCRYPTION_KEY = data.userEncryptionKey;
+                if (data.encryptionKey) {
+                    ALSocket.USER_ENCRYPTION_KEY = data.userEncryptionKey;
+                }
                 MCK_WEBSOCKET_URL = data.websocketUrl;
 
                 if (typeof data.websocketPort === "undefined") {

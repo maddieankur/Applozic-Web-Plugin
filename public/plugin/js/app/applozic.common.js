@@ -169,6 +169,11 @@ function MckUtils() {
         }).join(''));
     };
 
+    _this.checkIfB64Encoded = function(str) {
+        var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/; // check base64 encoding
+        return base64regex.test(str)
+    };
+
     _this.encrypt = function(data, encryptionKey) {
         if (!encryptionKey) {
             return data;

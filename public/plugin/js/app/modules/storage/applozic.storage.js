@@ -6,7 +6,7 @@ var ALStorage = (function (win) {
     var FRIEND_LIST_GROUP_NAME;
     var FRIEND_LIST_GROUP_TYPE;
     var ENCRYPTION_KEY;
-
+    var mckUtils = new MckUtils();
     return {
         updateLatestMessage: function (message) {
             var messageArray = [];
@@ -78,11 +78,15 @@ var ALStorage = (function (win) {
         },
         setAppHeaders: function (data) {
             if (ALStorage.isSessionStorageAvailable()) {
-                w.sessionStorage.setItem("chatheaders", btoa(w.JSON.stringify(data)));
+                var encryptData = mckUtils.b64EncodeUnicode(JSON.stringify(data));
+                w.sessionStorage.setItem("chatheaders", encryptData);
             }
         },
         getAppHeaders: function () {
-            return (ALStorage.isSessionStorageAvailable() && w.sessionStorage.getItem('chatheaders')) ? $applozic.parseJSON(atob(w.sessionStorage.getItem('chatheaders'))) : {};
+            if (ALStorage.isSessionStorageAvailable()) {
+                var data = w.sessionStorage.getItem('chatheaders');
+                data ? JSON.parse(mckUtils.checkIfB64Encoded() ? mckUtils.b64EncodeUnicode(data) : data) : {};
+            }
         },
         getMessageByKey: function (key) {
             return MCK_MESSAGE_MAP[key];

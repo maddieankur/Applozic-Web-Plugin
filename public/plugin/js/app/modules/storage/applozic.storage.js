@@ -85,7 +85,7 @@ var ALStorage = (function (win) {
         getAppHeaders: function () {
             if (ALStorage.isSessionStorageAvailable()) {
                 var data = w.sessionStorage.getItem('chatheaders');
-                data ? JSON.parse(mckUtils.checkIfB64Encoded() ? mckUtils.b64EncodeUnicode(data) : data) : {};
+                data ? JSON.parse(mckUtils.checkIfB64Encoded(data) ? mckUtils.b64DecodeUnicode(data) : data) : {};
             }
         },
         getMessageByKey: function (key) {

@@ -53,8 +53,9 @@
             }
             if (typeof data !== "undefined") {
                 ALSocket.MCK_TOKEN = data.token;
+                ALSocket.APP_VERSION_CODE = data.appVersionCode;
                 ALSocket.USER_DEVICE_KEY = data.deviceKey;
-                if (data.encryptionKey) {
+                if (data.encryptionKey || data.appVersionCode === window.Applozic.ALApiService.DEFAULT_ENCRYPTED_APP_VERSION) {
                     ALSocket.USER_ENCRYPTION_KEY = data.userEncryptionKey;
                 }
                 MCK_WEBSOCKET_URL = data.websocketUrl;
@@ -66,11 +67,11 @@
                 }
             }
 
-            ALSocket.setOnline = function() {
-              if (typeof window.Applozic.ALSocket !== 'undefined') {
-                window.Applozic.ALSocket.sendStatus(1);	
-            }	
-        };
+            ALSocket.setOnline = function () {
+                if (typeof window.Applozic.ALSocket !== 'undefined') {
+                    window.Applozic.ALSocket.sendStatus(1);
+                }
+            };
 
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {

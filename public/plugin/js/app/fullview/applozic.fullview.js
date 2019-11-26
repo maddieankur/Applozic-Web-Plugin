@@ -1051,7 +1051,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     userPxy.userTypeId = USER_TYPE_ID;
                 }
                 userPxy.enableEncryption = true;
-                userPxy.appVersionCode = 111;
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
                 window.Applozic.ALApiService.AUTH_TOKEN = null;
@@ -7712,7 +7711,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var DISCONNECTED = 'disconnected';
             var USER_ENCRYPTION_KEY;
             _this.init = function(data) {
-                if (typeof data !== "undefined" && data.encryptionKey) {
+                if (typeof data !== "undefined" && ( data.encryptionKey || data.appVersionCode === window.Applozic.ALApiService.DEFAULT_ENCRYPTED_APP_VERSION)) {
                     USER_ENCRYPTION_KEY = data.userEncryptionKey;
                 }
 

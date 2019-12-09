@@ -8060,6 +8060,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         stompClient.heartbeat.outgoing = 10000;
                         stompClient.heartbeat.incoming = 0;
                         stompClient.reconnect_delay = 30000;
+						stompClient.debug = null;
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };

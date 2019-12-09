@@ -74,6 +74,7 @@
                     ALSocket.stompClient.heartbeat.outgoing = 10000;
                     ALSocket.stompClient.heartbeat.incoming = 0;
                     ALSocket.stompClient.reconnect_delay = 30000;
+                    ALSocket.stompClient.debug = null;
                     ALSocket.stompClient.onclose = function() {
                         ALSocket.disconnect();
                     };

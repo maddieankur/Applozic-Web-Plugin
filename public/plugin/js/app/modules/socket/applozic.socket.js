@@ -236,7 +236,7 @@
                 }, ALSocket.MCK_TOKEN + "," + ALSocket.USER_DEVICE_KEY + "," + status);
             }
         };
-        ALSocket.sendMessageStatus = function (messageKey, status) {
+        ALSocket.sendMessageStatus = function (messageKey, status, MCK_USER_ID) {
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 ALSocket.stompClient.send("/topic/message-status", {
                     "content-type": "text/plain"

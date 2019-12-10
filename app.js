@@ -1,20 +1,17 @@
-const http = require("http");
 const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const compressor = require('node-minify');
 const app = express();
-const argv = require('yargs').argv
 const conf = require('config');
 const port = conf.get('port');
 const baseUrl = conf.get('baseUrl');
 const applozicMinifiedFileUrl = conf.get('applozicMinifiedFileUrl');
-const replace = require("replace");
 
 console.log(baseUrl);
 
 compressor.minify({
-  compressor: 'uglifyjs',
+  compressor: 'terser',
   input: ['./public/plugin/js/app/modules/videocall/applozic.calling.js',
     './public/plugin/js/sockjs-1.4.0.min.js', './public/plugin/js/stomp.2.3.3.min.js',
     './public/plugin/js/app/applozic.common.js', './public/plugin/js/app/modules/applozic.chat.js',
@@ -24,7 +21,9 @@ compressor.minify({
     './public/plugin/js/app/modules/file/applozic.file.js','./public/plugin/js/app/modules/customFunctions/applozic.custom.js' ,'./public/plugin/js/app/modules/message/applozic.message.js'
   ],
   output: './public/applozic.chat.min.js',
-  callback: function(err, min) {}
+  callback: function(err, min) {
+    if (err) return console.log(err);
+  }
 });
 
 // Define the port to run on

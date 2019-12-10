@@ -216,7 +216,7 @@ function MckUtils() {
             }
 
             reqOptions.success = function (data) {
-                res = _this.decrypt(data, options.encryptionKey);
+                var res = _this.decrypt(data, options.encryptionKey);
 
                 if (mckUtils.isJsonString(res)) {
                     options.success(JSON.parse(res));

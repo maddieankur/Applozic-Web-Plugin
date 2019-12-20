@@ -7716,13 +7716,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
 
                 if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
-                    if (typeof w.SockJS === 'function') {
-                        SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
+                    if (w.WebSocket) {
+                        MCK_WEBSOCKET_URL = MCK_WEBSOCKET_URL.replace("https://", "");
+                        SOCKET = new WebSocket("wss://" + MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT+ "/ws");
                         stompClient = w.Stomp.over(SOCKET);
                         stompClient.heartbeat.outgoing = 0;
                         stompClient.heartbeat.incoming = 0;
                         stompClient.reconnect_delay = 30000;
-						stompClient.debug = null;
+                        stompClient.debug = null;
                         stompClient.onclose = function() {
                             _this.disconnect();
                         };

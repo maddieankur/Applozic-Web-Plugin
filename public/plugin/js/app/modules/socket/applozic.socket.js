@@ -15,7 +15,7 @@
         ALSocket.mck_typing_status = 0;
         var MCK_TYPING_STATUS;
         var SOCKET = '';
-        var MCK_WEBSOCKET_URL = 'https://socket.applozic.com';
+        var MCK_WEBSOCKET_URL = 'socket.applozic.com';
         var MCK_WEBSOCKET_PORT = "80";
         ALSocket.MCK_TOKEN;
         ALSocket.USER_DEVICE_KEY;
@@ -75,8 +75,9 @@
 
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
-                if (typeof SockJS === 'function') {
-                    SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT + "/stomp");
+                if (window.WebSocket) {
+                    MCK_WEBSOCKET_URL = MCK_WEBSOCKET_URL.replace("https://", "");
+                    SOCKET = new WebSocket("wss://" + MCK_WEBSOCKET_URL + ":" + MCK_WEBSOCKET_PORT+ "/ws");
                     ALSocket.stompClient = Stomp.over(SOCKET);
                     ALSocket.stompClient.heartbeat.outgoing = 0;
                     ALSocket.stompClient.heartbeat.incoming = 0;

@@ -396,7 +396,6 @@ Applozic-Web-Plugin
                     
                 |-- applozic.aes.js                   - external library for Encryption
                 |-- applozic.emojis.min.js            - external library for emojis
-                |-- sockjs-1.4.0.min.js               - external library for SockJs
                 |-- stomp.2.3.3.min.js                - external library for StompJs
                 |-- applozic.widget.min.js            - external library for widgets
                 |-- jquery.min.js                     - external library for jquery

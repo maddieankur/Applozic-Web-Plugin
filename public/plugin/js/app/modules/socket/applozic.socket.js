@@ -135,6 +135,10 @@
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 ALSocket.sendStatus(0);
                 ALSocket.stompClient.disconnect();
+                if (typeof SOCKET === "object") {
+                    SOCKET.close();
+                    SOCKET = '';
+                }
             }
         };
         ALSocket.unsubscibeToTypingChannel = function() {
@@ -173,7 +177,7 @@
                 ALSocket.reconnect();
             }
         };
-        ALSocket.sendTypingStatus = function(status, mck_typing_status,MCK_USER_ID,tabId) {
+        ALSocket.sendTypingStatus = function (status, mck_typing_status, MCK_USER_ID, tabId) {
             ALSocket.mck_typing_status =mck_typing_status;
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 if (status === 1 && ALSocket.mck_typing_status === 1) {
@@ -230,6 +234,13 @@
                 ALSocket.stompClient.send('/topic/status-v2', {
                     "content-type": "text/plain"
                 }, ALSocket.MCK_TOKEN + "," + ALSocket.USER_DEVICE_KEY + "," + status);
+            }
+        };
+        ALSocket.sendMessageStatus = function (messageKey, status, MCK_USER_ID) {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
+                ALSocket.stompClient.send("/topic/message-status", {
+                    "content-type": "text/plain"
+                }, MCK_USER_ID + "," + messageKey + "," + status);
             }
         };
         ALSocket.onConnect = function() {

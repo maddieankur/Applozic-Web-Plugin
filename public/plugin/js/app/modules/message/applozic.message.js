@@ -16,7 +16,7 @@ function AlMessageService() {
   var refreshIntervalId;
 
   _this.init = function(optns) {
-    MCK_FILE_URL = optns.fileBaseUrl; 
+    MCK_FILE_URL = optns.fileBaseUrl;
     IS_MCK_VISITOR = optns.visitor;
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
@@ -41,7 +41,7 @@ function AlMessageService() {
     } else {
         return 'Unsupported format. Please check format';
     }
-};
+  };
 
   _this.getUserIdFromMessage = function(message) {
     var tos = message.to;
@@ -49,7 +49,7 @@ function AlMessageService() {
         tos = tos.substring(0, tos.length - 1);
     }
     return tos.split(",");
-};
+  };
 
 
   _this.isValidMetaData = function(message) {
@@ -76,8 +76,8 @@ function AlMessageService() {
         return 'mck-icon-sent';
     }
     return '';
-};
-
+  };
+  
   _this.addMessageToTab = function(messagePxy, contact, callback) {
     var message = {
       'to': messagePxy.to,

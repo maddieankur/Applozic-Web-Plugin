@@ -65,6 +65,7 @@
                     MCK_WEBSOCKET_PORT = data.websocketPort;
                 }
             }
+
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                 if (window.WebSocket) {

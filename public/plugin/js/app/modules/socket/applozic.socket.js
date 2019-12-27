@@ -103,15 +103,16 @@
                 if (sendConnectedStatusIntervalId) {
                     clearInterval(sendConnectedStatusIntervalId);
                 }
+                // Below code will check that socket is connected or not in every 10 minutes.
                 checkConnectedIntervalId = setInterval(function() {
                     ALSocket.connectToSocket(isFetchMessages);
                 }, 600000);
+                // Below code will send online status to server in every 20 minutes.
                 sendConnectedStatusIntervalId = setInterval(function() {
                     ALSocket.sendStatus(1);
                 }, 1200000);
-            } else {
-                ALSocket.connectToSocket(isFetchMessages);
-            }
+            };
+            ALSocket.connectToSocket(isFetchMessages);
         };
         ALSocket.connectToSocket = function(isFetchMessages) {
             if (typeof ALSocket.connectToSocket === "function") {

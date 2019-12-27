@@ -13,12 +13,12 @@ console.log(baseUrl);
 compressor.minify({
   compressor: 'terser',
   input: ['./public/plugin/js/app/modules/videocall/applozic.calling.js',
-    './public/plugin/js/sockjs-1.4.0.min.js', './public/plugin/js/stomp.2.3.3.min.js',
+    './public/plugin/js/stomp.2.3.3.min.js',
     './public/plugin/js/app/applozic.common.js', './public/plugin/js/app/modules/applozic.chat.js',
     './public/plugin/js/app/modules/storage/applozic.storage.js', './public/plugin/js/app/modules/api/applozic.api.js',
     './public/plugin/js/app/modules/socket/applozic.socket.js', './public/plugin/js/app/modules/notification/applozic.notification.js',
     './public/plugin/js/app/modules/group/applozic.group.js', './public/plugin/js/app/modules/user/applozic.user.js',
-    './public/plugin/js/app/modules/file/applozic.file.js','./public/plugin/js/app/modules/customFunctions/applozic.custom.js' ,'./public/plugin/js/app/modules/message/applozic.message.js'
+    './public/plugin/js/app/modules/file/applozic.file.js','./public/plugin/js/app/modules/customFunctions/applozic.custom.js' ,'./public/plugin/js/app/modules/label/applozic.label.js','./public/plugin/js/app/modules/message/applozic.message.js'
   ],
   output: './public/applozic.chat.min.js',
   callback: function(err, min) {

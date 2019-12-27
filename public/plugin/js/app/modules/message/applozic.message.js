@@ -21,6 +21,63 @@ function AlMessageService() {
     MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
 
+  _this.getConversation = function(params) {
+    _this.getTopicId({
+        'conversationId': params.conversationId
+    }, function(params){
+      mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
+    });
+  };
+
+  _this.addWelcomeMessage = function(params) {
+    if (typeof params === "object") {
+        if (typeof params.sender === 'undefined' || params.sender === '') {
+            return 'Sender Field Required';
+        }
+        if (typeof params.messageContent === 'undefined' || params.messageContent === '') {
+            return 'Message Content Required';
+        }
+        mckMessageService.sendWelcomeMessage(params);
+    } else {
+        return 'Unsupported format. Please check format';
+    }
+  };
+
+  _this.getUserIdFromMessage = function(message) {
+    var tos = message.to;
+    if (tos.lastIndexOf(",") === tos.length - 1) {
+        tos = tos.substring(0, tos.length - 1);
+    }
+    return tos.split(",");
+  };
+
+
+  _this.isValidMetaData = function(message) {
+    if (!message.metadata) {
+        return true;
+    } else if (message.metadata.category === 'HIDDEN' || message.metadata.category === 'ARCHIVE') {
+        return false;
+    } else {
+        return true;
+    }
+  };
+
+  _this.getStatusIconName = function(msg) {
+    if (msg.type === 7 || msg.type === 6 || msg.type === 4 || msg.type === 0) {
+        return '';
+    }
+    if (msg.status === 5) {
+        return 'mck-icon-read';
+    }
+    if (msg.status === 4) {
+        return 'mck-icon-delivered';
+    }
+    if (msg.type === 3 || msg.type === 5 || (msg.type === 1 && (msg.source === 0 || msg.source === 1))) {
+        return 'mck-icon-sent';
+    }
+    return '';
+  };
+  
   _this.addMessageToTab = function(messagePxy, contact, callback) {
     var message = {
       'to': messagePxy.to,

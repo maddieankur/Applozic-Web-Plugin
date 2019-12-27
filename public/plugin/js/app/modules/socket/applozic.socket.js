@@ -65,13 +65,6 @@
                     MCK_WEBSOCKET_PORT = data.websocketPort;
                 }
             }
-
-            ALSocket.setOnline = function() {
-              if (typeof window.Applozic.ALSocket !== 'undefined') {
-                window.Applozic.ALSocket.sendStatus(1);	
-            }	
-        };
-
             ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined' && navigator.onLine) {
                 if (window.WebSocket) {
@@ -94,6 +87,11 @@
                         }
                     });
                 }
+            }
+        };
+        ALSocket.setOnline = function () {
+            if (typeof window.Applozic.ALSocket !== 'undefined') {
+                window.Applozic.ALSocket.sendStatus(1);
             }
         };
         ALSocket.checkConnected = function(isFetchMessages) {

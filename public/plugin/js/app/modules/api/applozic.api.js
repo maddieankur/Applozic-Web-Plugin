@@ -860,7 +860,6 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + FRIEND_LIST_URL + options.group.groupName + getFriendListUrl,
                 type: "GET",
-                async: false,
                 contentType: "application/json",
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 success: function (response) {

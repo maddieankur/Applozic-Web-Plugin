@@ -20,11 +20,6 @@ compressor.minify({
     './public/plugin/js/app/modules/group/applozic.group.js', './public/plugin/js/app/modules/user/applozic.user.js',
     './public/plugin/js/app/modules/file/applozic.file.js', './public/plugin/js/app/modules/customFunctions/applozic.custom.js', './public/plugin/js/app/modules/label/applozic.label.js', './public/plugin/js/app/modules/message/applozic.message.js'
   ],
-  options: {
-    compress: {
-      drop_console: true
-    }
-  },
   output: './public/applozic.chat.min.js',
   callback: function (err, min) {
     if (err) return console.log(err);

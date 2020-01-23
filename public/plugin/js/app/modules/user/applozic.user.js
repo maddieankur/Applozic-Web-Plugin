@@ -34,6 +34,7 @@ function AlUserService() {
     }
   };
   _this.checkUserConnectedStatus = function(callback) {
+    console.log("got it");
     var userIdArray = new Array();
     var otherUserIdArray = new Array();
     $applozic(".mck-user-ol-status").each(function() {

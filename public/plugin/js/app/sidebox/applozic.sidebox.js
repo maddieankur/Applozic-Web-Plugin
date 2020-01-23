@@ -1881,11 +1881,11 @@ window.onload = function() {
                         }
                     }
                 }
-                alUserService.checkUserConnectedStatus(function(otherUserIdArray){
-									(otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
-			                setStatus: true
-			            }): mckUserUtils.updateUserConnectedStatus();
-								});
+                alUserService.checkUserConnectedStatus(function (otherUserIdArray) {
+                    (otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
+                        setStatus: true
+                    }) : mckUserUtils.updateUserConnectedStatus();
+                });
                 if (typeof MCK_ON_PLUGIN_INIT === 'function') {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }

@@ -18,7 +18,7 @@ function AlMessageService() {
   _this.init = function(optns) {
     MCK_FILE_URL = optns.fileBaseUrl;
     IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : optns.userId.trim();
   };
 
   _this.getConversation = function(params) {
@@ -191,11 +191,11 @@ function AlMessageService() {
           resp.messages = [];
         } else {
           var messages = data.message;
-           var messageFeeds = new Array();
-          $applozic.each(messages, function(i, message) {
+          var messageFeeds = new Array();
+          messages.forEach(function (message, i) {
             if (typeof callback === "function") {
               callback(message);
-            }
+            };
           });
           resp.messages = messageFeeds;
         }
@@ -254,12 +254,12 @@ function AlMessageService() {
         if (typeof data === 'object' && data.status === "success") {
           var conversationList = data.response;
           if (conversationList.length > 0) {
-            $applozic.each(conversationList, function(i, conversationPxy) {
+            conversationList.forEach(function (conversationPxy, i) {
               MCK_CONVERSATION_MAP[conversationPxy.id] = conversationPxy;
               MCK_TOPIC_CONVERSATION_MAP[conversationPxy.topicId] = [conversationPxy.id];
               if (conversationPxy.topicDetail) {
                 try {
-                  MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = $applozic.parseJSON(conversationPxy.topicDetail);
+                  MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = JSON.parse(conversationPxy.topicDetail);
                 } catch (ex) {
                   w.console.log('Incorect Topic Detail!');
                 }
@@ -269,8 +269,8 @@ function AlMessageService() {
                 tabConvArray.push(conversationPxy);
                 MCK_TAB_CONVERSATION_MAP[params.tabId] = tabConvArray;
               }
-            })
-          }
+            });
+          };
           if (params.isExtMessageList) {
             if (conversationList.length > 0) {
               params.conversationId = conversationList[0].id;
@@ -340,7 +340,7 @@ function AlMessageService() {
               MCK_CONVERSATION_MAP[params.conversationId] = conversationPxy;
               if (conversationPxy.topicDetail) {
                 try {
-                  MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = $applozic.parseJSON(conversationPxy.topicDetail);
+                  MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = JSON.parse(conversationPxy.topicDetail);
                 } catch (ex) {
                   w.console.log('Incorect Topic Detail!');
                 }
@@ -396,7 +396,7 @@ function AlMessageService() {
         var topicDetail = MCK_TOPIC_DETAIL_MAP[params.topicId];
         if (typeof topicDetail === 'object' && topicDetail.title !== 'undefined') {
           if (!messagePxy.message) {
-            messagePxy.message = $applozic.trim(topicDetail.title);
+            messagePxy.message = topicDetail.title.trim();
           }
           if (params.conversationId) {
             messagePxy.conversationId = params.conversationId;
@@ -412,7 +412,7 @@ function AlMessageService() {
         }
         if (!messagePxy.message && topicDetail.link) {
           var fileMeta = {
-            "blobKey": $applozic.trim(topicDetail.link),
+            "blobKey": topicDetail.link.trim(),
             "contentType": "image/png"
           };
           messagePxy.fileMeta = fileMeta;

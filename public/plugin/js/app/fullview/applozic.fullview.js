@@ -1309,11 +1309,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 }
-                alUserService.checkUserConnectedStatus(function(otherUserIdArray){
-									(otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
-			                setStatus: true
-			            }): mckUserUtils.updateUserConnectedStatus();
-								});
+                alUserService.checkUserConnectedStatus(function (otherUserIdArray) {
+                    (otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
+                        setStatus: true
+                    }) : mckUserUtils.updateUserConnectedStatus();
+                });
                 if (typeof MCK_INIT_AUTO_SUGGESTION === 'function') {
                     MCK_INIT_AUTO_SUGGESTION();
                 }

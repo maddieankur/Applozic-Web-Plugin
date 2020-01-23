@@ -114,7 +114,7 @@ _this.generateCloudUrl = function(key, callback) {
   _this.getFilePath = function(msg) {
     if (msg.contentType === 2) {
       try {
-        var geoLoc = $applozic.parseJSON(msg.message);
+        var geoLoc = JSON.parse(msg.message);
         if (geoLoc.lat && geoLoc.lon) {
           return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '&key=' + MCK_MAP_STATIC_API_KEY + '"/></a>';
         }

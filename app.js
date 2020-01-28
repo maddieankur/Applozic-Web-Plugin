@@ -11,7 +11,7 @@ const applozicMinifiedFileUrl = conf.get('applozicMinifiedFileUrl');
 console.log(baseUrl);
 
 compressor.minify({
-  compressor: 'no-compress',
+  compressor: 'terser',
   input: ['./public/plugin/js/stomp.2.3.3.min.js',
     './public/plugin/js/app/applozic.common.js', './public/plugin/js/app/modules/applozic.chat.js',
     './public/plugin/js/app/modules/storage/applozic.storage.js', './public/plugin/js/app/modules/api/applozic.api.js',

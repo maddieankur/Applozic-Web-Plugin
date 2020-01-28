@@ -8,13 +8,13 @@ window.onload = function() {
     var default_options = {
         baseUrl: MCK_BASE_URL? MCK_BASE_URL :'https://apps.applozic.com',
         fileBaseUrl: 'https://applozic.appspot.com',
-				customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
-				genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", // generate viewable link for a file incase of file upload on google cloud
+        customFileUrl: 'https://googleupload.applozic.com', // google cloud file upload url
+        genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", // generate viewable link for a file incase of file upload on google cloud
         notificationIconLink: '',
         notificationSoundLink: '',
-        mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
+        mapStaticAPIkey: 'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
         launcher: 'applozic-launcher',
-				emojilibrary: true, // true if you want to load emoticons in chat
+        emojilibrary: true, // true if you want to load emoticons in chat
         userId: null,
         appId: null,
         userName: null,
@@ -49,7 +49,7 @@ window.onload = function() {
     $applozic.fn.applozic = function(appOptions, params) {
         var $mck_sidebox = $applozic('#mck-sidebox');
         if ($applozic.type(appOptions) === 'object') {
-            appOptions = $applozic.extend(true, {}, default_options, appOptions);
+            appOptions = mckUtils.extendObject({}, default_options, appOptions);
         }
         var oInstance = undefined;
         if (typeof($mck_sidebox.data('applozic_instance')) !== 'undefined') {
@@ -962,12 +962,14 @@ window.onload = function() {
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
+            /* 
+            // Below code is related the video calling feature which was provided earlier.
             if (IS_CALL_ENABLED) {
              ringToneService = new RingToneService();
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
              mckCallService.init();
             }
-            
+            */
             if(MCK_NOTIFICATION_TONE_LINK){
                 ringToneService = new RingToneService();
                 mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK, { loop: false });
@@ -976,7 +978,7 @@ window.onload = function() {
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
-                optns = $applozic.extend(true, {}, default_options, optns);
+                optns = mckUtils.extendObject({}, default_options, optns);
             } else {
                 return;
             }
@@ -1486,7 +1488,7 @@ window.onload = function() {
         };
         _this.sendMessage = function(params) {
             if (typeof params === 'object') {
-                params = $applozic.extend(true, {}, message_default_options, params);
+                params = mckUtils.extendObject({}, message_default_options, params);
                 var message = params.message;
                 if (!params.to) {
                     return "To field required";
@@ -1514,7 +1516,7 @@ window.onload = function() {
         };
         _this.sendGroupMessage = function(params) {
             if (typeof params === 'object') {
-                params = $applozic.extend(true, {}, message_default_options, params);
+                params = mckUtils.extendObject({}, message_default_options, params);
                 var message = params.message;
                 if (!params.groupId && !params.clientGroupId) {
                     return 'groupId or clientGroupId required';
@@ -1881,11 +1883,7 @@ window.onload = function() {
                         }
                     }
                 }
-                alUserService.checkUserConnectedStatus(function(otherUserIdArray){
-									(otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
-			                setStatus: true
-			            }): mckUserUtils.updateUserConnectedStatus();
-								});
+                mckUserUtils.checkUserConnectedStatus();
                 if (typeof MCK_ON_PLUGIN_INIT === 'function') {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }
@@ -5858,22 +5856,45 @@ window.onload = function() {
             var $mck_block_button = $applozic("#mck-block-button");
             var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner");
 
-						_this.updateUserConnectedStatus = function() {
-								$applozic('.mck-user-ol-status').each(function() {
-										var $this = $applozic(this);
-										var tabId = $this.data('mck-id');
-										if (tabId) {
-												var userDetail = alUserService.MCK_USER_DETAIL_MAP[tabId];
-												if (typeof alUserService.MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
-														$this.removeClass('n-vis').addClass('vis');
-														$this.next().html('(' + MCK_LABELS['online'] + ')');
-												} else {
-														$this.removeClass('vis').addClass('n-vis');
-														$this.next().html('(Offline)');
-												}
-										}
-								});
-						};
+            _this.checkUserConnectedStatus = function () {
+                var userIdArray = new Array();
+                var otherUserIdArray = new Array();
+                $applozic(".mck-user-ol-status").each(function () {
+                    var tabId = $applozic(this).data('mck-id');
+                    if (typeof tabId !== "undefined" && tabId !== '') {
+                        userIdArray.push(tabId);
+                        var htmlId = mckContactUtils.formatContactId('' + tabId);
+                        $applozic(this).addClass(htmlId);
+                        $applozic(this).next().addClass(htmlId);
+                    }
+                });
+                if (userIdArray.length > 0) {
+                    $applozic.each(userIdArray, function (i, userId) {
+                        if (typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'undefined') {
+                            otherUserIdArray.push(userId);
+                        }
+                    });
+                    (otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
+                        setStatus: true
+                    }): _this.updateUserConnectedStatus();
+                }
+            };
+            _this.updateUserConnectedStatus = function () {
+                $applozic('.mck-user-ol-status').each(function () {
+                    var $this = $applozic(this);
+                    var tabId = $this.data('mck-id');
+                    if (tabId) {
+                        var userDetail = alUserService.MCK_USER_DETAIL_MAP[tabId];
+                        if (typeof alUserService.MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
+                            $this.removeClass('n-vis').addClass('vis');
+                            $this.next().html('(' + MCK_LABELS['online'] + ')');
+                        } else {
+                            $this.removeClass('vis').addClass('n-vis');
+                            $this.next().html('(Offline)');
+                        }
+                    }
+                });
+            };
             _this.lastSeenOfGroupOfTwo = function(tabId) {
                 if (w.MCK_OL_MAP[tabId]) {
                     $mck_tab_status.attr('title', MCK_LABELS['online']).html(MCK_LABELS['online']);

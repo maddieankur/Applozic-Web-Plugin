@@ -12,8 +12,7 @@ console.log(baseUrl);
 
 compressor.minify({
   compressor: 'terser',
-  input: ['./public/plugin/js/app/modules/videocall/applozic.calling.js',
-    './public/plugin/js/stomp.2.3.3.min.js',
+  input: ['./public/plugin/js/stomp.2.3.3.min.js',
     './public/plugin/js/app/applozic.common.js', './public/plugin/js/app/modules/applozic.chat.js',
     './public/plugin/js/app/modules/storage/applozic.storage.js', './public/plugin/js/app/modules/api/applozic.api.js',
     './public/plugin/js/app/modules/socket/applozic.socket.js', './public/plugin/js/app/modules/notification/applozic.notification.js',

@@ -208,8 +208,7 @@ function MckUtils() {
     },
 
     _this.ajax = function(options) {
-        //var reqOptions = Object.assign({}, options);
-        var reqOptions = $applozic.extend({}, {}, options);
+        var reqOptions = _this.extendObject({}, {}, options);
         if (!options.skipEncryption && options.encryptionKey) {
             if (reqOptions.type.toLowerCase() === 'post') {
                 reqOptions.data = encrypt(options.data, options.encryptionKey);
@@ -237,6 +236,28 @@ function MckUtils() {
         return true;
     };
 
+    // This is alternative for Jquery deep extend. Refer this link for help https://api.jquery.com/jquery.extend/
+    _this.extendObject = function (out) {
+        out = out || {};
+        for (var i = 1; i < arguments.length; i++) {
+            var obj = arguments[i];
+            if (!obj)
+                continue;
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (typeof obj[key] === 'object') {
+                        if (obj[key] instanceof Array == true)
+                            out[key] = obj[key].slice(0);
+                        else
+                            out[key] = _this.extendObject(out[key], obj[key]);
+                    } else
+                        out[key] = obj[key];
+                }
+            }
+        }
+        return out;
+    };
+
 }
 function MckContactUtils() {
     var _this = this;
@@ -244,12 +265,13 @@ function MckContactUtils() {
         var contactId = contact.contactId;
         return _this.formatContactId(contactId);
     };
-    _this.formatContactId = function(contactId) {
-        if (contactId.indexOf('+') === 0) {
-            contactId = contactId.substring(1);
+    _this.formatContactId = function (contactId) {
+        if (contactId) {
+            contactId.indexOf('+') === 0 && (contactId = contactId.substring(1));
+            contactId = decodeURIComponent(contactId);
+            contactId = contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON').trim();
         }
-        contactId = decodeURIComponent(contactId);
-        return $applozic.trim(contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON'));
+        return contactId;
     };
 }
 function MckMapUtils() {
@@ -332,7 +354,7 @@ function MckDateUtils() {
                 val = '0' + val;
                 return val;
             };
-        // Regexes and supporting functions are cached through closure
+        // Regex's and supporting functions are cached through closure
         return function(date, mask, utc) {
             var dF = dateFormat;
             // You can't provide utc if you skip other args (use the

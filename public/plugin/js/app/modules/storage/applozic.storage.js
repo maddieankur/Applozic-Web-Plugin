@@ -15,7 +15,7 @@ var ALStorage = (function (win) {
             ALStorage.updateMckMessageArray(messageArray);
         },
         getLatestMessageArray: function () {
-            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? JSON.parse(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
         },
         getFriendListGroupName: function () {
             return (ALStorage.isSessionStorageAvailable()) ? w.sessionStorage.getItem("friendListGroupName") : FRIEND_LIST_GROUP_NAME;
@@ -46,7 +46,7 @@ var ALStorage = (function (win) {
         },
         updateLatestMessageArray: function (mckMessageArray) {
             if (ALStorage.isSessionStorageAvailable()) {
-                var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckLatestMessageArray'));
+                var mckLocalMessageArray = JSON.parse(w.sessionStorage.getItem('mckLatestMessageArray'));
                 if (mckLocalMessageArray !== null) {
                     mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
                     w.sessionStorage.setItem('mckLatestMessageArray', w.JSON.stringify(mckLocalMessageArray));
@@ -60,7 +60,7 @@ var ALStorage = (function (win) {
             }
         },
         getMckMessageArray: function () {
-            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? JSON.parse(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
         },
         clearMckMessageArray: function () {
             if (ALStorage.isSessionStorageAvailable()) {
@@ -98,7 +98,7 @@ var ALStorage = (function (win) {
                 MCK_MESSAGE_MAP[message.key] = message;
             }
             if (ALStorage.isSessionStorageAvailable()) {
-                var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckMessageArray'));
+                var mckLocalMessageArray = JSON.parse(w.sessionStorage.getItem('mckMessageArray'));
                 if (mckLocalMessageArray !== null) {
                     mckLocalMessageArray = mckLocalMessageArray.concat(mckMessageArray);
                     w.sessionStorage.setItem('mckMessageArray', w.JSON.stringify(mckLocalMessageArray));
@@ -112,7 +112,7 @@ var ALStorage = (function (win) {
             }
         },
         getMckContactNameArray: function () {
-            return (ALStorage.isSessionStorageAvailable()) ? $applozic.parseJSON(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
+            return (ALStorage.isSessionStorageAvailable()) ? JSON.parse(w.sessionStorage.getItem("mckContactNameArray")) : MCK_CONTACT_NAME_ARRAY;
         },
         setMckContactNameArray: function (mckContactNameArray) {
             if (ALStorage.isSessionStorageAvailable()) {
@@ -123,7 +123,7 @@ var ALStorage = (function (win) {
         },
         updateMckContactNameArray: function (mckContactNameArray) {
             if (ALStorage.isSessionStorageAvailable()) {
-                var mckLocalcontactNameArray = $applozic.parseJSON(w.sessionStorage.getItem('mckContactNameArray'));
+                var mckLocalcontactNameArray = JSON.parse(w.sessionStorage.getItem('mckContactNameArray'));
                 if (mckLocalcontactNameArray !== null) {
                     mckContactNameArray = mckContactNameArray.concat(mckLocalcontactNameArray);
                 }

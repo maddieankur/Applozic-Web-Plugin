@@ -502,7 +502,7 @@ function AlMessageService() {
       }
     }
     if (typeof message.fileMeta === 'object') {
-      var file = Object.assign({}, message.fileMeta);
+      var file = mckUtils.extendObject({}, {}, message.fileMeta);
       if (typeof file.url === 'undefined' || file.url === '') {
         file.url = MCK_FILE_URL + '/rest/ws/aws/file/' + message.fileMeta.blobKey;
       }

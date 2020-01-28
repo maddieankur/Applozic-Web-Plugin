@@ -574,7 +574,7 @@ function MckGroupService() {
   };
   _this.sendGroupMessage = function (params) {
     if (typeof params === 'object') {
-      params = $applozic.extend(true, {}, message_default_options, params);
+      params = mckUtils.extendObject({}, message_default_options, params);
       var message = params.message;
       if (!params.groupId && !params.clientGroupId) {
         return 'groupId or clientGroupId required';

@@ -81,7 +81,7 @@ function MckGroupUtils() {
   _this.addGroup = function (group) {
     var name = (group.name) ? group.name : group.id;
     var users = [];
-    group.groupUsers.forEach(function(user, i){
+    group && group.groupUsers && group.groupUsers.forEach(function(user, i){
       if (user.userId) {
         users[user.userId] = user;
       }
@@ -151,7 +151,7 @@ function MckGroupService() {
   _this.addGroups = function (response) {
     var groups = response.data;
     MCK_GROUP_ARRAY.length = 0;
-    groups.forEach(function (group, i) {
+    groups && groups.forEach(function (group, i) {
       if ((typeof group.id !== 'undefined')) {
         var group = mckGroupUtils.addGroup(group);
         MCK_GROUP_ARRAY.push(group);
@@ -237,7 +237,7 @@ function MckGroupService() {
 
   _this.init = function (optns) {
     IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : optns.userId.trim();
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (optns.userId && optns.userId.trim());
     MCK_OPEN_GROUP_SETTINGS = optns.openGroupSettings;
   };
 
@@ -585,7 +585,7 @@ function MckGroupService() {
       if (params.type > 12) {
         return 'invalid message type';
       }
-      message = message.trim();
+      message = message && message.trim();
       var messagePxy = {
         'type': params.messageType,
         'contentType': params.type,
@@ -647,7 +647,7 @@ function MckGroupService() {
   _this.loadGroupsCallback = function (response) {
     var groups = response.data;
     MCK_GROUP_ARRAY.length = 0;
-    groups.groupUsers.forEach(function (group, i) {
+    groups && groups.groupUsers && groups.groupUsers.forEach(function (group, i) {
       if ((typeof group.id !== 'undefined')) {
         var group = mckGroupUtils.addGroup(group);
         MCK_GROUP_ARRAY.push(group);
@@ -689,7 +689,7 @@ function MckGroupService() {
             window.Applozic.ALApiService.getUserDetail({
               data: userIdList,
               success: function (data) {
-                if (data.response.length > 0) {
+                if (data && data.response && data.response.length > 0) {
                   data.response.forEach(function (userDetail, i) {
                     alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                     if (alUserService.MCK_USER_DETAIL_MAP[contact] && alUserService.MCK_USER_DETAIL_MAP[contact].displayName) {

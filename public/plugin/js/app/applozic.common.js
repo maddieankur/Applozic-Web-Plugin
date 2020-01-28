@@ -265,12 +265,13 @@ function MckContactUtils() {
         var contactId = contact.contactId;
         return _this.formatContactId(contactId);
     };
-    _this.formatContactId = function(contactId) {
-        if (contactId.indexOf('+') === 0) {
-            contactId = contactId.substring(1);
+    _this.formatContactId = function (contactId) {
+        if (contactId) {
+            contactId.indexOf('+') === 0 && (contactId = contactId.substring(1));
+            contactId = decodeURIComponent(contactId);
+            contactId = contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON').trim();
         }
-        contactId = decodeURIComponent(contactId);
-        return contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON').trim();
+        return contactId;
     };
 }
 function MckMapUtils() {

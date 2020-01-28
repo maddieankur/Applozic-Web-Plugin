@@ -18,7 +18,7 @@ function AlMessageService() {
   _this.init = function(optns) {
     MCK_FILE_URL = optns.fileBaseUrl;
     IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : optns.userId.trim();
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (optns && optns.userId && optns.userId.trim());
   };
 
   _this.getConversation = function(params) {
@@ -253,7 +253,7 @@ function AlMessageService() {
       success: function(data) {
         if (typeof data === 'object' && data.status === "success") {
           var conversationList = data.response;
-          if (conversationList.length > 0) {
+          if (conversationList && conversationList.length > 0) {
             conversationList.forEach(function (conversationPxy, i) {
               MCK_CONVERSATION_MAP[conversationPxy.id] = conversationPxy;
               MCK_TOPIC_CONVERSATION_MAP[conversationPxy.topicId] = [conversationPxy.id];
@@ -396,7 +396,7 @@ function AlMessageService() {
         var topicDetail = MCK_TOPIC_DETAIL_MAP[params.topicId];
         if (typeof topicDetail === 'object' && topicDetail.title !== 'undefined') {
           if (!messagePxy.message) {
-            messagePxy.message = topicDetail.title.trim();
+            messagePxy.message = topicDetail.title && topicDetail.title.trim();
           }
           if (params.conversationId) {
             messagePxy.conversationId = params.conversationId;

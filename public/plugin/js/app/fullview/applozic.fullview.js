@@ -45,7 +45,7 @@ var MCK_CLIENT_GROUP_MAP = [];
     $applozic.fn.applozic = function(appOptions, params) {
         var $mck_sidebox = $applozic('#mck-sidebox');
         if ($applozic.type(appOptions) === 'object') {
-            appOptions = mckUtils.extendObject({}, default_options, appOptions);
+            appOptions = mckUtils.extendObject(true, {}, default_options, appOptions);
         }
         var oInstance = undefined;
         if (typeof($mck_sidebox.data('applozic_instance')) !== 'undefined') {
@@ -414,7 +414,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
-                optns = mckUtils.extendObject({}, default_options, optns);
+                optns = mckUtils.extendObject(true, {}, default_options, optns);
             } else {
                 return;
             }
@@ -891,7 +891,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
         _this.sendMessage = function(params) {
             if (typeof params === 'object') {
-                params = mckUtils.extendObject({}, message_default_options, params);
+                params = mckUtils.extendObject(true, {}, message_default_options, params);
                 var message = params.message;
                 if (!params.to) {
                     return "To field required";
@@ -917,7 +917,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
         _this.sendGroupMessage = function(params) {
             if (typeof params === 'object') {
-                params = mckUtils.extendObject({}, message_default_options, params);
+                params = mckUtils.extendObject(true, {}, message_default_options, params);
                 var message = params.message;
                 if (!params.groupId && !params.clientGroupId) {
                     return 'groupId or clientGroupId required';

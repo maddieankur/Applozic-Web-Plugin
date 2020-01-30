@@ -235,27 +235,45 @@ function MckUtils() {
         }
         return true;
     };
+    /*
+    - This is alternative for Jquery deep extend. Refer this link for help https://api.jquery.com/jquery.extend/
+    - Pass in the objects to merge as arguments.
+    - For a deep extend, set the first argument to `true`.
+    */
+    _this.extendObject = function () {
+        // Variables
+        var extended = {};
+        var deep = false;
+        var i = 0;
+        var length = arguments.length;
 
-    // This is alternative for Jquery deep extend. Refer this link for help https://api.jquery.com/jquery.extend/
-    _this.extendObject = function (out) {
-        out = out || {};
-        for (var i = 1; i < arguments.length; i++) {
-            var obj = arguments[i];
-            if (!obj)
-                continue;
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    if (typeof obj[key] === 'object') {
-                        if (obj[key] instanceof Array == true)
-                            out[key] = obj[key].slice(0);
-                        else
-                            out[key] = _this.extendObject(out[key], obj[key]);
-                    } else
-                        out[key] = obj[key];
+        // Check if a deep merge
+        if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]') {
+            deep = arguments[0];
+            i++;
+        }
+
+        // Merge the object into the extended object
+        var merge = function (obj) {
+            for (var prop in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    // If deep merge and property is an object, merge properties
+                    if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                        extended[prop] = _this.extendObject(true, extended[prop], obj[prop]);
+                    } else {
+                        extended[prop] = obj[prop];
+                    }
                 }
             }
+        };
+
+        // Loop through each object and conduct a merge
+        for (; i < length; i++) {
+            var obj = arguments[i];
+            merge(obj);
         }
-        return out;
+
+        return extended;
     };
 
 }

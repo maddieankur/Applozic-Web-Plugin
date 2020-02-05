@@ -33,29 +33,6 @@ function AlUserService() {
       return;
     }
   };
-  _this.checkUserConnectedStatus = function(callback) {
-    var userIdArray = new Array();
-    var otherUserIdArray = new Array();
-    $applozic(".mck-user-ol-status").each(function() {
-      var tabId = $applozic(this).data('mck-id');
-      if (typeof tabId !== "undefined" && tabId !== '') {
-        userIdArray.push(tabId);
-        var htmlId = mckContactUtils.formatContactId('' + tabId);
-        $applozic(this).addClass(htmlId);
-        $applozic(this).next().addClass(htmlId);
-      }
-    });
-    if (userIdArray.length > 0) {
-      $applozic.each(userIdArray, function(i, userId) {
-        if (typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'undefined') {
-          otherUserIdArray.push(userId);
-        }
-      });
-      if (typeof callback === "function") {
-        callback(otherUserIdArray);
-      }
-    }
-  };
   _this.loadUserProfile = function(userId) {
     if (typeof userId !== "undefined") {
       typeof userId !== "string" && (userId = String(userId));

@@ -81,11 +81,12 @@ function MckGroupUtils() {
   _this.addGroup = function (group) {
     var name = (group.name) ? group.name : group.id;
     var users = [];
-    $applozic.each(group.groupUsers, function (i, user) {
+    group && group.groupUsers && group.groupUsers.forEach(function(user, i){
       if (user.userId) {
         users[user.userId] = user;
       }
     });
+
     var removedMembersId = (typeof group.removedMembersId !== 'undefined') ? group.removedMembersId : [];
     var groupFeed = {
       'contactId': group.id.toString(),
@@ -150,7 +151,7 @@ function MckGroupService() {
   _this.addGroups = function (response) {
     var groups = response.data;
     MCK_GROUP_ARRAY.length = 0;
-    groups.forEach(function (group, i) {
+    groups && groups.forEach(function (group, i) {
       if ((typeof group.id !== 'undefined')) {
         var group = mckGroupUtils.addGroup(group);
         MCK_GROUP_ARRAY.push(group);
@@ -236,7 +237,7 @@ function MckGroupService() {
 
   _this.init = function (optns) {
     IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (optns.userId && optns.userId.trim());
     MCK_OPEN_GROUP_SETTINGS = optns.openGroupSettings;
   };
 
@@ -573,7 +574,7 @@ function MckGroupService() {
   };
   _this.sendGroupMessage = function (params) {
     if (typeof params === 'object') {
-      params = $applozic.extend(true, {}, message_default_options, params);
+      params = mckUtils.extendObject(true, {}, message_default_options, params);
       var message = params.message;
       if (!params.groupId && !params.clientGroupId) {
         return 'groupId or clientGroupId required';
@@ -584,20 +585,20 @@ function MckGroupService() {
       if (params.type > 12) {
         return 'invalid message type';
       }
-      message = $applozic.trim(message);
+      message = message && message.trim();
       var messagePxy = {
         'type': params.messageType,
         'contentType': params.type,
         'message': message
       };
       if (params.groupId) {
-        messagePxy.groupId = $applozic.trim(params.groupId);
+        messagePxy.groupId = params.groupId.trim();
       } else if (params.clientGroupId) {
         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
         if (typeof group === 'undefined') {
           return 'group not found';
         }
-        messagePxy.clientGroupId = $applozic.trim(params.clientGroupId);
+        messagePxy.clientGroupId = params.clientGroupId.trim();
       }
       mckMessageService.sendMessage(messagePxy);
       return 'success';
@@ -646,13 +647,14 @@ function MckGroupService() {
   _this.loadGroupsCallback = function (response) {
     var groups = response.data;
     MCK_GROUP_ARRAY.length = 0;
-    $applozic.each(groups, function (i, group) {
+    groups && groups.groupUsers && groups.groupUsers.forEach(function (group, i) {
       if ((typeof group.id !== 'undefined')) {
         var group = mckGroupUtils.addGroup(group);
         MCK_GROUP_ARRAY.push(group);
       }
     });
   };
+
   _this.getGroupDisplayName = function (groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
       var group = MCK_GROUP_MAP[groupId];
@@ -687,8 +689,8 @@ function MckGroupService() {
             window.Applozic.ALApiService.getUserDetail({
               data: userIdList,
               success: function (data) {
-                if (data.response.length > 0) {
-                  $applozic.each(data.response, function (i, userDetail) {
+                if (data && data.response && data.response.length > 0) {
+                  data.response.forEach(function (userDetail, i) {
                     alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                     if (alUserService.MCK_USER_DETAIL_MAP[contact] && alUserService.MCK_USER_DETAIL_MAP[contact].displayName) {
                       displayName = alUserService.MCK_USER_DETAIL_MAP[contact].displayName;

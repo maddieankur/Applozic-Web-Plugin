@@ -208,8 +208,7 @@ function MckUtils() {
     },
 
     _this.ajax = function(options) {
-        //var reqOptions = Object.assign({}, options);
-        var reqOptions = $applozic.extend({}, {}, options);
+        var reqOptions = _this.extendObject({}, {}, options);
         if (!options.skipEncryption && options.encryptionKey) {
             if (reqOptions.type.toLowerCase() === 'post') {
                 reqOptions.data = encrypt(options.data, options.encryptionKey);
@@ -236,6 +235,46 @@ function MckUtils() {
         }
         return true;
     };
+    /*
+    - This is alternative for Jquery deep extend. Refer this link for help https://api.jquery.com/jquery.extend/
+    - Pass in the objects to merge as arguments.
+    - For a deep extend, set the first argument to `true`.
+    */
+    _this.extendObject = function () {
+        // Variables
+        var extended = {};
+        var deep = false;
+        var i = 0;
+        var length = arguments.length;
+
+        // Check if a deep merge
+        if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]') {
+            deep = arguments[0];
+            i++;
+        }
+
+        // Merge the object into the extended object
+        var merge = function (obj) {
+            for (var prop in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    // If deep merge and property is an object, merge properties
+                    if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                        extended[prop] = _this.extendObject(true, extended[prop], obj[prop]);
+                    } else {
+                        extended[prop] = obj[prop];
+                    }
+                }
+            }
+        };
+
+        // Loop through each object and conduct a merge
+        for (; i < length; i++) {
+            var obj = arguments[i];
+            merge(obj);
+        }
+
+        return extended;
+    };
 
 }
 function MckContactUtils() {
@@ -244,12 +283,13 @@ function MckContactUtils() {
         var contactId = contact.contactId;
         return _this.formatContactId(contactId);
     };
-    _this.formatContactId = function(contactId) {
-        if (contactId.indexOf('+') === 0) {
-            contactId = contactId.substring(1);
+    _this.formatContactId = function (contactId) {
+        if (contactId) {
+            contactId.indexOf('+') === 0 && (contactId = contactId.substring(1));
+            contactId = decodeURIComponent(contactId);
+            contactId = contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON').trim();
         }
-        contactId = decodeURIComponent(contactId);
-        return $applozic.trim(contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON'));
+        return contactId;
     };
 }
 function MckMapUtils() {
@@ -332,7 +372,7 @@ function MckDateUtils() {
                 val = '0' + val;
                 return val;
             };
-        // Regexes and supporting functions are cached through closure
+        // Regex's and supporting functions are cached through closure
         return function(date, mask, utc) {
             var dF = dateFormat;
             // You can't provide utc if you skip other args (use the

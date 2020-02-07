@@ -1191,9 +1191,20 @@
                   if (file) {
                       message.fileMeta = file.fileMeta;
                       Applozic.ALApiService.sendMessage({
-                          data: {message : message},
-                          success: function (response) { console.log(response); },
-                          error: function () { }
+                          data: {
+                              message: message
+                          },
+                          success: function (response) {
+                              if (options.success) {
+                                  response.fileMeta = file.fileMeta;
+                                  options.success(response);
+                              }
+                          },
+                          error: function (response) {
+                              if (options.error) {
+                                  options.error(response);
+                              }
+                          }
                       });
                   }
                 });
@@ -1217,14 +1228,23 @@
         var xhr = new XMLHttpRequest();
         var attachmentURL = MCK_BASE_URL + ATTACHMENT_UPLOAD_URL;
         xhr.addEventListener('load', function (e) {
-            var file = this.responseText;
+            var file = JSON.parse(this.responseText);
             var message = options.data.messagePxy;
             if (file) {
-                message.fileMeta = JSON.parse(file);
+                message.fileMeta = file;
                 Applozic.ALApiService.sendMessage({
                     data: {message : message},
-                    success: function (response) { console.log(response); },
-                    error: function () { }
+                    success: function (response) {
+                        if (options.success) {
+                            response.fileMeta = file;
+                            options.success(response);
+                        }
+                    },
+                    error: function (response) {
+                        if (options.error) {
+                            options.error(response);
+                        }
+                    }
                 });
              }
           });
@@ -1245,8 +1265,17 @@
                 message.fileMeta = file.fileMeta;
                 Applozic.ALApiService.sendMessage({
                     data: {message : message},
-                    success: function (response) { console.log(response); },
-                    error: function () { }
+                    success: function (response) {
+                        if (options.success) {
+                            options.fileMeta = file.fileMeta;
+                            options.success(response);
+                        }
+                    },
+                    error: function (response) {
+                        if (options.error) {
+                            options.error(response);
+                        }
+                    }
                 });
             }
           });

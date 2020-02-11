@@ -15,10 +15,10 @@ function AlMessageService() {
   var offlineblk = '<div id="mck-ofl-blk" class="mck-m-b"><div class="mck-clear"><div class="blk-lg-12 mck-text-light mck-text-muted mck-test-center">${userIdExpr} is offline now</div></div></div>';
   var refreshIntervalId;
 
-  _this.init = function(optns) {
-    MCK_FILE_URL = optns.fileBaseUrl;
-    IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (optns && optns.userId && optns.userId.trim());
+  _this.init = function(options) {
+    MCK_FILE_URL = options.fileBaseUrl;
+    IS_MCK_VISITOR = options.visitor;
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (options && options.userId && options.userId.toString().trim());
   };
 
   _this.getConversation = function(params) {

@@ -235,10 +235,10 @@ function MckGroupService() {
     }
   };
 
-  _this.init = function (optns) {
-    IS_MCK_VISITOR = optns.visitor;
-    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (optns.userId && optns.userId.trim());
-    MCK_OPEN_GROUP_SETTINGS = optns.openGroupSettings;
+  _this.init = function (options) {
+    IS_MCK_VISITOR = options.visitor;
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : (options.userId && options.userId.toString().trim());
+    MCK_OPEN_GROUP_SETTINGS = options.openGroupSettings;
   };
 
   _this.getGroupList = function (params) {
@@ -592,13 +592,13 @@ function MckGroupService() {
         'message': message
       };
       if (params.groupId) {
-        messagePxy.groupId = params.groupId.trim();
+        messagePxy.groupId = params.groupId.toString().trim();
       } else if (params.clientGroupId) {
         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
         if (typeof group === 'undefined') {
           return 'group not found';
         }
-        messagePxy.clientGroupId = params.clientGroupId.trim();
+        messagePxy.clientGroupId = params.clientGroupId.toString().trim();
       }
       mckMessageService.sendMessage(messagePxy);
       return 'success';

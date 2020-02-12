@@ -288,7 +288,8 @@
                 else if (messageType === 'APPLOZIC_11') {
                     ALSocket.events.onUserConnect(resp.message);
                 } else if (messageType === 'APPLOZIC_12') {
-                  var lastSeenAtTime = resp.message.split(",")[1];
+                    var userId = resp.message.split(",")[0];
+                    var lastSeenAtTime = resp.message.split(",")[1];
                     ALSocket.events.onUserDisconnect({
                         'userId': userId,
                         'lastSeenAtTime': lastSeenAtTime

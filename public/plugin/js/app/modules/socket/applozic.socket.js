@@ -21,6 +21,7 @@
         ALSocket.USER_DEVICE_KEY;
         ALSocket.USER_ENCRYPTION_KEY;
         var mckUtils = new MckUtils();
+        var isReconnectAvailable = true;
 
         /**
          * var events = {
@@ -209,22 +210,26 @@
             }
         };
         ALSocket.reconnect = function() {
-            ALSocket.unsubscibeToTypingChannel();
-            ALSocket.unsubscibeToNotification();
-            ALSocket.disconnect();
-            var data = {};
-            data.token = ALSocket.MCK_TOKEN ;
-            data.deviceKey = ALSocket.USER_DEVICE_KEY;
-            data.userEncryptionKey = ALSocket.USER_ENCRYPTION_KEY;
-            data.websocketUrl = MCK_WEBSOCKET_URL;
-            data.websocketPort = MCK_WEBSOCKET_PORT;
-            ALSocket.init(MCK_APP_ID, data, ALSocket.events);
+            if (isReconnectAvailable) {
+                isReconnectAvailable = false;
+                ALSocket.unsubscibeToTypingChannel();
+                ALSocket.unsubscibeToNotification();
+                ALSocket.disconnect();
+                var data = {};
+                data.token = ALSocket.MCK_TOKEN ;
+                data.deviceKey = ALSocket.USER_DEVICE_KEY;
+                data.userEncryptionKey = ALSocket.USER_ENCRYPTION_KEY;
+                data.websocketUrl = MCK_WEBSOCKET_URL;
+                data.websocketPort = MCK_WEBSOCKET_PORT;
+                ALSocket.init(MCK_APP_ID, data, ALSocket.events);
+            }
         };
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
             if (typeof ALSocket.events.onConnectFailed === "function") {
                 setTimeout(function () {
                     ALSocket.events.onConnectFailed();
+                    isReconnectAvailable = true;
                 }, 30000);
             }
         };
@@ -244,6 +249,7 @@
         };
         ALSocket.onConnect = function() {
             var topic = "/topic/" + (ALSocket.USER_ENCRYPTION_KEY ? "encr-":"") + ALSocket.MCK_TOKEN;
+            isReconnectAvailable = true;
             if (ALSocket.stompClient.connected) {
                 if (subscriber) {
                     ALSocket.unsubscibeToNotification();

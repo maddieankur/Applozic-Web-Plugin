@@ -54,7 +54,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 switch (appOptions) {
                     case 'reInitialize':
                         return oInstance.reInit(params);
-                        break;
                     case 'loadConvTab':
                         oInstance.loadConvTab(params);
                         break;
@@ -72,7 +71,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                         break;
                     case 'loadContextualTab':
                         return oInstance.loadTabWithTopic(params);
-                        break;
                     case "audioAttach":
                         oInstance.audioAttach(params);
                         break;
@@ -84,88 +82,65 @@ var MCK_CLIENT_GROUP_MAP = [];
                         break;
                     case 'sendMessage':
                         return oInstance.sendMessage(params);
-                        break;
                     case 'sendGroupMessage':
                         return oInstance.sendGroupMessage(params);
-                        break;
                     case 'createGroup':
                         return mckGroupService.createGroup(params);
-                        break;
                     case 'loadBroadcastTab':
                         params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
                         params.type = 5;
                         return mckGroupUtils.initGroupTab(params);
-                        break;
                     case 'initBroadcastTab':
                         params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
                         params.type = 5;
                         return mckGroupUtils.initGroupTab(params);
-                        break;
                     case 'initGroupTab':
                         return mckGroupUtils.initGroupTab(params);
-                        break;
                     case 'loadGroupTab':
                         return oInstance.loadGroupTab(params);
-                        break;
                     case 'loadGroupTabByClientGroupId':
                         return oInstance.loadGroupTabByClientGroupId(params);
-                        break;
                     case 'setOffline':
                         oInstance.setOffline();
                         return 'success';
-                        break;
                     case 'setOnline':
                         oInstance.setOffline();
                         return 'success';
-                        break;
                    case 'reset':
                         oInstance.reset(params);
                         break;
                     case 'logout':
                         oInstance.logout();
                         return 'success';
-                        break;
                     case 'getUserDetail':
                         oInstance.getUserStatus(params);
                         return 'success';
-                        break;
                     case 'getGroupList':
                         mckGroupService.getGroupList(params);
                         return 'success';
-                        break;
                     case 'leaveGroup':
                         return mckGroupUtils.leaveGroup(params);
-                        break;
                     case 'addGroupMember':
                         return oInstance.addGroupMember(params);
-                        break;
                     case 'removeGroupMember':
                         return mckGroupService.removeGroupMember(params);
-                        break;
                     case 'updateGroupInfo':
                         return oInstance.updateGroupInfo(params);
-                        break;
                     case 'getMessages':
                         oInstance.getMessages(params);
                         break;
                     case 'messageList':
                         return oInstance.getMessageList(params);
-                        break;
                     case 'getMessageListByTopicId':
                         return oInstance.getMessageListByTopicId(params);
-                        break;
                     case 'getTotalUnreadCount':
                         return oInstance.getTotalUnreadCount();
-                        break;
                     case 'subscribeToEvents':
                         return oInstance.subscribeToEvents(params);
-                        break;
                     case 'createFriendContactList':
                         return oInstance.createFriendContactList(params);
-                        break;
                     case 'getFriendContactList':
                         return oInstance.getFriendContactList(params);
-                        break;
                 }
             } else if ($applozic.type(appOptions) === 'object') {
                 oInstance.reInit(appOptions);

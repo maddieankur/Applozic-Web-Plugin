@@ -287,7 +287,7 @@ function MckContactUtils() {
         if (contactId) {
             contactId.indexOf('+') === 0 && (contactId = contactId.substring(1));
             contactId = decodeURIComponent(contactId);
-            contactId = contactId.replace(/\%/g, "PERCENATAGE").replace(/\~/g, "TILDE").replace(/\!/g, "EXCLAMATION_MARK").replace(/\*/g, "STAR").replace(/\(/g, "LEFT_PARENTHESIS").replace(/\)/g, "RIGHT_PARENTHESIS").replace(/\-/g, "DASH").replace(/\@/g, "AT").replace(/\./g, "DOT").replace(/\#/g, "HASH").replace(/\|/g, "VBAR").replace(/\+/g, "PLUS").replace(/\;/g, "SCOLON").replace(/\?/g, "QMARK").replace(/\//g,"FORWARDSLASH").trim();
+            contactId = contactId.replace(/\%/g, "PERCENTAGE").replace(/\~/g, "TILDE").replace(/\!/g, "EXCLAMATION_MARK").replace(/\*/g, "STAR").replace(/\(/g, "LEFT_PARENTHESIS").replace(/\)/g, "RIGHT_PARENTHESIS").replace(/\-/g, "DASH").replace(/\@/g, "AT").replace(/\./g, "DOT").replace(/\#/g, "HASH").replace(/\|/g, "VBAR").replace(/\+/g, "PLUS").replace(/\;/g, "SCOLON").replace(/\?/g, "QMARK").replace(/\//g,"FORWARDSLASH").trim();
         }
         return contactId;
     };
